@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "nome": "Helena",
+    "classe": "Guardiã de Túmulos",
+    "nivel": 3,
+    "hp": "25/25",
+    "mana": "15/15",
+    "ca": 15,
+    "slots_magia": { "nivel1": 4, "nivel2": 2, "nivel3": 0 },
+    "consumiveis": ["Incenso Sagrado", "Poção de Vida", "Óleo Protetor"]
+  },
+  {
+    "id": 2,
+    "nome": "Lyon",
+    "classe": "Patrulheiro",
+    "nivel": 16,
+    "hp": "124/124",
+    "mana": "40/40",
+    "ca": 18,
+    "slots_magia": { "nivel1": 4, "nivel2": 3, "nivel3": 3 },
+    "consumiveis": ["Flecha de Mitril (x5)", "Antídoto Forte", "Corda de Escalada"]
+  },
+  {
+    "id": 3,
+    "nome": "Merlin",
+    "classe": "Mago",
+    "nivel": 3,
+    "hp": "18/18",
+    "mana": "28/28",
+    "ca": 12,
+    "slots_magia": { "nivel1": 4, "nivel2": 2, "nivel3": 0 },
+    "consumiveis": ["Pergaminho de Escudo", "Pó de Diamante", "Foco Arcano"]
+  },
+  {
+    "id": 4,
+    "nome": "Lyria",
+    "classe": "Espiritualista",
+    "nivel": 3,
+    "hp": "21/21",
+    "mana": "22/22",
+    "ca": 13,
+    "slots_magia": { "nivel1": 4, "nivel2": 2, "nivel3": 0 },
+    "consumiveis": ["Amuleto de Osso", "Ervas Medicinais", "Essência Etérea"]
+  },
+  {
+    "id": 5,
+    "nome": "Aelion",
+    "classe": "Mago",
+    "nivel": 7,
+    "hp": "44/44",
+    "mana": "55/55",
+    "ca": 13,
+    "slots_magia": { "nivel1": 4, "nivel2": 3, "nivel3": 3 },
+    "consumiveis": ["Poção de Mana Maior", "Grimório de Bolso", "Pergaminho de Teleporte"]
+  },
+  {
+    "id": 6,
+    "nome": "Brakka",
+    "classe": "Guerreiro",
+    "nivel": 5,
+    "hp": "55/55",
+    "mana": "0/0",
+    "ca": 17,
+    "slots_magia": { "nivel1": 0, "nivel2": 0, "nivel3": 0 },
+    "consumiveis": ["Pedra de Amolar", "Rações de Viagem (x10)", "Bandagem Cíclica"]
+  },
+  {
+    "id": 7,
+    "nome": "Nymera",
+    "classe": "Druida",
+    "nivel": 4,
+    "hp": "33/33",
+    "mana": "32/32",
+    "ca": 14,
+    "slots_magia": { "nivel1": 4, "nivel2": 3, "nivel3": 0 },
+    "consumiveis": ["Sementes de Azevinho", "Baga de Água", "Unguento de Ervas"]
+  }
+]
