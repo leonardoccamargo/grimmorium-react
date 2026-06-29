@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useLanguage } from '../context/LanguageContext.jsx'
+import { calculateCharacterMaxHp, SUPPORTED_DND5E_CLASSES } from '../utils/characterHealth.js'
 
 const initialValues = {
   nome: '',
   classe: '',
   nivel: 1,
+  constituicao: 10,
   hp: '10/10',
   ca: 10,
   slots_magia: {
@@ -23,6 +25,7 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     name: language === 'pt-br' ? 'Nome' : 'Name',
     class: language === 'pt-br' ? 'Classe' : 'Class',
     level: language === 'pt-br' ? 'Nível' : 'Level',
+    constitution: language === 'pt-br' ? 'Constituição' : 'Constitution',
     hp: 'HP',
     ac: language === 'pt-br' ? 'CA' : 'AC',
     slots1: language === 'pt-br' ? 'Slots 1º nível' : '1st level slots',
@@ -30,6 +33,11 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     slots3: language === 'pt-br' ? 'Slots 3º nível' : '3rd level slots',
     consumables: language === 'pt-br' ? 'Consumíveis (separados por vírgula)' : 'Consumables (comma separated)',
     cancel: language === 'pt-br' ? 'Cancelar' : 'Cancel',
+    unsupportedClass:
+      language === 'pt-br'
+        ? 'Classes oficiais de D&D 5e disponíveis no seletor abaixo.'
+        : 'Official D&D 5e classes available in the selector below.',
+    selectClass: language === 'pt-br' ? 'Selecione uma classe' : 'Select a class',
   }
 
   const handleChange = (field, value) => {
@@ -48,10 +56,28 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    const calculatedHp = (() => {
+      try {
+        const maxHp = calculateCharacterMaxHp(
+          form.classe,
+          Number(form.nivel),
+          Number(form.constituicao),
+          true,
+          0,
+        )
+
+        return `${maxHp}/${maxHp}`
+      } catch {
+        return form.hp
+      }
+    })()
+
     onSubmit({
       ...form,
       nivel: Number(form.nivel),
+      constituicao: Number(form.constituicao),
       ca: Number(form.ca),
+      hp: calculatedHp,
       consumiveis: form.consumiveis.split(',').map((item) => item.trim()).filter(Boolean),
     })
   }
@@ -71,12 +97,16 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
 
         <label>
           {strings.class}
-          <input
-            type="text"
+          <select
             value={form.classe}
             onChange={(event) => handleChange('classe', event.target.value)}
             required
-          />
+          >
+            <option value="">{strings.selectClass}</option>
+            {SUPPORTED_DND5E_CLASSES.map((className) => (
+              <option key={className} value={className}>{className}</option>
+            ))}
+          </select>
         </label>
 
         <label>
@@ -86,6 +116,17 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
             min="1"
             value={form.nivel}
             onChange={(event) => handleChange('nivel', event.target.value)}
+            required
+          />
+        </label>
+
+        <label>
+          {strings.constitution}
+          <input
+            type="number"
+            min="1"
+            value={form.constituicao}
+            onChange={(event) => handleChange('constituicao', event.target.value)}
             required
           />
         </label>
@@ -141,6 +182,8 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
           />
         </label>
       </div>
+
+      <p className="form-hint">{strings.unsupportedClass}</p>
 
       <label className="full-width">
         {strings.consumables}
