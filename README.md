@@ -2,10 +2,6 @@
 
 Aplicação SPA para gerenciamento de personagens e consulta de magias de RPG, com navegação entre páginas, componentização e simulação de requisições a servidor via leitura de arquivos JSON.
 
-## Repositório
-
-- Projeto público no GitHub: adicione aqui a URL do repositório entregue.
-
 ## Funcionalidades principais
 
 - Navegação entre páginas: Home, Personagens, Grimório, Jogar e rota 404.

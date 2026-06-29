@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 
 const initialValues = {
@@ -18,10 +18,6 @@ const initialValues = {
 export default function CharacterForm({ initial = initialValues, onSubmit, onCancel, submitLabel }) {
   const { language } = useLanguage()
   const [form, setForm] = useState(initial)
-
-  useEffect(() => {
-    setForm(initial)
-  }, [initial])
 
   const strings = {
     name: language === 'pt-br' ? 'Nome' : 'Name',
