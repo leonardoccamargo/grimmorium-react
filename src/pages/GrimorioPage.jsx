@@ -103,15 +103,20 @@ export default function GrimorioPage() {
   const [detailStatus, setDetailStatus] = useState('idle')
   const [levelFilter, setLevelFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
+  const [reloadToken, setReloadToken] = useState(0)
   const ITEMS_PER_PAGE = 12
 
   useEffect(() => {
+    let active = true
+
     async function fetchSpells() {
       setIndexStatus('loading')
 
       const spells = language === 'pt-br'
         ? await loadPortugueseSpells()
         : await loadEnglishSpellIndex()
+
+      if (!active) return
 
       if (spells.length > 0) {
         setSpellIndexList(spells)
@@ -120,12 +125,16 @@ export default function GrimorioPage() {
         setCurrentPage(1)
         setIndexStatus('success')
       } else {
+        setSpellIndexList([])
+        setSelectedSpellIndex(null)
+        setSelectedSpellDetails(null)
         setIndexStatus('error')
       }
     }
 
     fetchSpells()
-  }, [language])
+    return () => { active = false }
+  }, [language, reloadToken])
 
   useEffect(() => {
     if (language !== 'en' || !selectedSpellIndex?.url) {
@@ -169,9 +178,11 @@ export default function GrimorioPage() {
   }
 
   const totalPages = useMemo(
-    () => Math.ceil(filteredSpells.length / ITEMS_PER_PAGE),
+    () => Math.max(1, Math.ceil(filteredSpells.length / ITEMS_PER_PAGE)),
     [filteredSpells],
   )
+
+  const hasFilteredSpells = filteredSpells.length > 0
 
   const paginatedSpells = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
@@ -217,6 +228,12 @@ export default function GrimorioPage() {
         : 'Unable to load spells. Try again later.',
     errorDetail:
       language === 'pt-br' ? 'Erro ao carregar a magia' : 'Failed to load spell details',
+    noFilteredResults:
+      language === 'pt-br'
+        ? 'Nenhuma magia encontrada para o filtro selecionado.'
+        : 'No spells found for the selected filter.',
+    retryLoad:
+      language === 'pt-br' ? 'Tentar novamente' : 'Try again',
   }
 
   const handleFirstPage = () => setCurrentPage(1)
@@ -259,11 +276,28 @@ export default function GrimorioPage() {
         </div>
 
         {indexStatus === 'loading' && <LoadingIndicator message={strings.loadingIndex} />}
-        {indexStatus === 'error' && <div className="alert alert-error">{strings.loadError}</div>}
+        {indexStatus === 'error' && (
+          <div className="alert alert-error">
+            <p>{strings.loadError}</p>
+            <div className="hook-actions">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setReloadToken((prev) => prev + 1)}
+              >
+                {strings.retryLoad}
+              </button>
+            </div>
+          </div>
+        )}
 
         {indexStatus === 'success' && (
           <div className="spell-grid-layout">
             <div className="spell-list">
+              {!hasFilteredSpells && (
+                <div className="alert alert-warning">{strings.noFilteredResults}</div>
+              )}
+
               <div className="cards-grid">
                 {paginatedSpells.map((spell) => (
                   <SpellCard
@@ -279,51 +313,53 @@ export default function GrimorioPage() {
                   />
                 ))}
               </div>
-              <div className="pagination-controls">
-                <button
-                  type="button"
-                  className="btn-pagination"
-                  onClick={handleFirstPage}
-                  disabled={currentPage === 1}
-                  aria-label={language === 'pt-br' ? 'Primeira página' : 'First page'}
-                  title={language === 'pt-br' ? 'Primeira página' : 'First page'}
-                >
-                  ⏮
-                </button>
-                <button
-                  type="button"
-                  className="btn-pagination"
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  aria-label={language === 'pt-br' ? 'Página anterior' : 'Previous page'}
-                  title={language === 'pt-br' ? 'Página anterior' : 'Previous page'}
-                >
-                  ◀
-                </button>
-                <span className="pagination-info">
-                  {currentPage} / {totalPages}
-                </span>
-                <button
-                  type="button"
-                  className="btn-pagination"
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  aria-label={language === 'pt-br' ? 'Próxima página' : 'Next page'}
-                  title={language === 'pt-br' ? 'Próxima página' : 'Next page'}
-                >
-                  ▶
-                </button>
-                <button
-                  type="button"
-                  className="btn-pagination"
-                  onClick={handleLastPage}
-                  disabled={currentPage === totalPages}
-                  aria-label={language === 'pt-br' ? 'Última página' : 'Last page'}
-                  title={language === 'pt-br' ? 'Última página' : 'Last page'}
-                >
-                  ⏭
-                </button>
-              </div>
+              {hasFilteredSpells && (
+                <div className="pagination-controls">
+                  <button
+                    type="button"
+                    className="btn-pagination"
+                    onClick={handleFirstPage}
+                    disabled={currentPage === 1}
+                    aria-label={language === 'pt-br' ? 'Primeira página' : 'First page'}
+                    title={language === 'pt-br' ? 'Primeira página' : 'First page'}
+                  >
+                    ⏮
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-pagination"
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                    aria-label={language === 'pt-br' ? 'Página anterior' : 'Previous page'}
+                    title={language === 'pt-br' ? 'Página anterior' : 'Previous page'}
+                  >
+                    ◀
+                  </button>
+                  <span className="pagination-info">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-pagination"
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    aria-label={language === 'pt-br' ? 'Próxima página' : 'Next page'}
+                    title={language === 'pt-br' ? 'Próxima página' : 'Next page'}
+                  >
+                    ▶
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-pagination"
+                    onClick={handleLastPage}
+                    disabled={currentPage === totalPages}
+                    aria-label={language === 'pt-br' ? 'Última página' : 'Last page'}
+                    title={language === 'pt-br' ? 'Última página' : 'Last page'}
+                  >
+                    ⏭
+                  </button>
+                </div>
+              )}
             </div>
 
             <aside className="spell-detail-panel">

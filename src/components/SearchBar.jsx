@@ -1,6 +1,6 @@
 import { useLanguage } from '../context/LanguageContext.jsx'
 
-export default function SearchBar({ value, onChange, placeholder, buttonLabel, ariaLabel }) {
+export default function SearchBar({ value, onChange, placeholder, buttonLabel, ariaLabel, onSubmit }) {
   const { language } = useLanguage()
   const labels = {
     button: buttonLabel ?? (language === 'pt-br' ? 'Buscar' : 'Search'),
@@ -9,17 +9,20 @@ export default function SearchBar({ value, onChange, placeholder, buttonLabel, a
   }
 
   return (
-    <div className="search-bar">
-      <label htmlFor="character-search" className="visually-hidden">{labels.aria}</label>
-      <input
-        id="character-search"
-        type="search"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={labels.placeholder}
-        aria-label={labels.aria}
-      />
-      <button type="button" className="btn-secondary">{labels.button}</button>
-    </div>
+    <form className="search-bar" onSubmit={onSubmit ?? ((event) => event.preventDefault())}>
+      <div className="search-bar-field">
+        <span className="search-bar-icon" aria-hidden="true">⌕</span>
+        <label htmlFor="character-search" className="visually-hidden">{labels.aria}</label>
+        <input
+          id="character-search"
+          type="search"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={labels.placeholder}
+          aria-label={labels.aria}
+        />
+      </div>
+      <button type="submit" className="btn-secondary search-bar-button">{labels.button}</button>
+    </form>
   )
 }

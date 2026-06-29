@@ -13,11 +13,11 @@ export default function Header({ theme, onToggleTheme }) {
     navHome: language === 'pt-br' ? 'Início' : 'Home',
     navCharacters: language === 'pt-br' ? 'Personagens' : 'Characters',
     navSpellbook: language === 'pt-br' ? 'Grimório' : 'Spellbook',
-    navPlay: language === 'pt-br' ? 'Jogar' : 'Play',
     breadcrumbPrefix: language === 'pt-br' ? 'Você está em:' : 'You are at:',
     themeToggle: language === 'pt-br'
       ? (theme === 'light' ? 'Tema Escuro' : 'Tema Claro')
       : (theme === 'light' ? 'Dark Mode' : 'Light Mode'),
+    languageToggle: language === 'pt-br' ? 'Alternar idioma' : 'Toggle language',
   }
 
   return (
@@ -29,10 +29,22 @@ export default function Header({ theme, onToggleTheme }) {
         </div>
 
         <div className="header-actions">
-          <button type="button" className="theme-toggle" onClick={onToggleTheme}>
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={onToggleTheme}
+            aria-label={strings.themeToggle}
+            title={strings.themeToggle}
+          >
             {strings.themeToggle}
           </button>
-          <button type="button" className="theme-toggle" onClick={toggleLanguage}>
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={toggleLanguage}
+            aria-label={strings.languageToggle}
+            title={strings.languageToggle}
+          >
             {language === 'pt-br' ? 'PT-BR' : 'EN'}
           </button>
         </div>
@@ -42,7 +54,6 @@ export default function Header({ theme, onToggleTheme }) {
         <NavLink to="/" end className={({ isActive }) => isActive ? 'is-active' : ''}>{strings.navHome}</NavLink>
         <NavLink to="/personagens" className={({ isActive }) => isActive ? 'is-active' : ''}>{strings.navCharacters}</NavLink>
         <NavLink to="/grimorio" className={({ isActive }) => isActive ? 'is-active' : ''}>{strings.navSpellbook}</NavLink>
-        <NavLink to="/jogar/1" className={({ isActive }) => isActive ? 'is-active' : ''}>{strings.navPlay}</NavLink>
       </nav>
 
       <div className="breadcrumb">{strings.breadcrumbPrefix} <strong>{location.pathname}</strong></div>

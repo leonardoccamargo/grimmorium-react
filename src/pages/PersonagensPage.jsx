@@ -84,6 +84,7 @@ export default function PersonagensPage() {
             placeholder={strings.searchPlaceholder}
             buttonLabel={strings.searchButton}
             ariaLabel={strings.searchAria}
+            onSubmit={(event) => event.preventDefault()}
           />
           <button type="button" className="btn-primary" onClick={() => setIsCreating(true)}>
             {strings.buttonNew}

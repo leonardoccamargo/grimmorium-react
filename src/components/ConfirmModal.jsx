@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function ConfirmModal({
   isOpen,
@@ -9,6 +9,8 @@ export default function ConfirmModal({
   onCancel,
   onConfirm,
 }) {
+  const cancelButtonRef = useRef(null)
+
   useEffect(() => {
     if (!isOpen) return undefined
 
@@ -19,12 +21,17 @@ export default function ConfirmModal({
     }
 
     const previousOverflow = document.body.style.overflow
+    const previousActiveElement = document.activeElement
     document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', handleKeydown)
+    cancelButtonRef.current?.focus()
 
     return () => {
       document.body.style.overflow = previousOverflow
       window.removeEventListener('keydown', handleKeydown)
+      if (previousActiveElement instanceof HTMLElement) {
+        previousActiveElement.focus()
+      }
     }
   }, [isOpen, onCancel])
 
@@ -44,7 +51,12 @@ export default function ConfirmModal({
         <p id="confirm-modal-message">{message}</p>
 
         <div className="modal-actions">
-          <button type="button" className="btn-secondary" onClick={onCancel}>
+          <button
+            ref={cancelButtonRef}
+            type="button"
+            className="btn-secondary"
+            onClick={onCancel}
+          >
             {cancelLabel}
           </button>
           <button type="button" className="btn-danger" onClick={onConfirm}>

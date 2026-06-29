@@ -33,15 +33,15 @@ export default function HomePage() {
           <h2>{strings.heroHeading}</h2>
           <p>{strings.heroText}</p>
           <div className="hero-cards">
-            <article className="hero-card">
+            <article className="hero-card" tabIndex={0}>
               <h3>{strings.card1Title}</h3>
               <p>{strings.card1Text}</p>
             </article>
-            <article className="hero-card">
+            <article className="hero-card" tabIndex={0}>
               <h3>{strings.card2Title}</h3>
               <p>{strings.card2Text}</p>
             </article>
-            <article className="hero-card">
+            <article className="hero-card" tabIndex={0}>
               <h3>{strings.card3Title}</h3>
               <p>{strings.card3Text}</p>
             </article>
