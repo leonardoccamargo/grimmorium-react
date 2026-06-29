@@ -1,16 +1,82 @@
-# React + Vite
+# Grimmorium React (2° MVP)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação SPA para gerenciamento de personagens e consulta de magias de RPG, com navegação entre páginas, componentização e simulação de requisições a servidor via leitura de arquivos JSON.
 
-Currently, two official plugins are available:
+## Repositório
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Projeto público no GitHub: adicione aqui a URL do repositório entregue.
 
-## React Compiler
+## Funcionalidades principais
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Navegação entre páginas: Home, Personagens, Grimório, Jogar e rota 404.
+- Cadastro, edição e remoção de personagens.
+- Busca e listagem em cards.
+- Consulta de magias com filtro por nível, paginação e painel de detalhes.
+- Alternância de idioma (PT-BR/EN) e tema (claro/escuro).
+- Feedback visual de carregamento, sucesso, aviso e erro.
 
-## Expanding the ESLint configuration
+## Tecnologias
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React
+- React Router DOM
+- Vite
+- CSS
+
+## Instalação e execução local
+
+### Pré-requisitos
+
+- Node.js 18+
+- npm 9+
+
+### Passo a passo
+
+```bash
+npm install
+npm run dev
+```
+
+Aplicação disponível em: http://localhost:5173
+
+## Como utilizar
+
+1. Abra a página inicial para acessar a visão geral do sistema.
+2. Acesse Personagens para buscar, cadastrar, editar e remover fichas.
+3. Entre em Grimório para filtrar magias por nível e visualizar detalhes.
+4. Abra a rota Jogar para atualizar valores da ficha durante a sessão.
+5. Use os botões do cabeçalho para alternar idioma e tema.
+
+### Outros comandos
+
+```bash
+npm run build
+npm run preview
+npm run lint
+```
+
+## Estrutura de pastas
+
+```text
+grimmorium-react/
+	public/
+		personagens.json
+		magias.json
+	src/
+		components/
+		context/
+		pages/
+		App.jsx
+		main.jsx
+```
+
+## Rotas da aplicação
+
+- / -> Home
+- /personagens -> Lista, busca e gestão de personagens
+- /grimorio -> Lista e detalhes de magias
+- /jogar/:id -> Ficha do personagem (visualização/edição)
+- * -> 404 Not Found
+
+## Observação sobre dados simulados
+
+Conforme a regra do MVP, os dados principais são carregados por leitura de JSON local para simular chamadas ao servidor.
