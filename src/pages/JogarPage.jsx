@@ -37,8 +37,8 @@ export default function JogarPage() {
       ? 'Use os botões de ajuste para alterar os valores do personagem durante a partida.'
       : 'Use the adjustment buttons to change the character values during the session.',
     hpCurrentLabel: language === 'pt-br' ? 'HP atual' : 'Current HP',
-    increase: language === 'pt-br' ? 'Aumentar' : 'Increase',
-    decrease: language === 'pt-br' ? 'Diminuir' : 'Decrease',
+    increase: '+',
+    decrease: '-',
     unsavedTitle: language === 'pt-br' ? 'Alterações não salvas' : 'Unsaved changes',
     unsavedMessage: language === 'pt-br'
       ? 'Você fez alterações que ainda não foram salvas. Deseja sair sem salvar?'

@@ -1,6 +1,15 @@
 import { useLanguage } from '../context/LanguageContext.jsx'
 
-export default function SearchBar({ value, onChange, placeholder, buttonLabel, ariaLabel, onSubmit }) {
+export default function SearchBar({
+  value,
+  onChange,
+  placeholder,
+  buttonLabel,
+  ariaLabel,
+  onSubmit,
+  actionLabel,
+  actionOnClick,
+}) {
   const { language } = useLanguage()
   const labels = {
     button: buttonLabel ?? (language === 'pt-br' ? 'Buscar' : 'Search'),
@@ -23,6 +32,9 @@ export default function SearchBar({ value, onChange, placeholder, buttonLabel, a
         />
       </div>
       <button type="submit" className="btn-secondary search-bar-button">{labels.button}</button>
+      <button type="button" className="btn-primary search-bar-action-button" onClick={actionOnClick}>
+        {actionLabel ?? (language === 'pt-br' ? 'Novo Personagem' : 'New Character')}
+      </button>
     </form>
   )
 }

@@ -84,11 +84,10 @@ export default function PersonagensPage() {
             placeholder={strings.searchPlaceholder}
             buttonLabel={strings.searchButton}
             ariaLabel={strings.searchAria}
+            actionLabel={strings.buttonNew}
+            actionOnClick={() => setIsCreating(true)}
             onSubmit={(event) => event.preventDefault()}
           />
-          <button type="button" className="btn-primary" onClick={() => setIsCreating(true)}>
-            {strings.buttonNew}
-          </button>
         </div>
 
         {status === 'loading' && <LoadingIndicator message={strings.loadingCharacters} />}

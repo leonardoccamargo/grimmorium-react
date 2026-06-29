@@ -996,11 +996,13 @@ input[type="number"]:focus {
 
 .search-bar {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     gap: 12px;
     align-items: stretch;
     margin-bottom: 18px;
-    padding: 14px;
+    width: 100%;
+    max-width: none;
+    padding: 10px;
     border-radius: 16px;
     background: color-mix(in srgb, var(--fundo-card) 84%, var(--fundo-secundario) 16%);
     border: 1px solid rgba(197, 160, 89, 0.28);
@@ -1012,7 +1014,8 @@ input[type="number"]:focus {
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
     gap: 10px;
-    padding: 0 14px;
+    min-height: 48px;
+    padding: 0 12px;
     border-radius: 12px;
     background: color-mix(in srgb, var(--fundo-secundario) 72%, #080d13 28%);
     border: 1px solid rgba(197, 160, 89, 0.24);
@@ -1028,7 +1031,7 @@ input[type="number"]:focus {
     min-width: 0;
     border: none;
     background: transparent;
-    padding: 14px 0;
+    padding: 10px 0;
     color: var(--texto-principal);
 }
 
@@ -1042,7 +1045,11 @@ input[type="number"]:focus {
 }
 
 .search-bar-button {
-    min-width: 160px;
+    min-width: 140px;
+}
+
+.search-bar-action-button {
+    min-width: 172px;
 }
 
 .search-bar:focus-within {
@@ -1317,7 +1324,8 @@ input[type="number"]:focus {
 }
 
 .play-step-button {
-    min-width: 110px;
+    min-width: 44px;
+    padding-inline: 12px;
     white-space: nowrap;
 }
 
@@ -1460,6 +1468,10 @@ input[type="number"]:focus {
     }
 
     .search-bar-button {
+        min-width: 100%;
+    }
+
+    .search-bar-action-button {
         min-width: 100%;
     }
 
