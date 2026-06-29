@@ -7,6 +7,7 @@ import SearchBar from '../components/SearchBar'
 import CharacterCard from '../components/CharacterCard'
 import LoadingIndicator from '../components/LoadingIndicator'
 import CharacterForm from '../components/CharacterForm'
+import ConfirmModal from '../components/ConfirmModal'
 
 export default function PersonagensPage() {
   const navigate = useNavigate()
@@ -14,12 +15,16 @@ export default function PersonagensPage() {
   const { personagens, status, mensagem, deleteCharacter, addCharacter, clearMensagem } = useCharacters()
   const [busca, setBusca] = useState('')
   const [isCreating, setIsCreating] = useState(false)
+  const [deleteTargetId, setDeleteTargetId] = useState(null)
 
   const strings = {
     title: language === 'pt-br' ? 'Personagens' : 'Characters',
     subtitle: language === 'pt-br' ? 'Veja, filtre e selecione seu personagem para jogar.' : 'View, filter, and select your character to play.',
     buttonNew: language === 'pt-br' ? 'Novo Personagem' : 'New Character',
-    confirmDelete: language === 'pt-br' ? 'Deseja realmente remover este personagem?' : 'Do you really want to remove this character?',
+    confirmDeleteTitle: language === 'pt-br' ? 'Confirmar exclusão' : 'Confirm deletion',
+    confirmDeleteMessage: language === 'pt-br' ? 'Deseja realmente remover este personagem?' : 'Do you really want to remove this character?',
+    cancelDelete: language === 'pt-br' ? 'Cancelar' : 'Cancel',
+    deleteLabel: language === 'pt-br' ? 'Excluir' : 'Delete',
     searchPlaceholder: language === 'pt-br' ? 'Buscar por nome ou classe...' : 'Search by name or class...',
     loadingCharacters: language === 'pt-br' ? 'Carregando personagens...' : 'Loading characters...',
     addCharacter: language === 'pt-br' ? 'Adicionar personagem' : 'Add character',
@@ -44,9 +49,17 @@ export default function PersonagensPage() {
   }
 
   function handleDelete(id) {
-    const confirmacao = window.confirm(strings.confirmDelete)
-    if (!confirmacao) return
-    deleteCharacter(id)
+    setDeleteTargetId(id)
+  }
+
+  function handleCancelDelete() {
+    setDeleteTargetId(null)
+  }
+
+  function handleConfirmDelete() {
+    if (deleteTargetId == null) return
+    deleteCharacter(deleteTargetId)
+    setDeleteTargetId(null)
   }
 
   function handleAdd(values) {
@@ -104,6 +117,16 @@ export default function PersonagensPage() {
             />
           ))}
         </div>
+
+        <ConfirmModal
+          isOpen={deleteTargetId != null}
+          title={strings.confirmDeleteTitle}
+          message={strings.confirmDeleteMessage}
+          cancelLabel={strings.cancelDelete}
+          confirmLabel={strings.deleteLabel}
+          onCancel={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+        />
       </section>
     </main>
   )

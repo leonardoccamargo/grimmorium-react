@@ -1024,6 +1024,54 @@ input[type="number"]:focus {
     border: 1px solid rgba(37, 105, 66, 0.35);
 }
 
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(4, 8, 14, 0.66);
+    backdrop-filter: blur(2px);
+}
+
+.modal-card {
+    width: min(520px, 100%);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(197, 160, 89, 0.5);
+    background: color-mix(in srgb, var(--fundo-card) 88%, #060a11 12%);
+    box-shadow:
+        0 20px 42px rgba(0, 0, 0, 0.45),
+        inset 0 0 0 1px rgba(231, 204, 139, 0.12);
+}
+
+.modal-card h3 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+}
+
+.modal-card p {
+    margin: 0;
+    color: var(--texto-secundario);
+    line-height: 1.55;
+}
+
+.modal-actions {
+    margin-top: 18px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+[data-theme="light"] .modal-overlay {
+    background: rgba(34, 27, 16, 0.45);
+}
+
+[data-theme="light"] .modal-card {
+    background: color-mix(in srgb, #fff7e9 90%, #f1e3c5 10%);
+}
+
 .loading-indicator {
     display: inline-flex;
     align-items: center;
@@ -1269,6 +1317,14 @@ input[type="number"]:focus {
     .btn-danger,
     .theme-toggle {
         width: 100%;
+    }
+
+    .modal-card {
+        padding: 18px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
     }
 }
 
