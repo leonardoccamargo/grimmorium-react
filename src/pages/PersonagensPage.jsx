@@ -56,15 +56,19 @@ export default function PersonagensPage() {
     setDeleteTargetId(null)
   }
 
-  function handleConfirmDelete() {
+  async function handleConfirmDelete() {
     if (deleteTargetId == null) return
-    deleteCharacter(deleteTargetId)
-    setDeleteTargetId(null)
+    const deleted = await deleteCharacter(deleteTargetId)
+    if (deleted) {
+      setDeleteTargetId(null)
+    }
   }
 
-  function handleAdd(values) {
-    addCharacter(values)
-    setIsCreating(false)
+  async function handleAdd(values) {
+    const created = await addCharacter(values)
+    if (created) {
+      setIsCreating(false)
+    }
   }
 
   function handleCancel() {

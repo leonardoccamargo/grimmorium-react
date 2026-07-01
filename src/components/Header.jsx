@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
+import Tooltip from './Tooltip.jsx'
 
 export default function Header({ theme, onToggleTheme }) {
   const location = useLocation()
@@ -29,24 +30,28 @@ export default function Header({ theme, onToggleTheme }) {
         </div>
 
         <div className="header-actions">
-          <button
-            type="button"
-            className="theme-toggle"
-            onClick={onToggleTheme}
-            aria-label={strings.themeToggle}
-            title={strings.themeToggle}
-          >
-            {strings.themeToggle}
-          </button>
-          <button
-            type="button"
-            className="theme-toggle"
-            onClick={toggleLanguage}
-            aria-label={strings.languageToggle}
-            title={strings.languageToggle}
-          >
-            {language === 'pt-br' ? 'PT-BR' : 'EN'}
-          </button>
+          <Tooltip text={strings.themeToggle}>
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={onToggleTheme}
+              aria-label={strings.themeToggle}
+              title={strings.themeToggle}
+            >
+              {strings.themeToggle}
+            </button>
+          </Tooltip>
+          <Tooltip text={strings.languageToggle}>
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={toggleLanguage}
+              aria-label={strings.languageToggle}
+              title={strings.languageToggle}
+            >
+              {language === 'pt-br' ? 'PT-BR' : 'EN'}
+            </button>
+          </Tooltip>
         </div>
       </div>
 

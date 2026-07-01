@@ -50,6 +50,20 @@ npm run preview
 npm run lint
 ```
 
+### Modo de dados para avaliação do MVP
+
+Por padrão, a seção de personagens roda em modo `mock` usando JSON local (conforme a diretriz da avaliação).
+
+- Padrão (não precisa configurar nada):
+	- usa `public/personagens.json`
+- Opcional para evolução com backend:
+	- crie um arquivo `.env` na raiz e defina:
+
+```bash
+VITE_CHARACTERS_DATA_MODE=api
+VITE_API_BASE_URL=http://127.0.0.1:5000
+```
+
 ## Estrutura de pastas
 
 ```text
@@ -76,3 +90,56 @@ grimmorium-react/
 ## Observação sobre dados simulados
 
 Conforme a regra do MVP, os dados principais são carregados por leitura de JSON local para simular chamadas ao servidor.
+
+## Aderência aos critérios do MVP (2° trimestre)
+
+### Componentização
+
+- Aplicação com 5 páginas: Home, Personagens, Grimório, Jogar e 404.
+- Componentes reutilizados em múltiplas telas e fluxos:
+	- Header
+	- PageTitle
+	- LoadingIndicator
+	- ConfirmModal
+	- SearchBar
+	- CharacterCard
+	- SpellCard
+	- Tooltip
+- Diferenciais visuais e funcionais:
+	- Tema claro/escuro
+	- Alternância de idioma PT-BR/EN
+	- Fluxo de jogo com edição de ficha em tempo real
+	- Painel de grimório com filtro, paginação e detalhe
+
+### React, hooks e roteamento
+
+- Hooks de estado/efeito em uso: useState, useEffect, useMemo.
+- Navegação com React Router.
+- Hooks de navegação exigidos:
+	- useNavigate
+	- useParams
+	- useLocation
+- Rota de erro implementada para URLs inexistentes (404).
+
+### Usabilidade
+
+- Feedback visual de carregamento, sucesso, aviso e erro.
+- Tooltips explicativas em ações principais.
+- Mensagens condicionais de contexto (ex.: nenhum item encontrado).
+- Layout responsivo para desktop, tablet e celular com media queries e grid/flex adaptativos.
+
+### Organização e boas práticas
+
+- Estrutura de pastas por responsabilidade: components, context, pages, utils.
+- Convenções de nomenclatura consistentes para componentes e arquivos.
+- README com instruções completas de instalação e execução.
+
+## Checklist de entrega final
+
+- Publicar repositório no GitHub e confirmar link correto.
+- Gravar vídeo com no máximo 5 minutos.
+- Mostrar no vídeo:
+	- objetivo da aplicação
+	- 4 componentes reutilizados
+	- navegação com hooks e rota 404
+	- elementos de usabilidade e responsividade

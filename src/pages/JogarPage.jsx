@@ -84,13 +84,14 @@ export default function JogarPage() {
   }
 
   const handleVoltar = () => navigate('/personagens')
-  const handleSave = () => {
+  const handleSave = async () => {
     if (formValues) {
       const { current, max } = parseHpString(formValues.hp)
-      updateCharacter({
+      const saved = await updateCharacter({
         ...formValues,
         hp: formatHpString(clampHpToMax(current, max), max),
       })
+      if (!saved) return
     }
     setEditedValues({})
     setShowSavedModal(true)

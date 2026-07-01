@@ -1,4 +1,5 @@
 import { useLanguage } from '../context/LanguageContext.jsx'
+import Tooltip from './Tooltip.jsx'
 
 export default function CharacterCard({ character, onSelect, onDelete, onEdit }) {
   const { language } = useLanguage()
@@ -38,30 +39,36 @@ export default function CharacterCard({ character, onSelect, onDelete, onEdit })
       </div>
 
       <div className="character-actions">
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={() => onSelect(character.id)}
-          title={strings.playTitle}
-        >
-          {strings.playButton}
-        </button>
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={() => onEdit(character.id)}
-          title={strings.editTitle}
-        >
-          {strings.editButton}
-        </button>
-        <button
-          type="button"
-          className="btn-danger"
-          onClick={() => onDelete(character.id)}
-          title={strings.deleteTitle}
-        >
-          {strings.deleteButton}
-        </button>
+        <Tooltip text={strings.playTitle}>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => onSelect(character.id)}
+            title={strings.playTitle}
+          >
+            {strings.playButton}
+          </button>
+        </Tooltip>
+        <Tooltip text={strings.editTitle}>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => onEdit(character.id)}
+            title={strings.editTitle}
+          >
+            {strings.editButton}
+          </button>
+        </Tooltip>
+        <Tooltip text={strings.deleteTitle}>
+          <button
+            type="button"
+            className="btn-danger"
+            onClick={() => onDelete(character.id)}
+            title={strings.deleteTitle}
+          >
+            {strings.deleteButton}
+          </button>
+        </Tooltip>
       </div>
     </article>
   )
