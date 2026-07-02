@@ -131,5 +131,20 @@
       "Baga de Água",
       "Unguento de Ervas"
     ]
+  },
+  {
+    "id": 8,
+    "nome": "Alakazam",
+    "classe": "Mago",
+    "nivel": 20,
+    "hp": "82/82",
+    "mana": "0/0",
+    "ca": 11,
+    "slots_magia": {
+      "nivel1": 4,
+      "nivel2": 3,
+      "nivel3": 3
+    },
+    "consumiveis": []
   }
 ]

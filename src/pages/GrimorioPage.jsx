@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import PageTitle from '../components/PageTitle'
 import LoadingIndicator from '../components/LoadingIndicator'
 import SpellCard from '../components/SpellCard'
@@ -253,6 +253,59 @@ export default function GrimorioPage() {
   const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages))
   const handleLastPage = () => setCurrentPage(totalPages)
 
+  const handleSpellSelect = (spell) => {
+    if (selectedSpellIndex?.index === spell.index) {
+      setSelectedSpellIndex(null)
+      setSelectedSpellDetails(null)
+      setDetailStatus('idle')
+      return
+    }
+
+    setSelectedSpellIndex(spell)
+  }
+
+  const renderSpellDetailCard = (className = 'spell-detail-card') => {
+    if (!detailSpell) return null
+
+    return (
+      <div className={className}>
+        <h2>{detailSpell.name}</h2>
+        <p className="spell-detail-meta">
+          {strings.levelLabel} {detailSpell.level === 0 ? (language === 'pt-br' ? 'Truque' : 'Cantrip') : detailSpell.level}
+          {' • '}
+          {detailSpell.school?.name}
+          {' • '}
+          {strings.rangeLabel} {detailSpell.range}
+        </p>
+
+        <div className="spell-detail-tags">
+          <span>{detailSpell.components.join(', ')}</span>
+          <span>{detailSpell.casting_time}</span>
+          <span>{detailSpell.duration}</span>
+          {detailSpell.concentration && <span>{strings.concentrationLabel}</span>}
+          {detailSpell.desc.map((line, index) => (
+            <p key={index}>{line}</p>
+          ))}
+        </div>
+
+        {detailSpell.higher_level?.length > 0 && (
+          <div className="spell-detail-section">
+            <strong>{strings.higherSlotLabel}</strong>
+            {detailSpell.higher_level.map((line, index) => (
+              <p key={index}>{line}</p>
+            ))}
+          </div>
+        )}
+
+        {averageDamage && (
+          <div className="spell-detail-summary">
+            <strong>{strings.averageDamageLabel}</strong> {averageDamage}
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <main>
       <PageTitle
@@ -311,19 +364,34 @@ export default function GrimorioPage() {
               )}
 
               <div className="cards-grid">
-                {paginatedSpells.map((spell) => (
-                  <SpellCard
-                    key={spell.index}
-                    spell={spell}
-                    isSelected={selectedSpellIndex?.index === spell.index}
-                    onSelect={() => setSelectedSpellIndex(spell)}
-                    details={selectedSpellIndex?.index === spell.index ? detailSpell : null}
-                    averageDamage={selectedSpellIndex?.index === spell.index ? averageDamage : null}
-                    emptySummary={language === 'pt-br'
-                      ? 'Selecione para ver descrição e componentes.'
-                      : 'Select to view description and components.'}
-                  />
-                ))}
+                {paginatedSpells.map((spell) => {
+                  const isSelected = selectedSpellIndex?.index === spell.index
+
+                  return (
+                    <Fragment key={spell.index}>
+                      <SpellCard
+                        spell={spell}
+                        isSelected={isSelected}
+                        onSelect={() => handleSpellSelect(spell)}
+                        details={isSelected ? detailSpell : null}
+                        averageDamage={isSelected ? averageDamage : null}
+                        emptySummary={language === 'pt-br'
+                          ? 'Selecione para ver descrição e componentes.'
+                          : 'Select to view description and components.'}
+                      />
+
+                      {isSelected && (
+                        <div className="spell-detail-inline">
+                          {effectiveDetailStatus === 'loading' && <LoadingIndicator message={strings.loadingDetails} />}
+                          {effectiveDetailStatus === 'error' && <div className="alert alert-error">{strings.errorDetail}</div>}
+                          {effectiveDetailStatus !== 'loading' && effectiveDetailStatus !== 'error' && detailSpell && (
+                            renderSpellDetailCard('spell-detail-card spell-detail-inline-card')
+                          )}
+                        </div>
+                      )}
+                    </Fragment>
+                  )
+                })}
               </div>
               {hasFilteredSpells && (
                 <div className="pagination-controls">
@@ -378,41 +446,7 @@ export default function GrimorioPage() {
               {effectiveDetailStatus === 'loading' && <LoadingIndicator message={strings.loadingDetails} />}
               {effectiveDetailStatus === 'error' && <div className="alert alert-error">{strings.errorDetail}</div>}
               {effectiveDetailStatus !== 'loading' && effectiveDetailStatus !== 'error' && detailSpell && (
-                <div className="spell-detail-card">
-                  <h2>{detailSpell.name}</h2>
-                  <p className="spell-detail-meta">
-                    {strings.levelLabel} {detailSpell.level === 0 ? (language === 'pt-br' ? 'Truque' : 'Cantrip') : detailSpell.level}
-                    {' • '}
-                    {detailSpell.school?.name}
-                    {' • '}
-                    {strings.rangeLabel} {detailSpell.range}
-                  </p>
-
-                  <div className="spell-detail-tags">
-                    <span>{detailSpell.components.join(', ')}</span>
-                    <span>{detailSpell.casting_time}</span>
-                    <span>{detailSpell.duration}</span>
-                      {detailSpell.concentration && <span>{strings.concentrationLabel}</span>}
-                    {detailSpell.desc.map((line, index) => (
-                      <p key={index}>{line}</p>
-                    ))}
-                  </div>
-
-                  {detailSpell.higher_level?.length > 0 && (
-                    <div className="spell-detail-section">
-                      <strong>{strings.higherSlotLabel}</strong>
-                      {detailSpell.higher_level.map((line, index) => (
-                        <p key={index}>{line}</p>
-                      ))}
-                    </div>
-                  )}
-
-                  {averageDamage && (
-                    <div className="spell-detail-summary">
-                      <strong>{strings.averageDamageLabel}</strong> {averageDamage}
-                    </div>
-                  )}
-                </div>
+                renderSpellDetailCard()
               )}
               {effectiveDetailStatus === 'idle' && !detailSpell && (
                 <div className="spell-detail-empty">

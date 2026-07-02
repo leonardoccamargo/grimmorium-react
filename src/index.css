@@ -84,6 +84,7 @@ body {
         radial-gradient(circle at 12% 20%, rgba(197, 160, 89, 0.14), transparent 32%),
         radial-gradient(circle at 88% 85%, rgba(15, 122, 92, 0.14), transparent 36%),
         linear-gradient(145deg, var(--fundo-principal) 0%, #0a0f16 100%);
+    overflow-x: hidden;
 }
 
     /* Camada de textura de papel sobre o fundo base. */
@@ -729,11 +730,13 @@ input[type="number"]:focus {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
     gap: 24px;
+    min-width: 0;
 }
 
 .spell-list {
     max-height: none;
     overflow: visible;
+    min-width: 0;
 }
 
 .spell-card {
@@ -743,6 +746,8 @@ input[type="number"]:focus {
     background: linear-gradient(170deg, color-mix(in srgb, var(--fundo-card) 94%, #02111d 6%), var(--fundo-card));
     box-shadow: var(--sombra-card);
     min-height: 170px;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .spell-card-selected {
@@ -790,6 +795,10 @@ input[type="number"]:focus {
 .spell-card-topo .badge {
     align-self: center;
     flex-shrink: 0;
+    max-width: 48%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .spell-card-meta {
@@ -876,6 +885,15 @@ input[type="number"]:focus {
 .spell-detail-panel {
     max-height: calc(100vh - 220px);
     overflow: visible;
+    min-width: 0;
+}
+
+.spell-detail-inline {
+    display: none;
+}
+
+.spell-detail-inline-card {
+    margin-top: -4px;
 }
 
 .spell-detail-card,
@@ -885,6 +903,9 @@ input[type="number"]:focus {
     border-radius: 16px;
     background: linear-gradient(170deg, color-mix(in srgb, var(--fundo-card) 90%, #04070d 10%), var(--fundo-card));
     box-shadow: var(--sombra-card);
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .spell-detail-meta {
@@ -938,6 +959,35 @@ input[type="number"]:focus {
     .spell-grid-layout {
         grid-template-columns: 1fr;
     }
+
+    .spell-card {
+        padding: 12px;
+    }
+
+    .spell-card-topo {
+        gap: 8px;
+    }
+
+    .spell-card-topo .badge {
+        max-width: 44%;
+        font-size: 0.78rem;
+        padding: 6px 10px;
+    }
+
+    .spell-detail-panel {
+        display: none;
+    }
+
+    .spell-detail-inline {
+        display: block;
+        margin: 10px 0 14px;
+    }
+
+    .spell-detail-inline .loading-indicator {
+        width: 100%;
+        justify-content: center;
+    }
+
     .spell-actions {
         flex-direction: column;
         align-items: stretch;
@@ -1053,6 +1103,14 @@ input[type="number"]:focus {
     color: var(--texto-principal);
     font-family: "Source Sans 3", sans-serif;
     font-size: 0.98rem;
+}
+
+.character-form select.is-placeholder {
+    color: var(--texto-secundario);
+}
+
+.character-form select option {
+    color: var(--texto-principal);
 }
 
 .character-form input[type="text"]:focus,
@@ -1218,6 +1276,7 @@ input[type="number"]:focus {
 .modal-actions {
     margin-top: 18px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
     gap: 10px;
 }
@@ -1397,11 +1456,16 @@ input[type="number"]:focus {
 
 .play-control-group {
     display: grid;
+    min-width: 0;
     gap: 10px;
     padding: 14px;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(197, 160, 89, 0.22);
+}
+
+.play-hp-group {
+    grid-column: 1 / -1;
 }
 
 .play-control-label {
@@ -1418,14 +1482,29 @@ input[type="number"]:focus {
     align-items: end;
 }
 
+.play-control-row-compact {
+    align-items: center;
+}
+
 .play-control-row label {
     display: grid;
     gap: 8px;
 }
 
+.play-inline-field {
+    display: grid;
+    gap: 6px;
+}
+
+.play-inline-field span {
+    font-size: 0.82rem;
+    color: var(--texto-secundario);
+}
+
 .play-step-button {
-    min-width: 44px;
-    padding-inline: 12px;
+    min-width: 36px;
+    min-height: 36px;
+    padding-inline: 10px;
     white-space: nowrap;
 }
 
@@ -1433,11 +1512,113 @@ input[type="number"]:focus {
     width: 100%;
 }
 
+.play-inline-field input {
+    min-height: 38px;
+}
+
+.play-hp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.play-hp-cell {
+    display: grid;
+    gap: 6px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.play-hp-cell > span {
+    font-size: 0.78rem;
+    color: var(--texto-secundario);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.play-hp-cell input[readonly] {
+    opacity: 0.9;
+    cursor: default;
+}
+
+.play-slots-group {
+    grid-column: 1 / -1;
+}
+
+.play-slot-empty {
+    margin: 0;
+    color: var(--texto-secundario);
+    font-size: 0.9rem;
+}
+
+.play-slots-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.play-slot-row {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.play-slot-level {
+    font-weight: 700;
+    color: var(--texto-secundario);
+    font-size: 0.88rem;
+}
+
+.play-slot-boxes {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.play-slot-box {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(197, 160, 89, 0.34);
+    background: color-mix(in srgb, var(--fundo-secundario) 72%, #111926 28%);
+    color: var(--texto-secundario);
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.play-slot-box:hover {
+    transform: translateY(-1px);
+    border-color: rgba(231, 204, 139, 0.64);
+}
+
+.play-slot-box.is-used {
+    background: rgba(15, 122, 92, 0.25);
+    border-color: rgba(15, 122, 92, 0.58);
+    color: #b9f0de;
+}
+
+.play-slot-count {
+    font-size: 0.82rem;
+    color: var(--texto-secundario);
+    min-width: 42px;
+    text-align: right;
+}
+
 .play-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 16px;
+}
+
+.play-actions .btn-secondary,
+.play-actions .btn-primary {
+    flex: 1 1 170px;
 }
 
 .play-note {
@@ -1517,6 +1698,16 @@ input[type="number"]:focus {
     outline-offset: 3px;
 }
 
+@media (max-width: 1200px) {
+    .play-hp-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .play-hp-cell:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
 @media (max-width: 980px) {
     .cards-grid,
     .play-fields,
@@ -1580,6 +1771,23 @@ input[type="number"]:focus {
         align-items: stretch;
     }
 
+    .play-slot-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .play-hp-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .play-hp-cell:last-child {
+        grid-column: auto;
+    }
+
+    .play-slot-count {
+        text-align: left;
+    }
+
     .play-step-button {
         min-width: 100%;
     }
@@ -1590,6 +1798,7 @@ input[type="number"]:focus {
 
     .modal-actions {
         flex-direction: column-reverse;
+        justify-content: stretch;
     }
 }
 

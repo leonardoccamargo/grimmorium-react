@@ -28,15 +28,19 @@ export default function JogarPage() {
     levelLabel: language === 'pt-br' ? 'Nível' : 'Level',
     hpLabel: 'HP',
     acLabel: language === 'pt-br' ? 'Classe de Armadura' : 'Armor Class',
-    slots1Label: language === 'pt-br' ? 'Slots 1º nível' : '1st level slots',
-    slots2Label: language === 'pt-br' ? 'Slots 2º nível' : '2nd level slots',
-    slots3Label: language === 'pt-br' ? 'Slots 3º nível' : '3rd level slots',
+    spellSlotsLabel: language === 'pt-br' ? 'Slots de Feitiço (usados)' : 'Spell Slots (used)',
+    noSpellSlots: language === 'pt-br' ? 'Sem slots para esta classe/nível.' : 'No slots for this class/level.',
     backButton: language === 'pt-br' ? 'Voltar' : 'Back',
     saveButton: language === 'pt-br' ? 'Salvar' : 'Save',
+    saveAndLeaveButton: language === 'pt-br' ? 'Salvar e sair' : 'Save and leave',
+    shortRestButton: language === 'pt-br' ? 'Descanso curto' : 'Short rest',
+    longRestButton: language === 'pt-br' ? 'Descanso longo' : 'Long rest',
     playNote: language === 'pt-br'
-      ? 'Use os botões de ajuste para alterar os valores do personagem durante a partida.'
-      : 'Use the adjustment buttons to change the character values during the session.',
+      ? 'Clique nas caixas para marcar os slots gastos em tempo real.'
+      : 'Click the boxes to track spent slots in real time.',
     hpCurrentLabel: language === 'pt-br' ? 'HP atual' : 'Current HP',
+    hpMaxLabel: language === 'pt-br' ? 'HP máximo' : 'Max HP',
+    hpTempLabel: language === 'pt-br' ? 'HP temporário' : 'Temp HP',
     increase: '+',
     decrease: '-',
     unsavedTitle: language === 'pt-br' ? 'Alterações não salvas' : 'Unsaved changes',
@@ -66,6 +70,10 @@ export default function JogarPage() {
         ...selecionado.slots_magia,
         ...editedValues.slots_magia,
       },
+      slots_usados: {
+        ...selecionado.slots_usados,
+        ...editedValues.slots_usados,
+      },
     }
   }, [selecionado, editedValues])
 
@@ -73,48 +81,94 @@ export default function JogarPage() {
     setEditedValues((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleSlotChange = (slot, value) => {
+  const handleUsedSlotChange = (slot, value) => {
     setEditedValues((prev) => ({
       ...prev,
-      slots_magia: {
-        ...prev.slots_magia,
+      slots_usados: {
+        ...prev.slots_usados,
         [slot]: Number(value),
       },
     }))
   }
 
   const handleVoltar = () => navigate('/personagens')
-  const handleSave = async () => {
+  const persistChanges = async ({ exitAfterSave = false, showSavedModal = true } = {}) => {
     if (formValues) {
-      const { current, max } = parseHpString(formValues.hp)
+      const parsedHp = parseHpString(formValues.hp)
+      const hpMaxFromField = Number(formValues.hp_max)
+      const resolvedMax = Number.isFinite(hpMaxFromField) && hpMaxFromField > 0 ? hpMaxFromField : Math.max(1, parsedHp.max)
+      const hpCurrentFromField = Number(formValues.hp_current)
+      const resolvedCurrent = Number.isFinite(hpCurrentFromField)
+        ? clampHpToMax(Math.max(0, hpCurrentFromField), resolvedMax)
+        : clampHpToMax(parsedHp.current, resolvedMax)
+      const hpTempFromField = Number(formValues.hp_temp)
+      const resolvedTemp = Number.isFinite(hpTempFromField) ? Math.max(0, hpTempFromField) : 0
+
       const saved = await updateCharacter({
         ...formValues,
-        hp: formatHpString(clampHpToMax(current, max), max),
+        hp_current: resolvedCurrent,
+        hp_max: resolvedMax,
+        hp_temp: resolvedTemp,
+        hp: formatHpString(resolvedCurrent, resolvedMax),
       })
       if (!saved) return
     }
+
     setEditedValues({})
-    setShowSavedModal(true)
-  }
 
-  const parseHp = (hpValue) => {
-    const [currentValue = '0', maxValue = '0'] = String(hpValue ?? '0/0').split('/')
-    const current = Number(currentValue)
-    const max = Number(maxValue)
+    if (exitAfterSave) {
+      setShowUnsavedModal(false)
+      handleVoltar()
+      return
+    }
 
-    return {
-      current: Number.isFinite(current) ? current : 0,
-      max: Number.isFinite(max) ? max : 0,
+    if (showSavedModal) {
+      setShowSavedModal(true)
     }
   }
 
-  const formatHp = (current, max) => `${Math.max(0, current)}/${Math.max(0, max)}`
+  const handleSave = async () => {
+    await persistChanges()
+  }
 
-  const adjustHp = (delta) => {
+  const handleSaveAndLeave = async () => {
+    await persistChanges({ exitAfterSave: true, showSavedModal: false })
+  }
+
+  const hpState = useMemo(() => {
+    if (!formValues) {
+      return { current: 0, max: 0, temp: 0 }
+    }
+
+    const parsedHp = parseHpString(formValues.hp)
+    const maxFromField = Number(formValues.hp_max)
+    const max = Number.isFinite(maxFromField) && maxFromField > 0 ? maxFromField : Math.max(1, parsedHp.max)
+    const currentFromField = Number(formValues.hp_current)
+    const current = Number.isFinite(currentFromField)
+      ? clampHpToMax(Math.max(0, currentFromField), max)
+      : clampHpToMax(parsedHp.current, max)
+    const tempFromField = Number(formValues.hp_temp)
+    const temp = Number.isFinite(tempFromField) ? Math.max(0, tempFromField) : 0
+
+    return { current, max, temp }
+  }, [formValues])
+
+  const adjustHpCurrent = (delta) => {
     if (!formValues) return
+    handleChange('hp_current', clampHpToMax(hpState.current + delta, hpState.max))
+  }
 
-    const { current, max } = parseHp(formValues.hp)
-    handleChange('hp', formatHp(clampHpToMax(current + delta, max), max))
+  const adjustHpTemp = (delta) => {
+    if (!formValues) return
+    handleChange('hp_temp', Math.max(0, hpState.temp + delta))
+  }
+
+  const handleHpCurrentInput = (value) => {
+    handleChange('hp_current', clampHpToMax(Number(value) || 0, hpState.max))
+  }
+
+  const handleHpTempInput = (value) => {
+    handleChange('hp_temp', Math.max(0, Number(value) || 0))
   }
 
   const adjustNumberField = (field, delta, minimum = 0) => {
@@ -123,15 +177,90 @@ export default function JogarPage() {
     handleChange(field, Math.max(minimum, currentValue + delta))
   }
 
-  const adjustSlot = (slot, delta) => {
+  const slotLevels = useMemo(() => {
+    if (!formValues?.slots_magia) return []
+
+    return Array.from({ length: 9 }, (_, index) => {
+      const level = index + 1
+      const key = `nivel${level}`
+      const max = Number(formValues.slots_magia[key]) || 0
+      const used = Number(formValues.slots_usados?.[key]) || 0
+
+      return {
+        level,
+        key,
+        max,
+        used: Math.min(Math.max(used, 0), max),
+      }
+    }).filter((entry) => entry.max > 0)
+  }, [formValues])
+
+  const handleSlotBoxClick = (slotKey, slotIndex, currentUsed) => {
+    const clickedValue = slotIndex + 1
+    const nextValue = currentUsed === clickedValue ? clickedValue - 1 : clickedValue
+    handleUsedSlotChange(slotKey, Math.max(0, nextValue))
+  }
+
+  const normalizeClass = (value) => String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+
+  const resetUsedSlots = (mode = 'all') => {
+    if (!formValues?.slots_magia) return
+
+    const normalizedClass = normalizeClass(formValues.classe)
+    const shouldResetWarlockOnly = mode === 'short' && normalizedClass === 'bruxo'
+    const nextUsed = {}
+
+    Array.from({ length: 9 }, (_, index) => index + 1).forEach((level) => {
+      const key = `nivel${level}`
+      const maxForLevel = Number(formValues.slots_magia?.[key]) || 0
+      const currentUsed = Number(formValues.slots_usados?.[key]) || 0
+
+      if (mode === 'long') {
+        nextUsed[key] = 0
+        return
+      }
+
+      if (shouldResetWarlockOnly && maxForLevel > 0) {
+        nextUsed[key] = 0
+        return
+      }
+
+      nextUsed[key] = currentUsed
+    })
+
+    setEditedValues((prev) => ({
+      ...prev,
+      slots_usados: {
+        ...prev.slots_usados,
+        ...nextUsed,
+      },
+    }))
+  }
+
+  const handleShortRest = () => {
+    resetUsedSlots('short')
+  }
+
+  const handleLongRest = () => {
     if (!formValues) return
-    const currentValue = Number(formValues.slots_magia[slot]) || 0
-    handleSlotChange(slot, Math.max(0, currentValue + delta))
+
+    handleChange('hp_current', hpState.max)
+    handleChange('hp_temp', 0)
+    resetUsedSlots('long')
   }
 
   const canSave = useMemo(() => {
-    return formValues && formValues.hp && formValues.ca != null && formValues.slots_magia
-  }, [formValues])
+    return formValues
+      && Number.isFinite(Number(hpState.current))
+      && Number.isFinite(Number(hpState.max))
+      && Number.isFinite(Number(hpState.temp))
+      && formValues.ca != null
+      && formValues.slots_magia
+  }, [formValues, hpState.current, hpState.max, hpState.temp])
 
   const hasUnsavedChanges = Object.keys(editedValues).length > 0
 
@@ -153,17 +282,6 @@ export default function JogarPage() {
   const clampInputValue = (fieldValue, maxValue, minValue = 0) => {
     const parsedValue = Number(fieldValue) || 0
     return Math.min(Math.max(parsedValue, minValue), maxValue)
-  }
-
-  const limitHpInput = (rawValue) => {
-    if (!formValues) return
-
-    const { current, max } = parseHpString(formValues.hp)
-    const [currentPart = '0'] = String(rawValue ?? '0/0').split('/')
-    const parsedCurrent = Number(currentPart)
-    const resolvedCurrent = clampHpToMax(Number.isFinite(parsedCurrent) ? parsedCurrent : current, max)
-
-    handleChange('hp', formatHpString(resolvedCurrent, max))
   }
 
   return (
@@ -189,29 +307,51 @@ export default function JogarPage() {
             </div>
 
             <div className="play-fields">
-              <div className="play-control-group">
+              <div className="play-control-group play-hp-group">
                 <span className="play-control-label">{strings.hpLabel}</span>
-                <div className="play-control-row">
-                  <button type="button" className="btn-secondary play-step-button" onClick={() => adjustHp(-1)}>{strings.decrease}</button>
-                  <label>
-                    {strings.hpCurrentLabel}
-                    <input
-                      type="text"
-                      value={formValues.hp}
-                      onChange={(event) => handleChange('hp', event.target.value)}
-                      onBlur={(event) => limitHpInput(event.target.value)}
-                    />
-                  </label>
-                  <button type="button" className="btn-secondary play-step-button" onClick={() => adjustHp(1)}>{strings.increase}</button>
+                <div className="play-hp-grid">
+                  <div className="play-hp-cell">
+                    <span>{strings.hpCurrentLabel}</span>
+                    <div className="play-control-row play-control-row-compact">
+                      <button type="button" className="btn-secondary play-step-button" onClick={() => adjustHpCurrent(-1)}>{strings.decrease}</button>
+                      <input
+                        type="number"
+                        min="0"
+                        max={hpState.max}
+                        value={hpState.current}
+                        onChange={(event) => handleHpCurrentInput(event.target.value)}
+                      />
+                      <button type="button" className="btn-secondary play-step-button" onClick={() => adjustHpCurrent(1)}>{strings.increase}</button>
+                    </div>
+                  </div>
+
+                  <div className="play-hp-cell">
+                    <span>{strings.hpMaxLabel}</span>
+                    <input type="number" value={hpState.max} readOnly />
+                  </div>
+
+                  <div className="play-hp-cell">
+                    <span>{strings.hpTempLabel}</span>
+                    <div className="play-control-row play-control-row-compact">
+                      <button type="button" className="btn-secondary play-step-button" onClick={() => adjustHpTemp(-1)}>{strings.decrease}</button>
+                      <input
+                        type="number"
+                        min="0"
+                        value={hpState.temp}
+                        onChange={(event) => handleHpTempInput(event.target.value)}
+                      />
+                      <button type="button" className="btn-secondary play-step-button" onClick={() => adjustHpTemp(1)}>{strings.increase}</button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div className="play-control-group">
                 <span className="play-control-label">{strings.acLabel}</span>
-                <div className="play-control-row">
+                <div className="play-control-row play-control-row-compact">
                   <button type="button" className="btn-secondary play-step-button" onClick={() => adjustNumberField('ca', -1)}>{strings.decrease}</button>
-                  <label>
-                    {strings.acLabel}
+                  <label className="play-inline-field">
+                    <span>{strings.acLabel}</span>
                     <input
                       type="number"
                       value={formValues.ca}
@@ -222,56 +362,42 @@ export default function JogarPage() {
                 </div>
               </div>
 
-              <div className="play-control-group">
-                <span className="play-control-label">{strings.slots1Label}</span>
-                <div className="play-control-row">
-                  <button type="button" className="btn-secondary play-step-button" onClick={() => adjustSlot('nivel1', -1)}>{strings.decrease}</button>
-                  <label>
-                    {strings.slots1Label}
-                    <input
-                      type="number"
-                      value={formValues.slots_magia.nivel1}
-                      onChange={(event) => handleSlotChange('nivel1', clampInputValue(event.target.value, 999, 0))}
-                    />
-                  </label>
-                  <button type="button" className="btn-secondary play-step-button" onClick={() => adjustSlot('nivel1', 1)}>{strings.increase}</button>
-                </div>
-              </div>
-
-              <div className="play-control-group">
-                <span className="play-control-label">{strings.slots2Label}</span>
-                <div className="play-control-row">
-                  <button type="button" className="btn-secondary play-step-button" onClick={() => adjustSlot('nivel2', -1)}>{strings.decrease}</button>
-                  <label>
-                    {strings.slots2Label}
-                    <input
-                      type="number"
-                      value={formValues.slots_magia.nivel2}
-                      onChange={(event) => handleSlotChange('nivel2', clampInputValue(event.target.value, 999, 0))}
-                    />
-                  </label>
-                  <button type="button" className="btn-secondary play-step-button" onClick={() => adjustSlot('nivel2', 1)}>{strings.increase}</button>
-                </div>
-              </div>
-
-              <div className="play-control-group">
-                <span className="play-control-label">{strings.slots3Label}</span>
-                <div className="play-control-row">
-                  <button type="button" className="btn-secondary play-step-button" onClick={() => adjustSlot('nivel3', -1)}>{strings.decrease}</button>
-                  <label>
-                    {strings.slots3Label}
-                    <input
-                      type="number"
-                      value={formValues.slots_magia.nivel3}
-                      onChange={(event) => handleSlotChange('nivel3', clampInputValue(event.target.value, 999, 0))}
-                    />
-                  </label>
-                  <button type="button" className="btn-secondary play-step-button" onClick={() => adjustSlot('nivel3', 1)}>{strings.increase}</button>
-                </div>
+              <div className="play-control-group play-slots-group">
+                <span className="play-control-label">{strings.spellSlotsLabel}</span>
+                {slotLevels.length === 0 ? (
+                  <p className="play-slot-empty">{strings.noSpellSlots}</p>
+                ) : (
+                  <div className="play-slots-grid">
+                    {slotLevels.map((slotInfo) => (
+                      <div key={slotInfo.key} className="play-slot-row">
+                        <span className="play-slot-level">{slotInfo.level}º</span>
+                        <div className="play-slot-boxes">
+                          {Array.from({ length: slotInfo.max }, (_, slotIndex) => {
+                            const isUsed = slotIndex < slotInfo.used
+                            return (
+                              <button
+                                key={`${slotInfo.key}-${slotIndex + 1}`}
+                                type="button"
+                                className={`play-slot-box ${isUsed ? 'is-used' : ''}`}
+                                onClick={() => handleSlotBoxClick(slotInfo.key, slotIndex, slotInfo.used)}
+                                title={`${slotInfo.level}º ${slotIndex + 1}`}
+                              >
+                                {slotIndex + 1}
+                              </button>
+                            )
+                          })}
+                        </div>
+                        <span className="play-slot-count">{slotInfo.used}/{slotInfo.max}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="play-actions">
+              <button type="button" className="btn-secondary" onClick={handleShortRest}>{strings.shortRestButton}</button>
+              <button type="button" className="btn-secondary" onClick={handleLongRest}>{strings.longRestButton}</button>
               <button type="button" className="btn-secondary" onClick={handleBackClick}>{strings.backButton}</button>
               <button type="button" className="btn-primary" onClick={handleSave} disabled={!canSave}>{strings.saveButton}</button>
             </div>
@@ -286,6 +412,8 @@ export default function JogarPage() {
               message={strings.unsavedMessage}
               cancelLabel={strings.stayButton}
               confirmLabel={strings.leaveButton}
+              extraActionLabel={strings.saveAndLeaveButton}
+              onExtraAction={handleSaveAndLeave}
               onCancel={() => setShowUnsavedModal(false)}
               onConfirm={confirmLeaveWithoutSaving}
             />

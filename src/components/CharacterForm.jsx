@@ -48,12 +48,12 @@ const BACKGROUND_OPTIONS = ['Acolito', 'Criminoso', 'Ermitão', 'Herói do Povo'
 const initialValues = {
   nome: '',
   campanha: '',
-  raca: 'Humano',
-  subraca: 'Padrão',
+  raca: '',
+  subraca: '',
   classe: '',
-  nivel: 1,
-  alinhamento: 'Neutro',
-  antecedente: 'Aventureiro',
+  nivel: '',
+  alinhamento: '',
+  antecedente: '',
   tracos: '',
   ideais: '',
   vinculos: '',
@@ -61,7 +61,7 @@ const initialValues = {
   constituicao: 10,
   hp: '10/10',
   ca: 10,
-  metodo_atributos: 'standard',
+  metodo_atributos: '',
   atributos_base: {
     str: null,
     dex: null,
@@ -136,6 +136,88 @@ function pointBuySpent(pointsState) {
   return ATTRIBUTE_KEYS.reduce((sum, key) => sum + (POINT_BUY_COST[pointsState[key]] ?? 0), 0)
 }
 
+function normalizeText(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+}
+
+function getAutoSpellSlots(className, level) {
+  const normalizedClass = normalizeText(className)
+  const safeLevel = Math.max(1, Math.min(20, Number(level) || 1))
+
+  const fullCasterSlots = [
+    [2, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0],
+    [4, 2, 0, 0, 0, 0, 0, 0, 0],
+    [4, 3, 0, 0, 0, 0, 0, 0, 0],
+    [4, 3, 2, 0, 0, 0, 0, 0, 0],
+    [4, 3, 3, 0, 0, 0, 0, 0, 0],
+    [4, 3, 3, 1, 0, 0, 0, 0, 0],
+    [4, 3, 3, 2, 0, 0, 0, 0, 0],
+    [4, 3, 3, 3, 1, 0, 0, 0, 0],
+    [4, 3, 3, 3, 2, 0, 0, 0, 0],
+    [4, 3, 3, 3, 2, 1, 0, 0, 0],
+    [4, 3, 3, 3, 2, 1, 0, 0, 0],
+    [4, 3, 3, 3, 2, 1, 1, 0, 0],
+    [4, 3, 3, 3, 2, 1, 1, 0, 0],
+    [4, 3, 3, 3, 2, 1, 1, 1, 0],
+    [4, 3, 3, 3, 2, 1, 1, 1, 0],
+    [4, 3, 3, 3, 2, 1, 1, 1, 1],
+    [4, 3, 3, 3, 3, 1, 1, 1, 1],
+    [4, 3, 3, 3, 3, 2, 1, 1, 1],
+    [4, 3, 3, 3, 3, 2, 2, 1, 1],
+  ]
+
+  const warlockPactSlots = [
+    { count: 1, level: 1 }, { count: 2, level: 1 }, { count: 2, level: 2 }, { count: 2, level: 2 },
+    { count: 2, level: 3 }, { count: 2, level: 3 }, { count: 2, level: 4 }, { count: 2, level: 4 },
+    { count: 2, level: 5 }, { count: 2, level: 5 }, { count: 3, level: 5 }, { count: 3, level: 5 },
+    { count: 3, level: 5 }, { count: 3, level: 5 }, { count: 3, level: 5 }, { count: 3, level: 5 },
+    { count: 4, level: 5 }, { count: 4, level: 5 }, { count: 4, level: 5 }, { count: 4, level: 5 },
+  ]
+  const fullCasters = ['bardo', 'clerigo', 'druida', 'mago', 'feiticeiro']
+  const halfCasters = ['paladino', 'patrulheiro']
+
+  const mapRowToSlots = (row) => ({
+    nivel1: row[0] || 0,
+    nivel2: row[1] || 0,
+    nivel3: row[2] || 0,
+    nivel4: row[3] || 0,
+    nivel5: row[4] || 0,
+    nivel6: row[5] || 0,
+    nivel7: row[6] || 0,
+    nivel8: row[7] || 0,
+    nivel9: row[8] || 0,
+  })
+
+  if (fullCasters.includes(normalizedClass)) {
+    return mapRowToSlots(fullCasterSlots[safeLevel - 1])
+  }
+
+  if (halfCasters.includes(normalizedClass)) {
+    const casterLevel = Math.floor(safeLevel / 2)
+    if (casterLevel <= 0) return mapRowToSlots(Array(9).fill(0))
+    return mapRowToSlots(fullCasterSlots[casterLevel - 1])
+  }
+
+  if (normalizedClass === 'artifice' || normalizedClass === 'artificie') {
+    const casterLevel = Math.ceil(safeLevel / 2)
+    return mapRowToSlots(fullCasterSlots[Math.max(1, casterLevel) - 1])
+  }
+
+  if (normalizedClass === 'bruxo') {
+    const pact = warlockPactSlots[safeLevel - 1]
+    const slots = mapRowToSlots(Array(9).fill(0))
+    slots[`nivel${pact.level}`] = pact.count
+    return slots
+  }
+
+  return mapRowToSlots(Array(9).fill(0))
+}
+
 export default function CharacterForm({ initial = initialValues, onSubmit, onCancel, submitLabel }) {
   const { language } = useLanguage()
   const [form, setForm] = useState(() => normalizeInitialValues(initial))
@@ -158,13 +240,17 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     slots1: language === 'pt-br' ? 'Slots 1º nível' : '1st level slots',
     slots2: language === 'pt-br' ? 'Slots 2º nível' : '2nd level slots',
     slots3: language === 'pt-br' ? 'Slots 3º nível' : '3rd level slots',
-    consumables: language === 'pt-br' ? 'Consumíveis (separados por vírgula)' : 'Consumables (comma separated)',
+    consumables: language === 'pt-br' ? 'Itens iniciais (opcional, separados por vírgula)' : 'Starting items (optional, comma separated)',
     cancel: language === 'pt-br' ? 'Cancelar' : 'Cancel',
-    unsupportedClass:
-      language === 'pt-br'
-        ? 'Classes oficiais de D&D 5e disponíveis no seletor abaixo.'
-        : 'Official D&D 5e classes available in the selector below.',
     selectClass: language === 'pt-br' ? 'Selecione uma classe' : 'Select a class',
+    selectRace: language === 'pt-br' ? 'Selecione uma raça' : 'Select a race',
+    selectSubrace: language === 'pt-br' ? 'Selecione uma linhagem' : 'Select a subrace',
+    selectAlignment: language === 'pt-br' ? 'Selecione um alinhamento' : 'Select an alignment',
+    selectBackground: language === 'pt-br' ? 'Selecione um antecedente' : 'Select a background',
+    selectMethod: language === 'pt-br' ? 'Selecione um método' : 'Select a method',
+    selectLevel: language === 'pt-br' ? 'Selecione o nível' : 'Select a level',
+    enterName: language === 'pt-br' ? 'Insira seu nome' : 'Enter your name',
+    enterCampaign: language === 'pt-br' ? 'Insira o nome da sua campanha' : 'Enter your campaign name',
     campaign: language === 'pt-br' ? 'Campanha (opcional)' : 'Campaign (optional)',
     race: language === 'pt-br' ? 'Raça' : 'Race',
     subrace: language === 'pt-br' ? 'Linhagem' : 'Subrace',
@@ -182,14 +268,15 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     roll: language === 'pt-br' ? 'Rolar 4d6' : 'Roll 4d6',
     rollAll: language === 'pt-br' ? 'Rolar todos (4d6)' : 'Roll all (4d6)',
     review: language === 'pt-br' ? 'Revisão final' : 'Final review',
+    spellSlotsSummary: language === 'pt-br' ? 'Slots de magia' : 'Spell slots',
+    noSpellSlots: language === 'pt-br' ? 'Sem slots para essa classe/nível' : 'No slots for this class/level',
     next: language === 'pt-br' ? 'Próxima etapa' : 'Next step',
     back: language === 'pt-br' ? 'Voltar etapa' : 'Back step',
-    wizardHint: language === 'pt-br' ? 'Criação guiada em etapas para manter a ficha consistente.' : 'Step-by-step wizard to keep the sheet consistent.',
     stepMeta: language === 'pt-br' ? '1. Metadados' : '1. Metadata',
     stepRace: language === 'pt-br' ? '2. Raça e linhagem' : '2. Race and subrace',
     stepClass: language === 'pt-br' ? '3. Classe e perfil' : '3. Class and profile',
     stepAttr: language === 'pt-br' ? '4. Atributos' : '4. Abilities',
-    stepResources: language === 'pt-br' ? '5. Recursos' : '5. Resources',
+    stepResources: language === 'pt-br' ? '5. Equipamentos' : '5. Equipment',
     stepReview: language === 'pt-br' ? '6. Revisão' : '6. Review',
     strength: language === 'pt-br' ? 'Força' : 'Strength',
     dexterity: language === 'pt-br' ? 'Destreza' : 'Dexterity',
@@ -209,19 +296,11 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
   ]
 
   const handleChange = (field, value) => {
+    if (field === 'raca') {
+      setForm((prev) => ({ ...prev, raca: value, subraca: '' }))
+      return
+    }
     setForm((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleSlotChange = (slot, value) => {
-    const numericValue = Number(value)
-
-    setForm((prev) => ({
-      ...prev,
-      slots_magia: {
-        ...prev.slots_magia,
-        [slot]: Number.isFinite(numericValue) ? numericValue : 0,
-      },
-    }))
   }
 
   const handleAttributeChange = (bucket, key, value) => {
@@ -278,6 +357,29 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     }
   }, [form.classe, form.nivel, totalAbilities.con, form.hp])
 
+  const autoResources = useMemo(() => {
+    const dexTotal = Number(totalAbilities.dex || 10)
+    const dexModifier = Math.floor((dexTotal - 10) / 2)
+    const autoAc = Math.max(1, 10 + dexModifier)
+    const autoSlots = getAutoSpellSlots(form.classe, form.nivel)
+
+    return {
+      hp: hpPreview,
+      ac: autoAc,
+      slots: autoSlots,
+    }
+  }, [form.classe, form.nivel, totalAbilities.dex, hpPreview])
+
+  const reviewSpellSlots = useMemo(() => {
+    return Object.entries(autoResources.slots)
+      .map(([key, value]) => ({
+        level: Number(key.replace('nivel', '')),
+        count: Number(value || 0),
+      }))
+      .filter((entry) => entry.count > 0)
+      .sort((a, b) => a.level - b.level)
+  }, [autoResources.slots])
+
   const standardCounts = useMemo(() => {
     const counts = {}
     ATTRIBUTE_KEYS.forEach((key) => {
@@ -292,9 +394,16 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
   const isNameInvalid = submitAttempted && !form.nome.trim()
   const isClassInvalid = submitAttempted && !form.classe
   const isLevelInvalid = submitAttempted && (!Number.isFinite(Number(form.nivel)) || Number(form.nivel) < 1)
-  const isAcInvalid = submitAttempted && (!Number.isFinite(Number(form.ca)) || Number(form.ca) < 0)
+  const isRaceInvalid = submitAttempted && !form.raca
+  const isSubraceInvalid = submitAttempted && !form.subraca
+  const isAlignmentInvalid = submitAttempted && !form.alinhamento
+  const isBackgroundInvalid = submitAttempted && !form.antecedente
+  const isMethodInvalid = submitAttempted && !form.metodo_atributos
+  const isStandardAbilitiesInvalid = submitAttempted
+    && form.metodo_atributos === 'standard'
+    && ATTRIBUTE_KEYS.some((key) => form.atributos_base[key] == null)
 
-  const subraceOptions = SUBRACE_OPTIONS[form.raca] || ['Padrão']
+  const subraceOptions = SUBRACE_OPTIONS[form.raca] || []
 
   const rollAllFreeAbilities = () => {
     const rolledAbilities = {}
@@ -335,6 +444,7 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
               type="text"
               value={form.nome}
               onChange={(event) => handleChange('nome', event.target.value)}
+              placeholder={strings.enterName}
               required
             />
           </label>
@@ -345,19 +455,24 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
               type="text"
               value={form.campanha}
               onChange={(event) => handleChange('campanha', event.target.value)}
+              placeholder={strings.enterCampaign}
             />
           </label>
 
           <label className={`required-label ${isLevelInvalid ? 'is-invalid' : ''}`}>
             {strings.level} *
-            <input
-              type="number"
-              min="1"
-              max="20"
+            <select
+              className={!form.nivel ? 'is-placeholder' : ''}
               value={form.nivel}
               onChange={(event) => handleChange('nivel', event.target.value)}
               required
-            />
+            >
+              <option value="">{strings.selectLevel}</option>
+              {Array.from({ length: 20 }, (_, idx) => {
+                const level = String(idx + 1)
+                return <option key={level} value={level}>{level}</option>
+              })}
+            </select>
           </label>
         </div>
       )
@@ -366,16 +481,18 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     if (currentStep === 1) {
       return (
         <div className="form-grid form-grid-2">
-          <label>
-            {strings.race}
-            <select value={form.raca} onChange={(event) => handleChange('raca', event.target.value)}>
+          <label className={`required-label ${isRaceInvalid ? 'is-invalid' : ''}`}>
+            {strings.race} *
+            <select className={!form.raca ? 'is-placeholder' : ''} value={form.raca} onChange={(event) => handleChange('raca', event.target.value)} required>
+              <option value="">{strings.selectRace}</option>
               {RACE_OPTIONS.map((race) => <option key={race} value={race}>{race}</option>)}
             </select>
           </label>
 
-          <label>
-            {strings.subrace}
-            <select value={form.subraca} onChange={(event) => handleChange('subraca', event.target.value)}>
+          <label className={`required-label ${isSubraceInvalid ? 'is-invalid' : ''}`}>
+            {strings.subrace} *
+            <select className={!form.subraca ? 'is-placeholder' : ''} value={form.subraca} onChange={(event) => handleChange('subraca', event.target.value)} required disabled={!form.raca}>
+              <option value="">{strings.selectSubrace}</option>
               {subraceOptions.map((subrace) => <option key={subrace} value={subrace}>{subrace}</option>)}
             </select>
           </label>
@@ -390,6 +507,7 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
             <label className={`required-label ${isClassInvalid ? 'is-invalid' : ''}`}>
               {strings.class} *
               <select
+                className={!form.classe ? 'is-placeholder' : ''}
                 value={form.classe}
                 onChange={(event) => handleChange('classe', event.target.value)}
                 required
@@ -401,16 +519,18 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
               </select>
             </label>
 
-            <label>
-              {strings.alignment}
-              <select value={form.alinhamento} onChange={(event) => handleChange('alinhamento', event.target.value)}>
+            <label className={`required-label ${isAlignmentInvalid ? 'is-invalid' : ''}`}>
+              {strings.alignment} *
+              <select className={!form.alinhamento ? 'is-placeholder' : ''} value={form.alinhamento} onChange={(event) => handleChange('alinhamento', event.target.value)} required>
+                <option value="">{strings.selectAlignment}</option>
                 {ALIGNMENT_OPTIONS.map((alignment) => <option key={alignment} value={alignment}>{alignment}</option>)}
               </select>
             </label>
 
-            <label>
-              {strings.background}
-              <select value={form.antecedente} onChange={(event) => handleChange('antecedente', event.target.value)}>
+            <label className={`required-label ${isBackgroundInvalid ? 'is-invalid' : ''}`}>
+              {strings.background} *
+              <select className={!form.antecedente ? 'is-placeholder' : ''} value={form.antecedente} onChange={(event) => handleChange('antecedente', event.target.value)} required>
+                <option value="">{strings.selectBackground}</option>
                 <option value="Aventureiro">Aventureiro</option>
                 {BACKGROUND_OPTIONS.map((background) => <option key={background} value={background}>{background}</option>)}
               </select>
@@ -435,7 +555,6 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
               <input type="text" value={form.defeitos} onChange={(event) => handleChange('defeitos', event.target.value)} />
             </label>
           </div>
-          <p className="form-hint">{strings.unsupportedClass}</p>
         </>
       )
     }
@@ -444,9 +563,10 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
       return (
         <>
           <div className="wizard-method-row">
-            <label>
-              {strings.method}
-              <select value={form.metodo_atributos} onChange={(event) => handleChange('metodo_atributos', event.target.value)}>
+            <label className={`required-label ${isMethodInvalid || isStandardAbilitiesInvalid ? 'is-invalid' : ''}`}>
+              {strings.method} *
+              <select className={!form.metodo_atributos ? 'is-placeholder' : ''} value={form.metodo_atributos} onChange={(event) => handleChange('metodo_atributos', event.target.value)} required>
+                <option value="">{strings.selectMethod}</option>
                 <option value="standard">{strings.methodStandard}</option>
                 <option value="pointbuy">{strings.methodPointBuy}</option>
                 <option value="free">{strings.methodFree}</option>
@@ -472,7 +592,9 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
 
               return (
                 <article key={key} className="ability-card">
-                  <h4>{abilityLabels[key]}</h4>
+                  <h4 className={(submitAttempted && form.metodo_atributos === 'standard' && form.atributos_base[key] == null) ? 'required-label is-invalid' : ''}>
+                    {abilityLabels[key]}
+                  </h4>
 
                   {form.metodo_atributos === 'standard' && (
                     <select
@@ -526,39 +648,6 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     if (currentStep === 4) {
       return (
         <>
-          <div className="form-grid form-grid-mixed">
-            <label className={`required-label ${isAcInvalid ? 'is-invalid' : ''}`}>
-              {strings.ac} *
-              <input
-                type="number"
-                min="0"
-                value={form.ca}
-                onChange={(event) => handleChange('ca', event.target.value)}
-                required
-              />
-            </label>
-
-            <label>
-              {strings.hp}
-              <input type="text" value={hpPreview} readOnly />
-            </label>
-
-            <label>
-              {strings.slots1}
-              <input type="number" min="0" value={form.slots_magia.nivel1} onChange={(event) => handleSlotChange('nivel1', event.target.value)} />
-            </label>
-
-            <label>
-              {strings.slots2}
-              <input type="number" min="0" value={form.slots_magia.nivel2} onChange={(event) => handleSlotChange('nivel2', event.target.value)} />
-            </label>
-
-            <label>
-              {strings.slots3}
-              <input type="number" min="0" value={form.slots_magia.nivel3} onChange={(event) => handleSlotChange('nivel3', event.target.value)} />
-            </label>
-          </div>
-
           <label className="full-width">
             {strings.consumables}
             <input
@@ -581,8 +670,14 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
         <p><strong>{strings.race}:</strong> {form.raca} ({form.subraca})</p>
         <p><strong>{strings.alignment}:</strong> {form.alinhamento}</p>
         <p><strong>{strings.background}:</strong> {form.antecedente}</p>
-        <p><strong>{strings.hp}:</strong> {hpPreview}</p>
-        <p><strong>{strings.ac}:</strong> {form.ca}</p>
+        <p><strong>{strings.hp}:</strong> {autoResources.hp}</p>
+        <p><strong>{strings.ac}:</strong> {autoResources.ac}</p>
+        <p>
+          <strong>{strings.spellSlotsSummary}:</strong>{' '}
+          {reviewSpellSlots.length > 0
+            ? reviewSpellSlots.map((entry) => `${entry.level}º: ${entry.count}`).join(' | ')
+            : strings.noSpellSlots}
+        </p>
       </div>
     )
   }
@@ -599,12 +694,24 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
       setCurrentStep(0)
       return
     }
+    if (!form.raca || !form.subraca) {
+      setCurrentStep(1)
+      return
+    }
     if (!form.classe) {
       setCurrentStep(2)
       return
     }
-    if (!Number.isFinite(Number(form.ca)) || Number(form.ca) < 0) {
-      setCurrentStep(4)
+    if (!form.alinhamento || !form.antecedente) {
+      setCurrentStep(2)
+      return
+    }
+    if (!form.metodo_atributos) {
+      setCurrentStep(3)
+      return
+    }
+    if (form.metodo_atributos === 'standard' && ATTRIBUTE_KEYS.some((key) => form.atributos_base[key] == null)) {
+      setCurrentStep(3)
       return
     }
 
@@ -628,8 +735,8 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
       ...form,
       nivel: Number(form.nivel),
       constituicao: Number(totalAbilities.con || 10),
-      ca: Number(form.ca),
-      hp: calculatedHp,
+      ca: autoResources.ac,
+      hp: autoResources.hp || calculatedHp,
       raca: form.raca,
       subraca: form.subraca,
       campanha: form.campanha,
@@ -648,6 +755,7 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
         cha: Number(selectedBaseAbilities.cha || 10),
       },
       atributos_raciais: racialBonuses,
+      slots_magia: autoResources.slots,
       consumiveis: String(form.consumiveis ?? '').split(',').map((item) => item.trim()).filter(Boolean),
     })
   }
@@ -669,8 +777,6 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
           </button>
         ))}
       </div>
-
-      <p className="form-hint">{strings.wizardHint}</p>
 
       {renderStep()}
 

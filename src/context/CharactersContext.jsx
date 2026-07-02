@@ -45,12 +45,34 @@ function mapSlotsToFrontend(slotRows = []) {
     nivel1: findSlot(1)?.max_slots ?? 0,
     nivel2: findSlot(2)?.max_slots ?? 0,
     nivel3: findSlot(3)?.max_slots ?? 0,
+    nivel4: findSlot(4)?.max_slots ?? 0,
+    nivel5: findSlot(5)?.max_slots ?? 0,
+    nivel6: findSlot(6)?.max_slots ?? 0,
+    nivel7: findSlot(7)?.max_slots ?? 0,
+    nivel8: findSlot(8)?.max_slots ?? 0,
+    nivel9: findSlot(9)?.max_slots ?? 0,
+  }
+}
+
+function mapUsedSlotsToFrontend(slotRows = []) {
+  const findSlot = (level) => slotRows.find((slot) => slot.slot_level === level)
+  return {
+    nivel1: findSlot(1)?.used_slots ?? 0,
+    nivel2: findSlot(2)?.used_slots ?? 0,
+    nivel3: findSlot(3)?.used_slots ?? 0,
+    nivel4: findSlot(4)?.used_slots ?? 0,
+    nivel5: findSlot(5)?.used_slots ?? 0,
+    nivel6: findSlot(6)?.used_slots ?? 0,
+    nivel7: findSlot(7)?.used_slots ?? 0,
+    nivel8: findSlot(8)?.used_slots ?? 0,
+    nivel9: findSlot(9)?.used_slots ?? 0,
   }
 }
 
 function mapV2CharacterToFrontend(character) {
   const hpCurrent = character.vitals?.hp_current ?? 0
   const hpMax = character.vitals?.hp_max ?? 0
+  const hpTemp = character.vitals?.hp_temp ?? 0
 
   return {
     id: character.id,
@@ -59,8 +81,12 @@ function mapV2CharacterToFrontend(character) {
     nivel: character.level,
     constituicao: character.abilities?.con?.total ?? 10,
     hp: `${hpCurrent}/${hpMax}`,
+    hp_current: hpCurrent,
+    hp_max: hpMax,
+    hp_temp: hpTemp,
     ca: character.vitals?.ac_current ?? character.vitals?.ac_base ?? 10,
     slots_magia: mapSlotsToFrontend(character.spell_slots),
+    slots_usados: mapUsedSlotsToFrontend(character.spell_slots),
     consumiveis: (character.inventory || []).map((item) => item.name),
   }
 }
@@ -168,6 +194,36 @@ function buildWizardPayload(character) {
       {
         slot_level: 3,
         max_slots: Number(character.slots_magia?.nivel3) || 0,
+        used_slots: 0,
+      },
+      {
+        slot_level: 4,
+        max_slots: Number(character.slots_magia?.nivel4) || 0,
+        used_slots: 0,
+      },
+      {
+        slot_level: 5,
+        max_slots: Number(character.slots_magia?.nivel5) || 0,
+        used_slots: 0,
+      },
+      {
+        slot_level: 6,
+        max_slots: Number(character.slots_magia?.nivel6) || 0,
+        used_slots: 0,
+      },
+      {
+        slot_level: 7,
+        max_slots: Number(character.slots_magia?.nivel7) || 0,
+        used_slots: 0,
+      },
+      {
+        slot_level: 8,
+        max_slots: Number(character.slots_magia?.nivel8) || 0,
+        used_slots: 0,
+      },
+      {
+        slot_level: 9,
+        max_slots: Number(character.slots_magia?.nivel9) || 0,
         used_slots: 0,
       },
     ],
@@ -326,22 +382,36 @@ export function CharactersProvider({ children }) {
     }
 
     const { current, max } = parseHpString(updatedCharacter.hp)
-    const hpCurrent = Math.max(0, Math.min(current, max))
+    const hpMax = Number(updatedCharacter.hp_max)
+    const resolvedMax = Number.isFinite(hpMax) && hpMax > 0 ? hpMax : max
+    const hpCurrentFromField = Number(updatedCharacter.hp_current)
+    const resolvedCurrent = Number.isFinite(hpCurrentFromField) ? hpCurrentFromField : current
+    const hpCurrent = Math.max(0, Math.min(resolvedCurrent, resolvedMax))
+    const hpTempFromField = Number(updatedCharacter.hp_temp)
+    const hpTemp = Number.isFinite(hpTempFromField) ? Math.max(0, hpTempFromField) : 0
 
     try {
       await apiRequest(`/api/v2/characters/${updatedCharacter.id}/play`, {
         method: 'PUT',
         body: JSON.stringify({
           hp_current: hpCurrent,
+          hp_temp: hpTemp,
           ac_base: Number(updatedCharacter.ca) || 10,
         }),
       })
 
-      const slotEntries = [
-        { level: 1, used: Number(updatedCharacter.slots_magia?.nivel1) || 0 },
-        { level: 2, used: Number(updatedCharacter.slots_magia?.nivel2) || 0 },
-        { level: 3, used: Number(updatedCharacter.slots_magia?.nivel3) || 0 },
-      ]
+      const slotEntries = Array.from({ length: 9 }, (_, index) => {
+        const level = index + 1
+        const usedFromPlay = Number(updatedCharacter.slots_usados?.[`nivel${level}`])
+        const usedFallback = Number(updatedCharacter.slots_magia?.[`nivel${level}`])
+
+        return {
+          level,
+          used: Number.isFinite(usedFromPlay)
+            ? Math.max(0, usedFromPlay)
+            : (Number.isFinite(usedFallback) ? Math.max(0, usedFallback) : 0),
+        }
+      })
 
       await Promise.all(slotEntries.map((entry) => (
         apiRequest(`/api/v2/characters/${updatedCharacter.id}/spell-slots/${entry.level}`, {

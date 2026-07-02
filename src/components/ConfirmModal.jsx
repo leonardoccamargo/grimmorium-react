@@ -6,6 +6,9 @@ export default function ConfirmModal({
   message,
   cancelLabel,
   confirmLabel,
+  extraActionLabel,
+  onExtraAction,
+  extraActionClassName = 'btn-primary',
   onCancel,
   onConfirm,
 }) {
@@ -61,6 +64,11 @@ export default function ConfirmModal({
           >
             {cancelLabel}
           </button>
+          {extraActionLabel && onExtraAction && (
+            <button type="button" className={extraActionClassName} onClick={onExtraAction}>
+              {extraActionLabel}
+            </button>
+          )}
           <button type="button" className="btn-danger" onClick={onConfirm}>
             {confirmLabel}
           </button>
