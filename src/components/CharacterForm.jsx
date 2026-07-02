@@ -140,6 +140,7 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
   const { language } = useLanguage()
   const [form, setForm] = useState(() => normalizeInitialValues(initial))
   const [currentStep, setCurrentStep] = useState(0)
+  const [validationError, setValidationError] = useState('')
 
   useEffect(() => {
     setForm(normalizeInitialValues(initial))
@@ -583,6 +584,19 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
 
   const handleSubmit = (event) => {
     event.preventDefault()
+
+    if (!form.nome.trim()) {
+      setValidationError(language === 'pt-br' ? 'O nome do personagem é obrigatório.' : 'Character name is required.')
+      setCurrentStep(0)
+      return
+    }
+    if (!form.classe) {
+      setValidationError(language === 'pt-br' ? 'A classe do personagem é obrigatória.' : 'Character class is required.')
+      setCurrentStep(2)
+      return
+    }
+    setValidationError('')
+
     const calculatedHp = (() => {
       try {
         const maxHp = calculateCharacterMaxHp(
@@ -648,6 +662,8 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
       <p className="form-hint">{strings.wizardHint}</p>
 
       {renderStep()}
+
+      {validationError && <p className="form-error">{validationError}</p>}
 
       <div className="form-actions">
         <button type="button" className="btn-secondary" onClick={onCancel}>{strings.cancel}</button>

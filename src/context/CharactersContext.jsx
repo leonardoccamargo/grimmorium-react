@@ -99,7 +99,9 @@ async function apiRequest(path, options = {}) {
 
   if (!response.ok) {
     const message = payload?.message || 'API request failed.'
-    throw new Error(message)
+    const err = new Error(message)
+    err.isApiError = true
+    throw err
   }
 
   return payload
@@ -189,6 +191,7 @@ export function CharactersProvider({ children }) {
   const [personagens, setPersonagens] = useState(() => (IS_API_MODE ? [] : (getStoredCharacters() || [])))
   const [status, setStatus] = useState(() => (IS_API_MODE ? 'loading' : (getStoredCharacters() ? 'success' : 'loading')))
   const [mensagemKey, setMensagemKey] = useState(null)
+  const [apiErrorDetail, setApiErrorDetail] = useState('')
 
   const mensagem = useMemo(() => {
     switch (mensagemKey) {
@@ -212,6 +215,9 @@ export function CharactersProvider({ children }) {
         return language === 'pt-br'
           ? 'Não foi possível sincronizar com o backend. Verifique se a API está ativa em http://127.0.0.1:5000.'
           : 'Could not sync with backend. Ensure API is running at http://127.0.0.1:5000.'
+      case 'character-api-error':
+        return apiErrorDetail
+          || (language === 'pt-br' ? 'Erro ao salvar o personagem.' : 'Error saving character.')
       case 'character-fallback-local':
         return language === 'pt-br'
           ? 'Backend indisponível. Personagens carregados do JSON local como fallback.'
@@ -219,7 +225,7 @@ export function CharactersProvider({ children }) {
       default:
         return ''
     }
-  }, [mensagemKey, language])
+  }, [mensagemKey, apiErrorDetail, language])
 
   useEffect(() => {
     async function loadCharacters() {
@@ -303,8 +309,9 @@ export function CharactersProvider({ children }) {
       await refreshCharacters()
       setMensagemKey('character-added')
       return true
-    } catch {
-      setMensagemKey('character-sync-error')
+    } catch (error) {
+      setMensagemKey(error?.isApiError ? 'character-api-error' : 'character-sync-error')
+      setApiErrorDetail(error?.isApiError ? error.message : '')
       return false
     }
   }
@@ -370,7 +377,7 @@ export function CharactersProvider({ children }) {
     }
   }
 
-  const clearMensagem = () => setMensagemKey(null)
+  const clearMensagem = () => { setMensagemKey(null); setApiErrorDetail('') }
 
   return (
     <CharactersContext.Provider value={{ personagens, status, mensagem, addCharacter, updateCharacter, deleteCharacter, clearMensagem, dataMode: DATA_MODE }}>
