@@ -1007,12 +1007,72 @@ input[type="number"]:focus {
     border-radius: 16px;
     background: color-mix(in srgb, var(--fundo-card) 88%, var(--fundo-secundario) 12%);
     border: 1px solid rgba(197, 160, 89, 0.24);
+    max-width: 1120px;
+    margin-inline: auto;
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 16px;
+}
+
+.form-grid-2 > label {
+    grid-column: span 6;
+}
+
+.form-grid-3 > label {
+    grid-column: span 4;
+}
+
+.form-grid-4 > label {
+    grid-column: span 3;
+}
+
+.form-grid-mixed > label {
+    grid-column: span 6;
+}
+
+.character-form label {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    font-size: 0.95rem;
+}
+
+.character-form input[type="text"],
+.character-form input[type="number"],
+.character-form select,
+.character-form textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--borda-input);
+    background: color-mix(in srgb, var(--fundo-secundario) 70%, #080d13 30%);
+    color: var(--texto-principal);
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 0.98rem;
+}
+
+.character-form input[type="text"]:focus,
+.character-form input[type="number"]:focus,
+.character-form select:focus,
+.character-form textarea:focus {
+    outline: none;
+    border-color: var(--acento-esmeralda);
+    box-shadow: 0 0 0 3px rgba(15, 122, 92, 0.3);
+}
+
+.character-form textarea {
+    min-height: 88px;
+    resize: vertical;
+}
+
+.form-hint {
+    margin: 2px 0 0;
+    color: var(--texto-secundario);
+    line-height: 1.45;
 }
 
 .full-width {
@@ -1569,6 +1629,133 @@ input[type="number"]:focus {
     animation: spin 1s linear infinite;
 }
 
+.wizard-progress {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.wizard-step {
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+    padding: 10px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(197, 160, 89, 0.28);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--texto-secundario);
+    cursor: pointer;
+}
+
+.wizard-step span {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(197, 160, 89, 0.2);
+    color: var(--texto-principal);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.wizard-step small {
+    font-size: 0.74rem;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.wizard-step.is-active {
+    border-color: rgba(231, 204, 139, 0.7);
+    background: rgba(197, 160, 89, 0.16);
+    color: var(--texto-principal);
+}
+
+.wizard-step.is-done span {
+    background: color-mix(in srgb, var(--acento-esmeralda) 70%, transparent);
+}
+
+.wizard-method-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.wizard-method-row label {
+    min-width: 260px;
+}
+
+.wizard-roll-all-button {
+    align-self: end;
+    min-height: 44px;
+    min-width: 190px;
+    white-space: nowrap;
+}
+
+.wizard-points {
+    align-self: end;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(197, 160, 89, 0.4);
+    color: var(--texto-principal);
+}
+
+.ability-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.ability-card {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(197, 160, 89, 0.25);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.ability-card h4,
+.ability-card p {
+    margin: 0;
+}
+
+.ability-stepper {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 42px;
+    gap: 8px;
+    align-items: center;
+}
+
+.ability-stepper span {
+    text-align: center;
+    font-weight: 700;
+}
+
+.ability-free-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.wizard-review {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    border: 1px solid rgba(197, 160, 89, 0.25);
+    border-radius: 12px;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.wizard-review h4,
+.wizard-review p {
+    margin: 0;
+}
+
 @keyframes reveal {
     from {
         opacity: 0;
@@ -1668,6 +1855,38 @@ input[type="number"]:focus {
 
     .dice-result-number {
         font-size: clamp(34px, 9.5vw, 44px);
+    }
+
+    .wizard-progress {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-grid,
+    .form-grid-2,
+    .form-grid-3,
+    .form-grid-4,
+    .form-grid-mixed {
+        grid-template-columns: 1fr;
+    }
+
+    .wizard-roll-all-button {
+        min-width: 100%;
+    }
+
+    .form-grid > label,
+    .form-grid-2 > label,
+    .form-grid-3 > label,
+    .form-grid-4 > label,
+    .form-grid-mixed > label {
+        grid-column: span 1;
+    }
+
+    .ability-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .wizard-review {
+        grid-template-columns: 1fr;
     }
 
 }

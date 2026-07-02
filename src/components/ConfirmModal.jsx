@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useId, useRef } from 'react'
 
 export default function ConfirmModal({
   isOpen,
@@ -10,6 +10,8 @@ export default function ConfirmModal({
   onConfirm,
 }) {
   const cancelButtonRef = useRef(null)
+  const titleId = useId()
+  const messageId = useId()
 
   useEffect(() => {
     if (!isOpen) return undefined
@@ -43,12 +45,12 @@ export default function ConfirmModal({
         className="modal-card"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="confirm-modal-title"
-        aria-describedby="confirm-modal-message"
+        aria-labelledby={titleId}
+        aria-describedby={messageId}
         onClick={(event) => event.stopPropagation()}
       >
-        <h3 id="confirm-modal-title">{title}</h3>
-        <p id="confirm-modal-message">{message}</p>
+        <h3 id={titleId}>{title}</h3>
+        <p id={messageId}>{message}</p>
 
         <div className="modal-actions">
           <button

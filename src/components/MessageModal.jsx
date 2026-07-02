@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useId, useRef } from 'react'
 
 export default function MessageModal({
   isOpen,
@@ -8,6 +8,8 @@ export default function MessageModal({
   onClose,
 }) {
   const buttonRef = useRef(null)
+  const titleId = useId()
+  const messageId = useId()
 
   useEffect(() => {
     if (!isOpen) return undefined
@@ -41,12 +43,12 @@ export default function MessageModal({
         className="modal-card"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="message-modal-title"
-        aria-describedby="message-modal-message"
+        aria-labelledby={titleId}
+        aria-describedby={messageId}
         onClick={(event) => event.stopPropagation()}
       >
-        <h3 id="message-modal-title">{title}</h3>
-        <p id="message-modal-message">{message}</p>
+        <h3 id={titleId}>{title}</h3>
+        <p id={messageId}>{message}</p>
 
         <div className="modal-actions">
           <button ref={buttonRef} type="button" className="btn-primary" onClick={onClose}>

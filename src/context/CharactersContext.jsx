@@ -5,8 +5,9 @@ import { parseHpString } from '../utils/characterHealth.js'
 
 const CharactersContext = createContext(null)
 const STORAGE_KEY = 'atlas-arcano-personagens'
-const DATA_MODE = String(import.meta.env.VITE_CHARACTERS_DATA_MODE || 'mock').toLowerCase()
+const DATA_MODE = String(import.meta.env.VITE_CHARACTERS_DATA_MODE || 'api').toLowerCase()
 const IS_API_MODE = DATA_MODE === 'api'
+const ENABLE_LOCAL_JSON_FALLBACK = String(import.meta.env.VITE_ENABLE_LOCAL_JSON_FALLBACK || 'false').toLowerCase() === 'true'
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000').replace(/\/$/, '')
 
 const HIT_DICE_BY_CLASS = {
@@ -74,6 +75,12 @@ const getStoredCharacters = () => {
   }
 }
 
+async function loadLocalJsonCharacters() {
+  const response = await fetch('/personagens.json')
+  if (!response.ok) throw new Error('Falha ao carregar personagens locais')
+  return response.json()
+}
+
 async function apiRequest(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
     headers: {
@@ -104,20 +111,23 @@ function buildWizardPayload(character) {
   const ca = Number(character.ca) || 10
   const { current, max } = parseHpString(character.hp)
 
+  const baseAbilities = character.atributos_base || {}
+  const racialAbilities = character.atributos_raciais || {}
+
   return {
     name: character.nome,
-    campaign: null,
+    campaign: character.campanha || null,
     level: nivel,
-    race: 'Humano',
-    subrace: null,
+    race: character.raca || 'Humano',
+    subrace: character.subraca || null,
     character_class: character.classe,
     hit_die: getHitDie(character.classe),
-    alignment: null,
-    background: 'Aventureiro',
-    personality_traits: '',
-    ideals: '',
-    bonds: '',
-    flaws: '',
+    alignment: character.alinhamento || null,
+    background: character.antecedente || 'Aventureiro',
+    personality_traits: character.tracos || '',
+    ideals: character.ideais || '',
+    bonds: character.vinculos || '',
+    flaws: character.defeitos || '',
     hp_max: Math.max(1, max || current || 10),
     hp_current: Math.max(0, current || max || 10),
     hp_temp: 0,
@@ -129,18 +139,18 @@ function buildWizardPayload(character) {
     coins_gp: 0,
     coins_pp: 0,
     abilities: {
-      str_base: 10,
-      dex_base: 10,
-      con_base: constituicao,
-      int_base: 10,
-      wis_base: 10,
-      cha_base: 10,
-      str_racial: 0,
-      dex_racial: 0,
-      con_racial: 0,
-      int_racial: 0,
-      wis_racial: 0,
-      cha_racial: 0,
+      str_base: Number(baseAbilities.str) || 10,
+      dex_base: Number(baseAbilities.dex) || 10,
+      con_base: Number(baseAbilities.con) || constituicao,
+      int_base: Number(baseAbilities.int) || 10,
+      wis_base: Number(baseAbilities.wis) || 10,
+      cha_base: Number(baseAbilities.cha) || 10,
+      str_racial: Number(racialAbilities.str) || 0,
+      dex_racial: Number(racialAbilities.dex) || 0,
+      con_racial: Number(racialAbilities.con) || 0,
+      int_racial: Number(racialAbilities.int) || 0,
+      wis_racial: Number(racialAbilities.wis) || 0,
+      cha_racial: Number(racialAbilities.cha) || 0,
     },
     spell_slots: [
       {
@@ -202,6 +212,10 @@ export function CharactersProvider({ children }) {
         return language === 'pt-br'
           ? 'Não foi possível sincronizar com o backend. Verifique se a API está ativa em http://127.0.0.1:5000.'
           : 'Could not sync with backend. Ensure API is running at http://127.0.0.1:5000.'
+      case 'character-fallback-local':
+        return language === 'pt-br'
+          ? 'Backend indisponível. Personagens carregados do JSON local como fallback.'
+          : 'Backend unavailable. Characters loaded from local JSON fallback.'
       default:
         return ''
     }
@@ -219,9 +233,7 @@ export function CharactersProvider({ children }) {
 
         try {
           setStatus('loading')
-          const response = await fetch('/personagens.json')
-          if (!response.ok) throw new Error('Falha ao carregar personagens locais')
-          const data = await response.json()
+          const data = await loadLocalJsonCharacters()
           setPersonagens(data)
           setStatus('success')
         } catch {
@@ -238,6 +250,18 @@ export function CharactersProvider({ children }) {
         setPersonagens(mapped)
         setStatus('success')
       } catch {
+        if (ENABLE_LOCAL_JSON_FALLBACK) {
+          try {
+            const localData = await loadLocalJsonCharacters()
+            setPersonagens(localData)
+            setMensagemKey('character-fallback-local')
+            setStatus('success')
+            return
+          } catch {
+            // Keep API error path below when fallback also fails.
+          }
+        }
+
         setMensagemKey('character-sync-error')
         setStatus('error')
       }

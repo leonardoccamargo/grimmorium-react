@@ -5,32 +5,44 @@ import SpellCard from '../components/SpellCard'
 import { useLanguage } from '../context/LanguageContext.jsx'
 
 const API_BASE = 'https://www.dnd5eapi.co/api/2014/spells'
+const BACKEND_API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000').replace(/\/$/, '')
+
+function mapPortugueseSpell(magia) {
+  return {
+    index: (magia.nome || '').toLowerCase().replace(/\s+/g, '-'),
+    name: magia.nome,
+    level: magia.nivel,
+    school: { name: magia.escola },
+    range: magia.alcance,
+    components: (magia.componentes || '').split(',').map((c) => c.trim()).filter(Boolean),
+    duration: magia.duracao,
+    casting_time: magia.tempo,
+    concentration: magia.concentracao,
+    ritual: magia.ritual,
+    desc: [magia.descricao],
+    higher_level: [],
+    classes: (magia.classes || []).map((classe) => ({ name: classe })),
+    url: null,
+  }
+}
 
 async function loadPortugueseSpells() {
   try {
-    const response = await fetch('/magias.json')
-    if (!response.ok) throw new Error(`Falha ao carregar magias (${response.status})`)
-    const data = await response.json()
-    
-    return data.map((magia) => ({
-      index: magia.nome.toLowerCase().replace(/\s+/g, '-'),
-      name: magia.nome,
-      level: magia.nivel,
-      school: { name: magia.escola },
-      range: magia.alcance,
-      components: magia.componentes.split(', ').map((c) => c.trim()),
-      duration: magia.duracao,
-      casting_time: magia.tempo,
-      concentration: magia.concentracao,
-      ritual: magia.ritual,
-      desc: [magia.descricao],
-      higher_level: [],
-      classes: magia.classes.map((classe) => ({ name: classe })),
-      url: null,
-    }))
+    const response = await fetch(`${BACKEND_API_BASE}/api/magias`)
+    if (!response.ok) throw new Error(`Falha ao carregar magias do backend (${response.status})`)
+    const payload = await response.json()
+    return (payload.magias || []).map(mapPortugueseSpell)
   } catch (error) {
-    console.error(error)
-    return []
+    console.error('Falha no backend de magias, tentando JSON local.', error)
+    try {
+      const response = await fetch('/magias.json')
+      if (!response.ok) throw new Error(`Falha ao carregar magias locais (${response.status})`)
+      const data = await response.json()
+      return data.map(mapPortugueseSpell)
+    } catch (fallbackError) {
+      console.error(fallbackError)
+      return []
+    }
   }
 }
 

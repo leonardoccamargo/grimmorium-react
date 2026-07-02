@@ -3,6 +3,26 @@ import Tooltip from './Tooltip.jsx'
 
 export default function CharacterCard({ character, onSelect, onDelete, onEdit }) {
   const { language } = useLanguage()
+  const safeCharacter = {
+    id: '-',
+    nome: '',
+    classe: '',
+    nivel: 0,
+    hp: '0/0',
+    ca: 0,
+    slots_magia: {
+      nivel1: 0,
+      nivel2: 0,
+      nivel3: 0,
+    },
+    ...character,
+    slots_magia: {
+      nivel1: 0,
+      nivel2: 0,
+      nivel3: 0,
+      ...(character?.slots_magia ?? {}),
+    },
+  }
 
   const strings = {
     classLabel: language === 'pt-br' ? 'Classe' : 'Class',
@@ -23,19 +43,19 @@ export default function CharacterCard({ character, onSelect, onDelete, onEdit })
   return (
     <article className="character-card">
       <div className="character-card-topo">
-        <span className="character-name">{character.nome}</span>
-        <span className="character-id">#{character.id}</span>
+        <span className="character-name">{safeCharacter.nome}</span>
+        <span className="character-id">#{safeCharacter.id}</span>
       </div>
 
-      <p className="character-line"><strong>{strings.classLabel}:</strong> {character.classe}</p>
-      <p className="character-line"><strong>{strings.levelLabel}:</strong> {character.nivel}</p>
-      <p className="character-line"><strong>{strings.hpLabel}:</strong> {character.hp}</p>
-      <p className="character-line"><strong>{strings.acLabel}:</strong> {character.ca}</p>
+      <p className="character-line"><strong>{strings.classLabel}:</strong> {safeCharacter.classe}</p>
+      <p className="character-line"><strong>{strings.levelLabel}:</strong> {safeCharacter.nivel}</p>
+      <p className="character-line"><strong>{strings.hpLabel}:</strong> {safeCharacter.hp}</p>
+      <p className="character-line"><strong>{strings.acLabel}:</strong> {safeCharacter.ca}</p>
 
       <div className="character-slots">
-        <span>{strings.slots1}: {character.slots_magia.nivel1}</span>
-        <span>{strings.slots2}: {character.slots_magia.nivel2}</span>
-        <span>{strings.slots3}: {character.slots_magia.nivel3}</span>
+        <span>{strings.slots1}: {safeCharacter.slots_magia.nivel1}</span>
+        <span>{strings.slots2}: {safeCharacter.slots_magia.nivel2}</span>
+        <span>{strings.slots3}: {safeCharacter.slots_magia.nivel3}</span>
       </div>
 
       <div className="character-actions">
@@ -43,7 +63,7 @@ export default function CharacterCard({ character, onSelect, onDelete, onEdit })
           <button
             type="button"
             className="btn-secondary"
-            onClick={() => onSelect(character.id)}
+            onClick={() => onSelect?.(safeCharacter.id)}
             title={strings.playTitle}
           >
             {strings.playButton}
@@ -53,7 +73,7 @@ export default function CharacterCard({ character, onSelect, onDelete, onEdit })
           <button
             type="button"
             className="btn-primary"
-            onClick={() => onEdit(character.id)}
+            onClick={() => onEdit?.(safeCharacter.id)}
             title={strings.editTitle}
           >
             {strings.editButton}
@@ -63,7 +83,7 @@ export default function CharacterCard({ character, onSelect, onDelete, onEdit })
           <button
             type="button"
             className="btn-danger"
-            onClick={() => onDelete(character.id)}
+            onClick={() => onDelete?.(safeCharacter.id)}
             title={strings.deleteTitle}
           >
             {strings.deleteButton}
