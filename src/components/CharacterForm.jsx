@@ -140,10 +140,12 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
   const { language } = useLanguage()
   const [form, setForm] = useState(() => normalizeInitialValues(initial))
   const [currentStep, setCurrentStep] = useState(0)
+  const [submitAttempted, setSubmitAttempted] = useState(false)
 
   useEffect(() => {
     setForm(normalizeInitialValues(initial))
     setCurrentStep(0)
+    setSubmitAttempted(false)
   }, [initial])
 
   const strings = {
@@ -287,6 +289,10 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
   }, [form.atributos_base])
 
   const canAdvance = true
+  const isNameInvalid = submitAttempted && !form.nome.trim()
+  const isClassInvalid = submitAttempted && !form.classe
+  const isLevelInvalid = submitAttempted && (!Number.isFinite(Number(form.nivel)) || Number(form.nivel) < 1)
+  const isAcInvalid = submitAttempted && (!Number.isFinite(Number(form.ca)) || Number(form.ca) < 0)
 
   const subraceOptions = SUBRACE_OPTIONS[form.raca] || ['Padrão']
 
@@ -323,7 +329,7 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     if (currentStep === 0) {
       return (
         <div className="form-grid form-grid-3">
-          <label className="required-label">
+          <label className={`required-label ${isNameInvalid ? 'is-invalid' : ''}`}>
             {strings.name} *
             <input
               type="text"
@@ -342,7 +348,7 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
             />
           </label>
 
-          <label className="required-label">
+          <label className={`required-label ${isLevelInvalid ? 'is-invalid' : ''}`}>
             {strings.level} *
             <input
               type="number"
@@ -381,7 +387,7 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
       return (
         <>
           <div className="form-grid form-grid-3">
-            <label className="required-label">
+            <label className={`required-label ${isClassInvalid ? 'is-invalid' : ''}`}>
               {strings.class} *
               <select
                 value={form.classe}
@@ -521,7 +527,7 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
       return (
         <>
           <div className="form-grid form-grid-mixed">
-            <label className="required-label">
+            <label className={`required-label ${isAcInvalid ? 'is-invalid' : ''}`}>
               {strings.ac} *
               <input
                 type="number"
@@ -583,13 +589,22 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    setSubmitAttempted(true)
 
     if (!form.nome.trim()) {
       setCurrentStep(0)
       return
     }
+    if (!Number.isFinite(Number(form.nivel)) || Number(form.nivel) < 1) {
+      setCurrentStep(0)
+      return
+    }
     if (!form.classe) {
       setCurrentStep(2)
+      return
+    }
+    if (!Number.isFinite(Number(form.ca)) || Number(form.ca) < 0) {
+      setCurrentStep(4)
       return
     }
 

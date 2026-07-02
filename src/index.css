@@ -1080,6 +1080,10 @@ input[type="number"]:focus {
 }
 
 .required-label {
+    color: inherit;
+}
+
+.required-label.is-invalid {
     color: #e05252;
 }
 
