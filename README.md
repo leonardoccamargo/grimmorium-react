@@ -60,6 +60,10 @@ npm run lint
 - Magias PT-BR: backend em `/api/magias` com fallback local
 - JSON local em `public/` e sincronizado pelo backend
 
+## Creditos e APIs externas
+
+- [D&D 5e API](https://www.dnd5eapi.co) — API pública REST com dados do D&D 5ª edição (magias em inglês, fallback quando backend indisponível)
+
 ## Aderencia ao MVP (resumo)
 
 - 3+ paginas e componentizacao reutilizavel
