@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { calculateCharacterMaxHp, SUPPORTED_DND5E_CLASSES } from '../utils/characterHealth.js'
 
@@ -223,12 +223,6 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
   const [form, setForm] = useState(() => normalizeInitialValues(initial))
   const [currentStep, setCurrentStep] = useState(0)
   const [submitAttempted, setSubmitAttempted] = useState(false)
-
-  useEffect(() => {
-    setForm(normalizeInitialValues(initial))
-    setCurrentStep(0)
-    setSubmitAttempted(false)
-  }, [initial])
 
   const strings = {
     name: language === 'pt-br' ? 'Nome' : 'Name',

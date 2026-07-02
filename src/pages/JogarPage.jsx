@@ -253,14 +253,14 @@ export default function JogarPage() {
     resetUsedSlots('long')
   }
 
-  const canSave = useMemo(() => {
-    return formValues
-      && Number.isFinite(Number(hpState.current))
-      && Number.isFinite(Number(hpState.max))
-      && Number.isFinite(Number(hpState.temp))
-      && formValues.ca != null
-      && formValues.slots_magia
-  }, [formValues, hpState.current, hpState.max, hpState.temp])
+  const canSave = Boolean(
+    formValues
+    && Number.isFinite(Number(hpState.current))
+    && Number.isFinite(Number(hpState.max))
+    && Number.isFinite(Number(hpState.temp))
+    && formValues.ca != null
+    && formValues.slots_magia,
+  )
 
   const hasUnsavedChanges = Object.keys(editedValues).length > 0
 

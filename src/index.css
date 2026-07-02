@@ -1,47 +1,143 @@
+/* Tokens de tema e aliases compartilhados. */
 :root {
-    --fundo-principal: #11151d;
-    --fundo-secundario: #171d28;
-    --fundo-card: #1c2331;
-    --hero-bg-image: url("./assets/hero-dark.png");
+    /* Tokens visuais base. */
+    --radius: 0.5rem;
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+
+    /* Paleta principal. */
+    --ink-deep: oklch(0.14 0.03 260);
+    --ink: oklch(0.19 0.035 260);
+    --parchment: oklch(0.94 0.03 85);
+    --gold: oklch(0.82 0.13 85);
+    --gold-soft: oklch(0.88 0.09 88);
+    --gold-deep: oklch(0.62 0.13 75);
+    --blood: oklch(0.42 0.15 25);
+    --arcane: oklch(0.55 0.18 295);
+
+    --background: var(--ink-deep);
+    --foreground: oklch(0.95 0.02 85);
+    --card: oklch(0.22 0.035 260);
+    --card-foreground: oklch(0.95 0.02 85);
+    --popover: var(--card);
+    --popover-foreground: var(--card-foreground);
+    --primary: var(--gold);
+    --primary-foreground: var(--ink-deep);
+    --secondary: oklch(0.26 0.04 260);
+    --secondary-foreground: oklch(0.95 0.02 85);
+    --muted: oklch(0.24 0.03 260);
+    --muted-foreground: oklch(0.7 0.02 85);
+    --accent: var(--blood);
+    --accent-foreground: oklch(0.95 0.02 85);
+    --destructive: oklch(0.55 0.2 27);
+    --destructive-foreground: oklch(0.98 0 0);
+    --border: color-mix(in oklab, var(--gold) 22%, transparent);
+    --input: oklch(0.26 0.03 260);
+    --ring: var(--gold);
+
+    /* Aliases compatíveis com Shadcn/Tailwind usados pelo restante da folha. */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-gold: var(--gold);
+    --color-gold-soft: var(--gold-soft);
+    --color-gold-deep: var(--gold-deep);
+    --color-parchment: var(--parchment);
+    --color-blood: var(--blood);
+    --color-arcane: var(--arcane);
+    --color-ink: var(--ink);
+    --color-ink-deep: var(--ink-deep);
+
+    --font-display: "Cinzel", "Cormorant Garamond", serif;
+    --font-serif: "Cormorant Garamond", "Times New Roman", serif;
+    --font-sans: "Inter", system-ui, sans-serif;
+
+    --shadow-arcane: 0 20px 60px -20px color-mix(in oklab, var(--gold) 30%, transparent),
+        0 0 0 1px color-mix(in oklab, var(--gold) 20%, transparent);
+    --shadow-rune: 0 0 30px color-mix(in oklab, var(--gold) 40%, transparent);
+
+    /* Aliases do projeto mantidos para as regras de classe existentes. */
+    --fundo-principal: var(--background);
+    --fundo-secundario: var(--ink);
+    --fundo-card: var(--card);
     --hero-image-overlay: rgba(10, 15, 22, 0.42);
-    --hero-tone-top: rgba(5, 8, 14, 0.04);
-    --hero-tone-bottom: rgba(5, 8, 14, 0.2);
-    --hero-content-surface: rgba(9, 12, 18, 0.66);
-    --hero-content-border: rgba(197, 160, 89, 0.44);
-    --hero-content-shadow: 0 18px 30px rgba(0, 0, 0, 0.36);
-    --texto-principal: #f5f2e9;
-    --texto-secundario: #d6d0bf;
-    --detalhe-ouro: #c5a059;
-    --ouro-brilho: #e7cc8b;
+    --texto-principal: var(--foreground);
+    --texto-secundario: var(--muted-foreground);
+    --detalhe-ouro: var(--gold);
+    --ouro-brilho: var(--gold-soft);
+    --arcano-realce: var(--arcane);
     --acento-esmeralda: #0f7a5c;
     --acento-contraste: #f5f2e9;
     --borda-input: #8c7547;
     --sombra-card: 0 18px 30px rgba(0, 0, 0, 0.42);
-    --textura-opacidade: 0.05;
+    --textura-opacidade: 0.035;
 }
 
 [data-theme="light"] {
-    --fundo-principal: #f5f2e9;
-    --fundo-secundario: #fffaf0;
-    --fundo-card: #fcf7e4e7;
-    --hero-bg-image: url("./assets/hero-light.png");
-    --hero-image-overlay: rgba(245, 242, 233, 0.4);
-    --hero-tone-top: rgba(255, 252, 246, 0.03);
-    --hero-tone-bottom: rgba(232, 223, 205, 0.16);
-    --hero-content-surface: rgba(255, 250, 241, 0.74);
-    --hero-content-border: rgba(176, 141, 72, 0.42);
-    --hero-content-shadow: 0 14px 26px rgba(51, 46, 35, 0.2);
-    --texto-principal: #2c2c2c;
-    --texto-secundario: #4e4e4e;
-    --detalhe-ouro: #b08d48;
-    --ouro-brilho: #caa255;
-    --acento-esmeralda: #064e3b;
-    --acento-contraste: #f5f2e9;
-    --borda-input: #b59656;
-    --sombra-card: 0 14px 26px rgba(51, 46, 35, 0.2);
-    --textura-opacidade: 0.15;
+    /* Paleta de superfícies do tema claro. */
+    --bg-principal: #f9f6f0;
+    --bg-card: #efebe4;
+    --bg-nav: #e6e1d8;
+    --text-primary: #2b1e17;
+    --text-secondary: #5c4a3e;
+    --text-muted: #8c7667;
+    --gold-primary: #b38f4f;
+    --gold-glow: rgba(179, 143, 79, 0.15);
+    --green-arcane: #3b5249;
+    --green-bg-tag: #e2eae6;
+
+    --background: var(--bg-principal);
+    --foreground: var(--text-primary);
+    --ink: var(--bg-nav);
+    --card: var(--bg-card);
+    --card-foreground: var(--text-primary);
+    --muted-foreground: var(--text-secondary);
+    --gold: var(--gold-primary);
+    --gold-soft: color-mix(in srgb, var(--gold-primary) 82%, #e7d5a6 18%);
+    --arcane: var(--green-arcane);
+
+    --fundo-principal: var(--bg-principal);
+    --fundo-secundario: var(--bg-nav);
+    --fundo-card: var(--bg-card);
+    --hero-image-overlay: rgba(239, 235, 228, 0.56);
+    --texto-principal: var(--text-primary);
+    --texto-secundario: var(--text-secondary);
+    --detalhe-ouro: var(--gold-primary);
+    --ouro-brilho: var(--gold-primary);
+    --acento-esmeralda: var(--green-arcane);
+    --acento-contraste: #f9f6f0;
+    --borda-input: var(--gold-primary);
+    --sombra-card: 0 14px 26px rgba(91, 73, 55, 0.15);
+    --textura-opacidade: 0.12;
 }
 
+/* Fallback do tema escuro. */
+.dark {
+    --background: var(--ink-deep);
+    --foreground: oklch(0.95 0.02 85);
+}
+
+/* Base global. */
 * {
     margin: 0;
     padding: 0;
@@ -78,12 +174,12 @@ body {
     position: relative;
     min-height: 100vh;
     padding: 20px;
-    font-family: "Source Sans 3", sans-serif;
+    font-family: var(--font-sans);
     color: var(--texto-principal);
     background:
-        radial-gradient(circle at 12% 20%, rgba(197, 160, 89, 0.14), transparent 32%),
-        radial-gradient(circle at 88% 85%, rgba(15, 122, 92, 0.14), transparent 36%),
-        linear-gradient(145deg, var(--fundo-principal) 0%, #0a0f16 100%);
+        radial-gradient(ellipse at top, color-mix(in oklab, var(--detalhe-ouro) 8%, transparent), transparent 60%),
+        radial-gradient(ellipse at bottom, color-mix(in oklab, var(--arcano-realce) 10%, transparent), transparent 60%),
+        var(--fundo-principal);
     overflow-x: hidden;
 }
 
@@ -94,12 +190,13 @@ body::before {
     inset: 0;
     pointer-events: none;
     z-index: -2;
-    background: url("./assets/paper.png") repeat;
-    background-size: 340px 340px;
+    background:
+        radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.04), transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(231, 204, 139, 0.06), transparent 36%);
     opacity: var(--textura-opacidade);
 }
 
-/* Particulas douradas sutis para dar profundidade ao fundo. */
+/* Partículas douradas sutis para dar profundidade ao fundo. */
 body::after {
     content: "";
     position: fixed;
@@ -113,32 +210,29 @@ body::after {
         radial-gradient(circle at 64% 42%, rgba(231, 204, 139, 0.4) 0 1.8px, transparent 4px),
         radial-gradient(circle at 82% 18%, rgba(231, 204, 139, 0.45) 0 1.7px, transparent 4px),
         radial-gradient(circle at 74% 78%, rgba(231, 204, 139, 0.42) 0 1.6px, transparent 4px);
-    opacity: 0.4;
+    opacity: 0.3;
 }
 
+/* Estrutura principal do app e navegação superior. */
 .container {
     position: relative;
-    max-width: 100%;
+    max-width: 1240px;
     margin: 0 auto;
-    padding: 26px;
-    border: 1px solid color-mix(in srgb, var(--detalhe-ouro) 85%, #7a5a2d);
-    border-radius: 10px;
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)),
-        color-mix(in srgb, var(--fundo-secundario) 92%, #000 8%);
-    box-shadow:
-        inset 0 0 0 2px rgba(197, 160, 89, 0.35),
-        0 24px 45px rgba(0, 0, 0, 0.45);
-    overflow: hidden;
+    padding: 30px clamp(18px, 3.2vw, 34px);
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
     animation: reveal 0.7s ease;
 }
 
 h1,
 h2,
-h3 {
-    font-family: "Cinzel", serif;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+h3,
+h4 {
+    font-family: var(--font-display);
+    letter-spacing: 0.02em;
 }
 
 .topo-arcano {
@@ -150,14 +244,22 @@ h3 {
 
 .titulo-arcano {
     text-align: left;
-    font-size: clamp(1.9rem, 3vw, 2.7rem);
+    font-size: clamp(2.1rem, 3.4vw, 3.2rem);
     margin: 0;
+    letter-spacing: 0.14em;
     color: color-mix(in srgb, var(--ouro-brilho) 72%, var(--texto-principal));
     text-shadow: 0 0 10px rgba(231, 204, 139, 0.25);
 }
 
+.header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
 [data-theme="light"] .titulo-arcano {
-    color: color-mix(in srgb, #a58447 82%, var(--detalhe-ouro) 18%);
+    color: color-mix(in srgb, var(--gold-primary) 84%, var(--text-primary) 16%);
 }
 
 .menu-arcano {
@@ -173,13 +275,31 @@ h3 {
 .menu-arcano a {
     color: var(--texto-principal);
     text-decoration: none;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
     font-weight: 600;
-    padding: 6px 10px;
-    border-radius: 999px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-radius: 8px;
     position: relative;
+    transition: color 0.2s ease;
 }
 
-/* Linha luminosa exibida no hover/item ativo do menu. */
+.menu-placeholder {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: color-mix(in srgb, var(--texto-secundario) 88%, #fff 12%);
+}
+
+/* Linha luminosa exibida no hover e no item ativo do menu. */
 .menu-arcano a::after {
     content: "";
     position: absolute;
@@ -194,6 +314,10 @@ h3 {
 
 .menu-arcano a:hover::after {
     opacity: 1;
+}
+
+.menu-arcano a:hover {
+    color: var(--ouro-brilho);
 }
 
 .menu-arcano a.is-active {
@@ -226,61 +350,45 @@ h3 {
 .theme-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-left: auto;
-    padding: 9px 14px;
+    gap: 8px;
+    margin-left: 0;
+    padding: 8px 16px;
     border-radius: 999px;
-    border: 1px solid var(--detalhe-ouro);
-    background: color-mix(in srgb, var(--fundo-secundario) 65%, #111);
-    color: var(--texto-principal);
+    border: 1px solid color-mix(in oklab, var(--detalhe-ouro) 40%, transparent);
+    background: color-mix(in srgb, var(--fundo-principal) 72%, #0d131d 28%);
+    color: color-mix(in srgb, var(--texto-principal) 85%, #fff 15%);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
     font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     cursor: pointer;
-    box-shadow: inset 0 0 0 1px rgba(231, 204, 139, 0.2);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--detalhe-ouro) 16%, transparent);
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.18s ease;
 }
 
-/* Icone exibido depois do texto do botao. */
-.theme-toggle::after {
-    content: "☀";
+.theme-toggle:hover {
+    border-color: color-mix(in oklab, var(--detalhe-ouro) 75%, transparent);
+    color: var(--detalhe-ouro);
+    transform: translateY(-1px);
 }
 
-/* Substitui o icone quando tema claro estiver ativo. */
-[data-theme="light"] .theme-toggle::after {
-    content: "☾";
-}
-
+/* Hero e seções de destaque da Home. */
 .hero-arcano {
     position: relative;
     margin-bottom: 24px;
     min-height: 510px;
-    border: 1px solid color-mix(in srgb, var(--detalhe-ouro) 80%, #6e532b);
+    border: 1px solid color-mix(in srgb, var(--detalhe-ouro) 48%, transparent);
     border-radius: 14px;
     display: grid;
     place-items: center;
     text-align: center;
     overflow: hidden;
-    background-image:
-        linear-gradient(180deg, var(--hero-tone-top), var(--hero-tone-bottom)),
-        linear-gradient(var(--hero-image-overlay), var(--hero-image-overlay)),
-        var(--hero-bg-image);
-    background-position: center, center, center;
-    background-repeat: no-repeat, no-repeat, no-repeat;
-    background-size: auto, auto, cover;
-}
-
-    /* Dupla moldura interna para destacar o hero sem adicionar HTML extra. */
-.hero-arcano::before,
-.hero-arcano::after {
-    content: "";
-    position: absolute;
-    inset: 12px;
-    border: 1px solid rgba(197, 160, 89, 0.42);
-    border-radius: 12px;
-    pointer-events: none;
-}
-
-.hero-arcano::after {
-    inset: 18px;
-    border-color: rgba(197, 160, 89, 0.18);
+    background: transparent;
+    box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--detalhe-ouro) 12%, transparent),
+        inset 0 0 40px color-mix(in oklab, var(--detalhe-ouro) 6%, transparent),
+        0 30px 80px -30px color-mix(in oklab, var(--fundo-principal) 90%, transparent);
 }
 
 .hero-conteudo {
@@ -289,11 +397,11 @@ h3 {
     width: min(1000px, 90%);
     margin: clamp(14px, 2.6vw, 28px) auto;
     padding: clamp(22px, 3.6vw, 42px) clamp(20px, 3.8vw, 44px);
-    border: 1px solid var(--hero-content-border);
+    border: none;
     border-radius: 16px;
-    background: var(--hero-content-surface);
-    box-shadow: var(--hero-content-shadow);
-    backdrop-filter: blur(2px);
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
 }
 
 .hero-conteudo > * {
@@ -301,6 +409,7 @@ h3 {
     z-index: 1;
 }
 
+.hero-conteudo h1,
 .hero-conteudo h2 {
     display: block;
     border-bottom: none;
@@ -313,28 +422,591 @@ h3 {
         0 4px 14px rgba(0, 0, 0, 0.7);
 }
 
-.hero-conteudo p {
+.hero-lead {
     display: block;
     color: color-mix(in srgb, var(--texto-secundario) 86%, #fff 14%);
-    font-size: clamp(1.05rem, 2.4vw, 2rem);
-    margin-bottom: 26px;
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+    font-size: clamp(1.08rem, 1.8vw, 1.34rem);
+    line-height: 1.55;
+    max-width: 640px;
+    margin-bottom: 22px;
 }
 
+.home-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--detalhe-ouro) 40%, transparent);
+    background: color-mix(in srgb, var(--fundo-principal) 72%, #0d131d 28%);
+    color: color-mix(in srgb, var(--ouro-brilho) 75%, var(--texto-principal));
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+
+.home-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.home-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--detalhe-ouro) 25%, transparent);
+    background: color-mix(in srgb, var(--fundo-principal) 70%, #101723 30%);
+    color: color-mix(in srgb, var(--texto-principal) 70%, var(--ouro-brilho) 30%);
+    font-family: var(--font-serif);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.home-hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(20px, 3.4vw, 42px);
+    align-items: stretch;
+}
+
+.home-hero-copy {
+    text-align: left;
+}
+
+.home-cta-row {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 10px;
+    margin-bottom: 16px;
+}
+
+.home-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.home-btn-primary {
+    color: var(--fundo-principal);
+    border-color: transparent;
+    background: linear-gradient(180deg, oklch(0.9 0.11 88), oklch(0.68 0.13 78));
+    box-shadow: 0 10px 40px -10px color-mix(in oklab, var(--detalhe-ouro) 85%, transparent);
+}
+
+.home-btn-ghost {
+    justify-self: end;
+    color: var(--ouro-brilho);
+    border-color: color-mix(in oklab, var(--detalhe-ouro) 40%, transparent);
+    background: color-mix(in srgb, var(--fundo-principal) 78%, transparent);
+}
+
+.home-btn:hover {
+    transform: translateY(-1px);
+}
+
+.home-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 46px -10px color-mix(in oklab, var(--detalhe-ouro) 90%, transparent);
+}
+
+.home-btn-ghost:hover {
+    border-color: color-mix(in oklab, var(--detalhe-ouro) 70%, transparent);
+    background: color-mix(in oklab, var(--detalhe-ouro) 10%, transparent);
+}
+
+/* Conteúdo da Home. */
+.home-hero-panel {
+    align-self: stretch;
+    text-align: left;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.home-stats {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(231, 204, 139, 0.22);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 420px;
+}
+
+.home-stats dt {
+    font-family: "Cinzel", serif;
+    font-size: 1.25rem;
+    color: color-mix(in srgb, var(--ouro-brilho) 75%, var(--texto-principal));
+    margin: 0;
+}
+
+.home-stats dd {
+    margin: 2px 0 0;
+    color: var(--texto-secundario);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.home-pillars {
+    margin-top: 56px;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.home-pillars-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.home-pillars-intro {
+    display: grid;
+    gap: 8px;
+}
+
+.home-pillars-divider {
+    display: block;
+    flex: 1;
+    min-width: 140px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(231, 204, 139, 0.38), transparent);
+}
+
+.home-pillars-intro p {
+    margin: 0;
+    color: var(--detalhe-ouro);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+}
+
+.home-pillars-intro h3 {
+    margin: 0;
+    border: none;
+    padding: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.1vw, 2.7rem);
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: none;
+    letter-spacing: 0.02em;
+}
+
+.home-pillars-title-tail {
+    margin-left: 0.2ch;
+    color: color-mix(in srgb, var(--texto-principal) 80%, #ffffff 20%);
+}
+
+.home-page-shell {
+    position: relative;
+}
+
+.text-gold-gradient {
+    background: linear-gradient(
+        180deg,
+        oklch(0.92 0.1 90) 0%,
+        oklch(0.82 0.13 85) 45%,
+        oklch(0.62 0.13 75) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 40px color-mix(in oklab, var(--gold) 25%, transparent);
+}
+
+.rune-frame {
+    position: relative;
+    border: 1px solid color-mix(in oklab, var(--gold) 45%, transparent);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--gold) 12%, transparent),
+        inset 0 0 40px color-mix(in oklab, var(--gold) 6%, transparent),
+        0 30px 80px -30px color-mix(in oklab, var(--ink-deep) 90%, transparent);
+}
+
+.parchment-bg {
+    background:
+        radial-gradient(ellipse at top, color-mix(in oklab, var(--gold) 8%, transparent), transparent 60%),
+        radial-gradient(ellipse at bottom, color-mix(in oklab, var(--arcane) 10%, transparent), transparent 60%),
+        var(--ink-deep);
+}
+
+.home-runes-backdrop {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    opacity: 0.09;
+}
+
+.home-rune {
+    position: absolute;
+    color: var(--ouro-brilho);
+}
+
+.home-rune-left {
+    top: -220px;
+    left: -220px;
+    animation: rune-spin 120s linear infinite;
+}
+
+.home-rune-right {
+    right: -200px;
+    bottom: -220px;
+    animation: rune-spin 90s linear infinite reverse;
+}
+
+.home-corner {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    color: rgba(231, 204, 139, 0.66);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.home-corner.top-left {
+    top: 12px;
+    left: 12px;
+}
+
+.home-corner.top-right {
+    top: 12px;
+    right: 12px;
+    transform: scaleX(-1);
+}
+
+.home-corner.bottom-left {
+    bottom: 12px;
+    left: 12px;
+    transform: scaleY(-1);
+}
+
+.home-corner.bottom-right {
+    bottom: 12px;
+    right: 12px;
+    transform: scale(-1);
+}
+
+.home-kicker {
+    gap: 8px;
+}
+
+.home-hero-subline {
+    display: block;
+    margin-top: 8px;
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+    font-size: clamp(1.35rem, 2.8vw, 2.35rem);
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: color-mix(in srgb, var(--texto-principal) 84%, var(--ouro-brilho) 16%);
+}
+
+.home-hero-panel {
+    position: relative;
+    overflow: visible;
+    padding: 0;
+    backdrop-filter: blur(2px);
+}
+
+.home-hero-glow {
+    position: absolute;
+    inset: -14px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(231, 204, 139, 0.14), transparent 58%, rgba(134, 88, 183, 0.07));
+    filter: blur(18px);
+    pointer-events: none;
+}
+
+.home-hero-image-frame {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(231, 204, 139, 0.36);
+    box-shadow:
+        inset 0 0 0 1px rgba(231, 204, 139, 0.18),
+        0 20px 44px rgba(0, 0, 0, 0.34);
+}
+
+.home-hero-image {
+    width: 100%;
+    min-height: 320px;
+    object-fit: cover;
+    display: block;
+    animation: flicker 4s ease-in-out infinite;
+}
+
+.home-hero-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(5, 8, 14, 0.78) 100%);
+    pointer-events: none;
+}
+
+.home-floating-rune {
+    position: absolute;
+    right: -36px;
+    top: -36px;
+    opacity: 0.72;
+    color: var(--ouro-brilho);
+    animation: rune-spin 40s linear infinite;
+}
+
+.home-dice-card {
+    position: absolute;
+    left: -22px;
+    bottom: -24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(231, 204, 139, 0.34);
+    background: color-mix(in srgb, var(--fundo-card) 88%, #05080e 12%);
+    box-shadow:
+        inset 0 0 0 1px rgba(231, 204, 139, 0.18),
+        0 14px 28px rgba(0, 0, 0, 0.34);
+}
+
+.home-dice-icon {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    background: rgba(231, 204, 139, 0.12);
+    font-family: "Cinzel", serif;
+    font-size: 1.05rem;
+    color: var(--ouro-brilho);
+}
+
+.home-dice-card p {
+    margin: 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ouro-brilho);
+}
+
+.home-dice-card small {
+    display: block;
+    margin-top: 2px;
+    color: var(--texto-secundario);
+    font-size: 0.75rem;
+}
+
+.hero-card-icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 10px;
+    border: 1px solid rgba(231, 204, 139, 0.45);
+    background: color-mix(in srgb, var(--fundo-secundario) 75%, #080d13 25%);
+    color: var(--ouro-brilho);
+}
+
+.hero-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-family: "Cinzel", serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--ouro-brilho) 86%, var(--texto-principal) 14%);
+}
+
+.home-classes-belt {
+    margin-top: 18px;
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    border-radius: 14px;
+    padding: 18px;
+    background: color-mix(in srgb, var(--fundo-card) 76%, #090f16 24%);
+    box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.12);
+}
+
+.home-classes-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.home-classes-head > div p {
+    margin: 0;
+    color: var(--detalhe-ouro);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.home-classes-head h3 {
+    margin: 6px 0 0;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+}
+
+.home-classes-head > p {
+    margin: 0;
+    max-width: 400px;
+    color: var(--texto-secundario);
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+    font-size: 1.02rem;
+    line-height: 1.5;
+}
+
+.home-class-chips {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.home-class-chips span {
+    border-radius: 999px;
+    border: 1px solid rgba(231, 204, 139, 0.26);
+    background: color-mix(in srgb, var(--fundo-secundario) 72%, #090e15 28%);
+    padding: 6px 12px;
+    color: color-mix(in srgb, var(--texto-principal) 86%, var(--ouro-brilho) 14%);
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+    font-size: 0.95rem;
+}
+
+/* Cards compartilhados e feedback visual. */
+[data-theme="light"] .hero-conteudo h1,
 [data-theme="light"] .hero-conteudo h2 {
-    color: color-mix(in srgb, #a58447 82%, var(--detalhe-ouro) 18%);
+    color: color-mix(in srgb, var(--gold-primary) 88%, var(--text-primary) 12%);
     text-shadow:
-        0 0 8px rgba(231, 204, 139, 0.22),
-        0 2px 6px rgba(255, 250, 240, 0.25),
-        0 8px 20px rgba(0, 0, 0, 0.2);
+        0 0 8px var(--gold-glow),
+        0 2px 6px rgba(249, 246, 240, 0.35),
+        0 8px 20px rgba(43, 30, 23, 0.16);
 }
 
-[data-theme="light"] .hero-conteudo p {
-    color: color-mix(in srgb, #2f2a22 84%, var(--texto-principal) 16%);
+[data-theme="light"] .hero-lead {
+    color: color-mix(in srgb, var(--text-secondary) 86%, var(--text-primary) 14%);
     text-shadow:
-        0 1px 2px rgba(255, 250, 240, 0.2),
-        0 2px 6px rgba(0, 0, 0, 0.18);
+        0 1px 2px rgba(249, 246, 240, 0.2),
+        0 2px 6px rgba(43, 30, 23, 0.12);
 }
 
+[data-theme="light"] .home-btn-primary {
+    color: #fff9ef;
+    background: linear-gradient(180deg, #c9a15a, #a67e3e);
+    border-color: transparent;
+}
+
+[data-theme="light"] .home-btn-ghost {
+    color: var(--gold-primary);
+    border-color: rgba(179, 143, 79, 0.4);
+    background: rgba(239, 235, 228, 0.84);
+}
+
+[data-theme="light"] body {
+    background:
+        radial-gradient(ellipse at top, rgba(179, 143, 79, 0.16), transparent 60%),
+        radial-gradient(ellipse at bottom, rgba(59, 82, 73, 0.14), transparent 62%),
+        var(--bg-principal);
+}
+
+[data-theme="light"] .hero-arcano {
+    background: rgba(239, 235, 228, 0.92);
+    border-color: rgba(179, 143, 79, 0.36);
+    box-shadow:
+        inset 0 0 0 1px rgba(179, 143, 79, 0.18),
+        inset 0 0 24px rgba(179, 143, 79, 0.08),
+        0 24px 44px -24px rgba(91, 73, 55, 0.2);
+}
+
+[data-theme="light"] .home-kicker,
+[data-theme="light"] .home-pill,
+[data-theme="light"] .hero-card,
+[data-theme="light"] .home-classes-belt {
+    background: rgba(230, 225, 216, 0.9);
+    border-color: rgba(179, 143, 79, 0.34);
+}
+
+[data-theme="light"] .hero-card p,
+[data-theme="light"] .home-classes-head > p,
+[data-theme="light"] .home-class-chips span {
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .hero-card-link,
+[data-theme="light"] .home-pillars-intro p,
+[data-theme="light"] .home-classes-head > div p {
+    color: var(--gold-primary);
+}
+
+[data-theme="light"] .home-hero-panel,
+[data-theme="light"] .home-pillars {
+    background: rgba(239, 235, 228, 0.82);
+    border-color: rgba(179, 143, 79, 0.3);
+}
+
+[data-theme="light"] .home-hero-panel {
+    background: transparent;
+    border-color: transparent;
+}
+
+[data-theme="light"] .home-hero-subline {
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .home-hero-image-overlay {
+    background: linear-gradient(180deg, transparent 38%, rgba(239, 235, 228, 0.58) 100%);
+}
+
+[data-theme="light"] .home-dice-card {
+    background: rgba(239, 235, 228, 0.92);
+    border-color: rgba(179, 143, 79, 0.3);
+}
+
+[data-theme="light"] .hero-card-icon,
+[data-theme="light"] .home-class-chips span {
+    background: var(--green-bg-tag);
+    border-color: rgba(59, 82, 73, 0.22);
+    color: var(--green-arcane);
+}
+
+/* Paleta de botões reutilizáveis. */
 .btn-submit,
 .btn-editar,
 .btn-deletar {
@@ -352,41 +1024,9 @@ h3 {
     color: var(--acento-contraste);
 }
 
-.cta-mistico {
-    position: relative;
-    padding: 16px 42px;
-    font-size: clamp(1rem, 2.1vw, 1.9rem);
-    font-family: "Cinzel", serif;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border: 2px solid var(--detalhe-ouro);
-    box-shadow:
-        0 10px 20px rgba(0, 0, 0, 0.3),
-        inset 0 0 0 2px rgba(231, 204, 139, 0.25);
-    background:
-        linear-gradient(180deg, color-mix(in srgb, var(--acento-esmeralda) 85%, #1f9d6f), color-mix(in srgb, var(--acento-esmeralda) 90%, #063629));
-}
-
-/* Detalhes decorativos do botao CTA (borda interna e brilho inferior). */
-.cta-mistico::before,
-.cta-mistico::after {
-    content: "";
-    position: absolute;
-    inset: 5px;
-    border: 1px solid rgba(231, 204, 139, 0.5);
-    pointer-events: none;
-}
-
-.cta-mistico::after {
-    inset: auto 16px -8px 16px;
-    height: 2px;
-    border: none;
-    background: linear-gradient(90deg, transparent, rgba(231, 204, 139, 0.85), transparent);
-}
-
+/* Formulários, busca, modais e alertas. */
 .form-section,
 .aux-section,
-.modal-placeholder,
 .table-section {
     border: 1px solid rgba(197, 160, 89, 0.35);
     border-radius: 12px;
@@ -446,6 +1086,7 @@ h2 {
     transform: translateX(-50%) translateY(0);
 }
 
+/* Superfícies de personagem, grimório e modo de jogo. */
 .form-group {
     margin-bottom: 14px;
     display: flex;
@@ -476,7 +1117,7 @@ input[type="number"]:focus {
     box-shadow: 0 0 0 3px rgba(15, 122, 92, 0.3);
 }
 
-/* Estilos para o container de busca e filtro. */
+/* Estilos do container de busca e filtro. */
 .search-filter-container {
     display: flex;
     flex-wrap: wrap;
@@ -548,46 +1189,46 @@ input[type="number"]:focus {
 }
 
 [data-theme="light"] .search-filter-container {
-    background: #f1e8d4;
-    border-color: #b08d48;
-    box-shadow: inset 0 0 0 1px rgba(176, 141, 72, 0.2);
+    background: var(--bg-nav);
+    border-color: var(--gold-primary);
+    box-shadow: inset 0 0 0 1px rgba(179, 143, 79, 0.18);
 }
 
 [data-theme="light"] .search-input {
-    background: #fffaf0;
-    border-color: #aa8744;
-    color: #2f2415;
+    background: var(--bg-card);
+    border-color: var(--gold-primary);
+    color: var(--text-primary);
 }
 
 [data-theme="light"] .search-input::placeholder {
-    color: #7a5e2d;
+    color: var(--text-muted);
 }
 
 [data-theme="light"] .search-input:focus {
-    border-color: #0b6b52;
-    box-shadow: 0 0 0 2px rgba(11, 107, 82, 0.25);
+    border-color: var(--green-arcane);
+    box-shadow: 0 0 0 2px rgba(59, 82, 73, 0.2);
 }
 
 [data-theme="light"] .btn-buscar {
-    background: #0b6b52;
-    border-color: #0b6b52;
-    color: #fffaf0;
+    background: var(--green-arcane);
+    border-color: var(--green-arcane);
+    color: #f9f6f0;
 }
 
 [data-theme="light"] .btn-buscar:hover {
-    background: #095641;
-    box-shadow: 0 5px 14px rgba(9, 86, 65, 0.25);
+    background: color-mix(in srgb, var(--green-arcane) 88%, #000 12%);
+    box-shadow: 0 5px 14px rgba(59, 82, 73, 0.22);
 }
 
 [data-theme="light"] .btn-reset {
-    background: #b08d48;
-    border-color: #9a7734;
-    color: #fffaf0;
+    background: var(--gold-primary);
+    border-color: color-mix(in srgb, var(--gold-primary) 76%, #7b5a24 24%);
+    color: #fff8ef;
 }
 
 [data-theme="light"] .btn-reset:hover {
-    background: #9a7734;
-    color: #21160a;
+    background: color-mix(in srgb, var(--gold-primary) 84%, #8a672d 16%);
+    color: #25170d;
 }
 
 .hook-actions {
@@ -695,8 +1336,7 @@ input[type="number"]:focus {
 
 .btn-submit:hover,
 .btn-editar:hover,
-.btn-deletar:hover,
-.theme-toggle:hover {
+.btn-deletar:hover {
     transform: translateY(-1px);
     box-shadow: 0 10px 18px rgba(0, 0, 0, 0.28);
 }
@@ -1012,13 +1652,17 @@ input[type="number"]:focus {
 .subtitulo-arcano {
     margin-top: 6px;
     color: var(--texto-secundario);
-    font-size: 0.98rem;
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+    font-size: 1.26rem;
+    font-style: italic;
+    line-height: 1.25;
     max-width: 560px;
 }
 
 .breadcrumb {
     margin-top: 16px;
-    font-size: 0.95rem;
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+    font-size: 1rem;
     color: var(--texto-secundario);
 }
 
@@ -1282,11 +1926,69 @@ input[type="number"]:focus {
 }
 
 [data-theme="light"] .modal-overlay {
-    background: rgba(34, 27, 16, 0.45);
+    background: rgba(43, 30, 23, 0.46);
 }
 
 [data-theme="light"] .modal-card {
-    background: color-mix(in srgb, #fff7e9 90%, #f1e3c5 10%);
+    background: var(--bg-card);
+}
+
+[data-theme="light"] .personagem-card,
+[data-theme="light"] .character-card {
+    background: linear-gradient(170deg, color-mix(in srgb, var(--bg-card) 92%, #fff 8%), var(--bg-card));
+    border-color: rgba(179, 143, 79, 0.28);
+}
+
+[data-theme="light"] .status-rapido {
+    background: var(--bg-nav);
+    border-color: rgba(179, 143, 79, 0.28);
+}
+
+[data-theme="light"] .spell-actions select {
+    background: var(--bg-card);
+    border-color: var(--gold-primary);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .spell-card {
+    background: linear-gradient(170deg, color-mix(in srgb, var(--bg-card) 92%, #fff 8%), var(--bg-card));
+    border-color: rgba(179, 143, 79, 0.3);
+}
+
+[data-theme="light"] .spell-tag {
+    background: var(--green-bg-tag);
+    color: var(--green-arcane);
+}
+
+[data-theme="light"] .pagination-controls {
+    background: var(--bg-nav);
+    border-color: rgba(179, 143, 79, 0.24);
+}
+
+[data-theme="light"] .btn-pagination {
+    background: var(--bg-card);
+    border-color: rgba(179, 143, 79, 0.3);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .btn-pagination:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--gold-primary) 18%, var(--bg-card) 82%);
+    border-color: var(--gold-primary);
+}
+
+[data-theme="light"] .btn-voltar-inicio,
+[data-theme="light"] .theme-toggle,
+[data-theme="light"] .menu-placeholder {
+    background: var(--bg-nav);
+    border-color: rgba(179, 143, 79, 0.3);
+    color: var(--text-primary);
+    box-shadow: inset 0 0 0 1px rgba(179, 143, 79, 0.12);
+}
+
+[data-theme="light"] .theme-toggle:hover,
+[data-theme="light"] .btn-voltar-inicio:hover {
+    border-color: var(--gold-primary);
+    color: var(--gold-primary);
 }
 
 .loading-indicator {
@@ -1295,8 +1997,8 @@ input[type="number"]:focus {
     gap: 12px;
     padding: 12px 16px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: color-mix(in srgb, var(--fundo-card) 92%, transparent);
+    border: 1px solid color-mix(in srgb, var(--detalhe-ouro) 24%, transparent);
     color: var(--texto-principal);
     margin-bottom: 18px;
 }
@@ -1304,7 +2006,7 @@ input[type="number"]:focus {
 .spinner {
     width: 20px;
     height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.2);
+    border: 3px solid color-mix(in srgb, var(--fundo-secundario) 42%, transparent);
     border-top-color: var(--ouro-brilho);
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -1317,8 +2019,8 @@ input[type="number"]:focus {
 .content-section {
     padding: 18px;
     border-radius: 16px;
-    background: color-mix(in srgb, var(--fundo-card) 86%, #0a0f16 14%);
-    border: 1px solid rgba(197, 160, 89, 0.24);
+    background: var(--fundo-card);
+    border: 1px solid color-mix(in srgb, var(--detalhe-ouro) 24%, transparent);
 }
 
 .cards-grid {
@@ -1633,21 +2335,26 @@ input[type="number"]:focus {
     justify-items: start;
 }
 
+/* Cards da Home e faixa de classes. */
 .hero-cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    margin-top: 20px;
+    gap: 24px;
+    margin-top: 0;
 }
 
 .hero-card {
+    position: relative;
     display: grid;
-    gap: 10px;
-    padding: 18px;
+    gap: 12px;
+    overflow: hidden;
+    padding: 28px;
     border-radius: 16px;
-    border: 1px solid rgba(197, 160, 89, 0.26);
-    background: color-mix(in srgb, var(--fundo-card) 80%, var(--fundo-secundario) 20%);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+    border: 1px solid color-mix(in oklab, var(--detalhe-ouro) 38%, transparent);
+    background: color-mix(in srgb, var(--fundo-card) 78%, var(--fundo-secundario) 22%);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--detalhe-ouro) 10%, transparent),
+        0 20px 36px rgba(0, 0, 0, 0.18);
     transform: translateY(0);
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
     outline: none;
@@ -1656,40 +2363,51 @@ input[type="number"]:focus {
 .hero-card p {
     margin: 0;
     color: var(--texto-secundario);
-    font-size: 0.92rem;
-    line-height: 1.45;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transform: translateY(6px);
-    transition: max-height 0.3s ease, opacity 0.25s ease, transform 0.25s ease;
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    opacity: 0.95;
+    transition: opacity 0.25s ease;
 }
 
-.hero-card h3 {
+.hero-card h4 {
     margin: 0;
-    font-size: 1.06rem;
+    font-size: 1.8rem;
     line-height: 1.25;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
     color: color-mix(in srgb, var(--ouro-brilho) 70%, var(--texto-principal));
     transition: transform 0.25s ease;
 }
 
+.hero-card-index {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    color: color-mix(in srgb, var(--detalhe-ouro) 86%, var(--texto-principal) 14%);
+    font-family: "Cinzel", serif;
+    font-size: 3.4rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
 .hero-card:hover,
 .hero-card:focus-visible {
-    transform: translateY(-6px) scale(1.02);
+    transform: translateY(-3px);
     border-color: rgba(231, 204, 139, 0.55);
-    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.18);
-    background: color-mix(in srgb, var(--fundo-card) 72%, var(--fundo-secundario) 28%);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--detalhe-ouro) 16%, transparent),
+        0 24px 40px rgba(0, 0, 0, 0.22);
+    background: color-mix(in srgb, var(--fundo-card) 66%, var(--fundo-secundario) 34%);
 }
 
 .hero-card:hover p,
 .hero-card:focus-visible p {
-    max-height: 130px;
     opacity: 1;
-    transform: translateY(0);
 }
 
-.hero-card:hover h3,
-.hero-card:focus-visible h3 {
+.hero-card:hover h4,
+.hero-card:focus-visible h4 {
     transform: translateY(-1px);
 }
 
@@ -1698,6 +2416,7 @@ input[type="number"]:focus {
     outline-offset: 3px;
 }
 
+/* Ajustes responsivos. */
 @media (max-width: 1200px) {
     .play-hp-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1715,6 +2434,28 @@ input[type="number"]:focus {
         grid-template-columns: 1fr;
     }
 
+    .home-hero-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .home-hero-panel {
+        margin-top: 6px;
+    }
+
+    .home-dice-card {
+        left: 10px;
+        bottom: 10px;
+        position: absolute;
+    }
+
+    .home-classes-head {
+        align-items: flex-start;
+    }
+
+    .home-pillars-divider {
+        display: none;
+    }
+
     .topo-conteudo,
     .menu-arcano {
         flex-direction: column;
@@ -1723,6 +2464,10 @@ input[type="number"]:focus {
 
     .menu-arcano {
         justify-content: center;
+    }
+
+    .header-actions {
+        justify-content: flex-start;
     }
 }
 
@@ -1893,6 +2638,7 @@ input[type="number"]:focus {
     background: color-mix(in srgb, var(--acento-esmeralda) 70%, transparent);
 }
 
+/* Conteúdo do wizard. */
 .wizard-method-row {
     display: flex;
     flex-wrap: wrap;
@@ -1997,6 +2743,31 @@ input[type="number"]:focus {
     }
 }
 
+@keyframes flicker {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    45% {
+        opacity: 0.86;
+    }
+
+    55% {
+        opacity: 0.95;
+    }
+}
+
+@keyframes rune-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 @media (max-width: 1080px) {
     .cards-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2027,6 +2798,10 @@ input[type="number"]:focus {
 
     .theme-toggle {
         margin-left: 0;
+        width: auto;
+    }
+
+    .header-actions {
         width: 100%;
     }
 
@@ -2038,10 +2813,49 @@ input[type="number"]:focus {
         font-size: clamp(1.7rem, 8vw, 2.5rem);
     }
 
+    .hero-conteudo h1 {
+        font-size: clamp(1.7rem, 8vw, 2.5rem);
+    }
+
     .hero-conteudo {
         width: 92%;
         padding: 18px 16px 24px;
         border-radius: 12px;
+    }
+
+    .home-pill-row {
+        justify-content: flex-start;
+    }
+
+    .home-cta-row {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .home-btn-ghost {
+        justify-self: stretch;
+    }
+
+    .home-btn {
+        width: 100%;
+    }
+
+    .home-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .home-runes-backdrop {
+        opacity: 0.05;
+    }
+
+    .home-corner {
+        width: 24px;
+        height: 24px;
+    }
+
+    .home-floating-rune,
+    .home-dice-card {
+        display: none;
     }
 
     .cards-grid {

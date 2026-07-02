@@ -1,6 +1,6 @@
 # Grimmorium Frontend (MVP 2)
 
-SPA em React para gestão de personagens e grimorio de magias.
+SPA em React para gestão de personagens e grimório de magias.
 
 ## Requisitos
 
@@ -28,17 +28,17 @@ npm run dev
 
 Aplicação: http://localhost:5173
 
-## Variaveis de ambiente (opcional)
+## Variáveis de ambiente (opcional)
 
 Crie um arquivo `.env` na pasta `grimmorium-react-main`:
 
 ```bash
 VITE_CHARACTERS_DATA_MODE=api
 VITE_API_BASE_URL=http://127.0.0.1:5000
-VITE_ENABLE_LOCAL_JSON_FALLBACK=true
+VITE_ENABLE_LOCAL_JSON_FALLBACK=false
 ```
 
-## Comandos uteis
+## Comandos úteis
 
 ```bash
 npm run build
@@ -56,19 +56,19 @@ npm run lint
 
 ## Fontes de dados
 
-- Personagens: backend (padrao)
-- Magias PT-BR: backend em `/api/magias` com fallback local
-- JSON local em `public/` e sincronizado pelo backend
+- Personagens: backend (padrão)
+- Magias PT-BR: backend em `/api/magias` (padrão)
+- JSON local em `public/`: opcional, usado apenas como contingência quando `VITE_ENABLE_LOCAL_JSON_FALLBACK=true`
 
 ## Creditos e APIs externas
 
 - [D&D 5e API](https://www.dnd5eapi.co) — API pública REST com dados do D&D 5ª edição.
 
-## Aderencia ao MVP (resumo)
+## Aderência ao MVP (resumo)
 
 - 3+ paginas e componentizacao reutilizavel
 - React Router com `useNavigate`, `useParams`, `useLocation`
 - Rota 404
 - Feedback de loading/sucesso/erro, tooltips e mensagens condicionais
 - Layout responsivo (desktop/tablet/mobile)
-- README com instalacao e execucao
+- README com instalação e execução

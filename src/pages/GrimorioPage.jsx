@@ -36,7 +36,9 @@ async function loadPortugueseSpells() {
     console.error('Falha no backend de magias, tentando JSON local.', error)
     try {
       const response = await fetch('/magias.json')
-      if (!response.ok) throw new Error(`Falha ao carregar magias locais (${response.status})`)
+      if (!response.ok) {
+        throw new Error(`Falha ao carregar magias locais (${response.status})`, { cause: error })
+      }
       const data = await response.json()
       return data.map(mapPortugueseSpell)
     } catch (fallbackError) {

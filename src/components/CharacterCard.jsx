@@ -10,11 +10,6 @@ export default function CharacterCard({ character, onSelect, onDelete, onEdit })
     nivel: 0,
     hp: '0/0',
     ca: 0,
-    slots_magia: {
-      nivel1: 0,
-      nivel2: 0,
-      nivel3: 0,
-    },
     ...character,
     slots_magia: {
       nivel1: 0,
