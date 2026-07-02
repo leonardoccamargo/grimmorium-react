@@ -140,7 +140,6 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
   const { language } = useLanguage()
   const [form, setForm] = useState(() => normalizeInitialValues(initial))
   const [currentStep, setCurrentStep] = useState(0)
-  const [validationError, setValidationError] = useState('')
 
   useEffect(() => {
     setForm(normalizeInitialValues(initial))
@@ -324,8 +323,8 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     if (currentStep === 0) {
       return (
         <div className="form-grid form-grid-3">
-          <label>
-            {strings.name}
+          <label className="required-label">
+            {strings.name} *
             <input
               type="text"
               value={form.nome}
@@ -343,8 +342,8 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
             />
           </label>
 
-          <label>
-            {strings.level}
+          <label className="required-label">
+            {strings.level} *
             <input
               type="number"
               min="1"
@@ -382,8 +381,8 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
       return (
         <>
           <div className="form-grid form-grid-3">
-            <label>
-              {strings.class}
+            <label className="required-label">
+              {strings.class} *
               <select
                 value={form.classe}
                 onChange={(event) => handleChange('classe', event.target.value)}
@@ -522,8 +521,8 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
       return (
         <>
           <div className="form-grid form-grid-mixed">
-            <label>
-              {strings.ac}
+            <label className="required-label">
+              {strings.ac} *
               <input
                 type="number"
                 min="0"
@@ -586,16 +585,13 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
     event.preventDefault()
 
     if (!form.nome.trim()) {
-      setValidationError(language === 'pt-br' ? 'O nome do personagem é obrigatório.' : 'Character name is required.')
       setCurrentStep(0)
       return
     }
     if (!form.classe) {
-      setValidationError(language === 'pt-br' ? 'A classe do personagem é obrigatória.' : 'Character class is required.')
       setCurrentStep(2)
       return
     }
-    setValidationError('')
 
     const calculatedHp = (() => {
       try {
@@ -662,8 +658,6 @@ export default function CharacterForm({ initial = initialValues, onSubmit, onCan
       <p className="form-hint">{strings.wizardHint}</p>
 
       {renderStep()}
-
-      {validationError && <p className="form-error">{validationError}</p>}
 
       <div className="form-actions">
         <button type="button" className="btn-secondary" onClick={onCancel}>{strings.cancel}</button>

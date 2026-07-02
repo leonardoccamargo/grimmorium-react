@@ -1079,11 +1079,8 @@ input[type="number"]:focus {
     grid-column: 1 / -1;
 }
 
-.form-error {
+.required-label {
     color: #e05252;
-    font-size: 0.875rem;
-    margin: 0;
-    text-align: right;
 }
 
 .form-actions {
