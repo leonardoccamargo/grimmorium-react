@@ -62,7 +62,7 @@ npm run lint
 
 ## Creditos e APIs externas
 
-- [D&D 5e API](https://www.dnd5eapi.co) — API pública REST com dados do D&D 5ª edição (magias em inglês, fallback quando backend indisponível)
+- [D&D 5e API](https://www.dnd5eapi.co) — API pública REST com dados do D&D 5ª edição.
 
 ## Aderencia ao MVP (resumo)
 
