@@ -328,6 +328,23 @@ export function CharactersProvider({ children }) {
     }
   }, [personagens, status])
 
+  useEffect(() => {
+    const successMessageKeys = new Set(['character-added', 'character-updated', 'character-deleted'])
+
+    if (!successMessageKeys.has(mensagemKey)) {
+      return undefined
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setMensagemKey(null)
+      setApiErrorDetail('')
+    }, 4000)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [mensagemKey])
+
   const addCharacter = async (character) => {
     if (IS_LOCAL_MODE) {
       const newCharacter = {
