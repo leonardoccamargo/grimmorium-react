@@ -2,6 +2,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { useLanguage } from './context/LanguageContext.jsx'
 import Header from './components/Header.jsx'
+import RunesBackdrop from './components/RunesBackdrop.jsx'
 import HomePage from './pages/HomePage.jsx'
 import PersonagensPage from './pages/PersonagensPage.jsx'
 import GrimorioPage from './pages/GrimorioPage.jsx'
@@ -26,6 +27,7 @@ export default function App() {
 
   return (
     <div className="container">
+      <RunesBackdrop />
       <Header theme={theme} onToggleTheme={toggleTheme} />
 
       <main>

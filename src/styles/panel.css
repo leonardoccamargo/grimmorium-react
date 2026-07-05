@@ -1,0 +1,145 @@
+﻿/* ============================================
+   PAINEL LATERAL DE PERSONAGEM
+   ============================================ */
+
+.painel-lateral {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+}
+
+.painel-lateral[hidden] {
+    display: none;
+}
+
+.painel-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    cursor: pointer;
+}
+
+.painel-conteudo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(420px, 92vw);
+    background: color-mix(in srgb, var(--fundo-secundario) 94%, #000 6%);
+    border-left: 1px solid rgba(197, 160, 89, 0.5);
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    animation: slideInRight 0.25s ease;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+}
+
+.btn-fechar-painel {
+    align-self: flex-end;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(197, 160, 89, 0.45);
+    background: transparent;
+    color: var(--texto-principal);
+    font-size: 1rem;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.btn-fechar-painel:hover {
+    background: rgba(197, 160, 89, 0.18);
+}
+
+.painel-header {
+    border-bottom: 1px solid rgba(197, 160, 89, 0.35);
+    padding-bottom: 12px;
+}
+
+.painel-nome {
+    font-size: 1.35rem;
+    color: var(--detalhe-ouro);
+    border-bottom: none;
+    margin-bottom: 4px;
+    padding-bottom: 0;
+}
+
+.painel-info-char {
+    color: var(--texto-secundario);
+    font-size: 0.92rem;
+}
+
+.painel-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid rgba(197, 160, 89, 0.28);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.14);
+    text-align: center;
+}
+
+.painel-stats div span {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--texto-secundario);
+}
+
+.painel-stats div strong {
+    font-size: 1.15rem;
+    color: var(--ouro-brilho);
+}
+
+.painel-secao h3 {
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+    color: var(--texto-principal);
+    border-bottom: 1px solid rgba(197, 160, 89, 0.28);
+    padding-bottom: 8px;
+}
+
+.slot-linha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.slot-linha > span:first-child {
+    min-width: 58px;
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.slot-contador {
+    min-width: 38px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--ouro-brilho);
+    font-size: 0.88rem;
+}
+
+.btn-usar-slot,
+.btn-recuperar-slot {
+    padding: 5px 10px;
+    font-size: 0.82rem;
+    flex: 1;
+}
+
+.painel-placeholder {
+    color: var(--texto-secundario);
+    font-style: italic;
+    font-size: 0.88rem;
+}
+

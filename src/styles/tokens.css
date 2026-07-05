@@ -1,0 +1,230 @@
+﻿/* Tokens de tema e aliases compartilhados. */
+:root {
+    /* Tokens visuais base. */
+    --radius: 0.5rem;
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+
+    /* Paleta principal. */
+    --ink-deep: oklch(0.14 0.03 260);
+    --ink: oklch(0.19 0.035 260);
+    --parchment: oklch(0.94 0.03 85);
+    --gold: oklch(0.82 0.13 85);
+    --gold-soft: oklch(0.88 0.09 88);
+    --gold-deep: oklch(0.62 0.13 75);
+    --blood: oklch(0.42 0.15 25);
+    --arcane: oklch(0.55 0.18 295);
+
+    --background: var(--ink-deep);
+    --foreground: oklch(0.95 0.02 85);
+    --card: oklch(0.22 0.035 260);
+    --card-foreground: oklch(0.95 0.02 85);
+    --popover: var(--card);
+    --popover-foreground: var(--card-foreground);
+    --primary: var(--gold);
+    --primary-foreground: var(--ink-deep);
+    --secondary: oklch(0.26 0.04 260);
+    --secondary-foreground: oklch(0.95 0.02 85);
+    --muted: oklch(0.24 0.03 260);
+    --muted-foreground: oklch(0.7 0.02 85);
+    --accent: var(--blood);
+    --accent-foreground: oklch(0.95 0.02 85);
+    --destructive: oklch(0.55 0.2 27);
+    --destructive-foreground: oklch(0.98 0 0);
+    --border: color-mix(in oklab, var(--gold) 22%, transparent);
+    --input: oklch(0.26 0.03 260);
+    --ring: var(--gold);
+
+    /* Aliases compativeis com Shadcn/Tailwind usados pelo restante da folha. */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-gold: var(--gold);
+    --color-gold-soft: var(--gold-soft);
+    --color-gold-deep: var(--gold-deep);
+    --color-parchment: var(--parchment);
+    --color-blood: var(--blood);
+    --color-arcane: var(--arcane);
+    --color-ink: var(--ink);
+    --color-ink-deep: var(--ink-deep);
+
+    --font-display: "Cinzel", "Cormorant Garamond", serif;
+    --font-serif: "Cormorant Garamond", "Times New Roman", serif;
+    --font-sans: "Inter", system-ui, sans-serif;
+
+    --shadow-arcane: 0 20px 60px -20px color-mix(in oklab, var(--gold) 30%, transparent),
+        0 0 0 1px color-mix(in oklab, var(--gold) 20%, transparent);
+    --shadow-rune: 0 0 30px color-mix(in oklab, var(--gold) 40%, transparent);
+
+    /* Aliases do projeto mantidos para as regras de classe existentes. */
+    --fundo-principal: var(--background);
+    --fundo-secundario: var(--ink);
+    --fundo-card: var(--card);
+    --hero-image-overlay: rgba(10, 15, 22, 0.42);
+    --texto-principal: var(--foreground);
+    --texto-secundario: var(--muted-foreground);
+    --detalhe-ouro: var(--gold);
+    --ouro-brilho: var(--gold-soft);
+    --arcano-realce: var(--arcane);
+    --acento-esmeralda: #0f7a5c;
+    --acento-contraste: #f5f2e9;
+    --borda-input: #8c7547;
+    --sombra-card: 0 18px 30px rgba(0, 0, 0, 0.42);
+    --textura-opacidade: 0.035;
+
+    --home-btn-primary-text: var(--fundo-principal);
+    --home-btn-primary-bg: linear-gradient(180deg, oklch(0.9 0.11 88), oklch(0.68 0.13 78));
+    --home-btn-primary-hover-bg: linear-gradient(180deg, oklch(0.88 0.11 88), oklch(0.64 0.13 78));
+}
+
+[data-theme="light"] {
+    /* Paleta de superficies do tema claro. */
+    --bg-principal: #e9d7b9bb;
+    --bg-parchment: #e7d7ba;
+    --bg-card: #E1D7C4;
+    --bg-nav: #D9CFBB;
+    --border-color: #C9B89B;
+    --text-primary: #261F19;
+    --text-secondary: #52463C;
+    --text-muted: #8c7667;
+    --gold-primary: #8F6E12;
+    --gold-glow: rgba(143, 110, 18, 0.08);
+    --green-arcane: #3b5249;
+    --green-bg-tag: #D6DED8;
+
+    --background: var(--bg-principal);
+    --foreground: var(--text-primary);
+    --ink: var(--bg-nav);
+    --card: var(--bg-card);
+    --card-foreground: var(--text-primary);
+    --muted-foreground: var(--text-secondary);
+    --gold: var(--gold-primary);
+    --gold-soft: color-mix(in srgb, var(--gold-primary) 82%, #e7d5a6 18%);
+    --arcane: var(--green-arcane);
+
+    --fundo-principal: var(--bg-principal);
+    --fundo-secundario: var(--bg-nav);
+    --fundo-card: var(--bg-card);
+    --hero-image-overlay: rgba(214, 205, 187, 0.68);
+    --texto-principal: var(--text-primary);
+    --texto-secundario: var(--text-secondary);
+    --detalhe-ouro: var(--gold-primary);
+    --ouro-brilho: var(--gold-primary);
+    --acento-esmeralda: var(--green-arcane);
+    --acento-contraste: #EEE6D8;
+    --borda-input: var(--border-color);
+    --sombra-card: 0 12px 24px rgba(70, 57, 45, 0.12);
+    --textura-opacidade: 0.07;
+
+    --home-btn-primary-text: color-mix(in srgb, var(--text-primary) 96%, #000 4%);
+    --home-btn-primary-bg: linear-gradient(180deg, oklch(0.9 0.11 88), oklch(0.68 0.13 78));
+    --home-btn-primary-hover-bg: linear-gradient(180deg, oklch(0.88 0.11 88), oklch(0.64 0.13 78));
+}
+
+/* Fallback do tema escuro. */
+.dark {
+    --background: var(--ink-deep);
+    --foreground: oklch(0.95 0.02 85);
+}
+
+/* Base global. */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+html {
+    scroll-behavior: smooth;
+    background: var(--ink-deep);
+}
+
+[data-theme="light"] html {
+  background: var(--bg-parchment);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--ouro-brilho);
+    outline-offset: 2px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: var(--font-sans);
+    color: var(--texto-principal);
+    background:
+        radial-gradient(ellipse at top, color-mix(in oklab, var(--detalhe-ouro) 8%, transparent), transparent 60%),
+        radial-gradient(ellipse at bottom, color-mix(in oklab, var(--arcano-realce) 10%, transparent), transparent 60%),
+        var(--fundo-principal);
+    overflow-x: hidden;
+}
+
+    /* Camada de textura de papel sobre o fundo base. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -2;
+    background:
+        radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.04), transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(231, 204, 139, 0.06), transparent 36%);
+    opacity: var(--textura-opacidade);
+}
+
+/* Particulas douradas sutis para dar profundidade ao fundo. */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background-image:
+        radial-gradient(circle at 10% 30%, rgba(231, 204, 139, 0.45) 0 2px, transparent 4px),
+        radial-gradient(circle at 23% 78%, rgba(231, 204, 139, 0.35) 0 1.5px, transparent 4px),
+        radial-gradient(circle at 40% 16%, rgba(231, 204, 139, 0.45) 0 1.7px, transparent 4px),
+        radial-gradient(circle at 64% 42%, rgba(231, 204, 139, 0.4) 0 1.8px, transparent 4px),
+        radial-gradient(circle at 82% 18%, rgba(231, 204, 139, 0.45) 0 1.7px, transparent 4px),
+        radial-gradient(circle at 74% 78%, rgba(231, 204, 139, 0.42) 0 1.6px, transparent 4px);
+    opacity: 0.3;
+}
+

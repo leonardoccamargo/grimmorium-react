@@ -58,7 +58,6 @@ export default function HomePage() {
 
   return (
     <main className="home-page-shell">
-      <RunesBackdrop />
 
       <section className="hero-arcano home-hero">
         <CornerFlourish className="home-corner top-left" />
@@ -167,15 +166,6 @@ export default function HomePage() {
         </div>
       </section>
     </main>
-  )
-}
-
-function RunesBackdrop() {
-  return (
-    <div className="home-runes-backdrop" aria-hidden="true">
-      <div className="home-rune home-rune-left"><RuneCircle large /></div>
-      <div className="home-rune home-rune-right"><RuneCircle large /></div>
-    </div>
   )
 }
 
