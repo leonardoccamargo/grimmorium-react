@@ -70,7 +70,7 @@ A aplicação utiliza roteamento interno para as seguintes telas:
 
 A aplicação suporta funcionamento híbrido. Caso precise usar o frontend de forma isolada sem o backend ativo, você pode consumir dados de um arquivo **JSON local**:
 
-1. **Ativar Modo Local:** No seu arquivo `.env`, altere o valor da variável:
+1. **Ativar Modo Local:** No seu arquivo `.env.development`, altere o valor da variável:
 ```env
 VITE_CHARACTERS_DATA_MODE=local
 
