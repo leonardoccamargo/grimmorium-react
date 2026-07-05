@@ -61,6 +61,7 @@ npm run lint
 - /
 - /personagens
 - /grimorio
+- /jogar
 - /jogar/:id
 - * (404)
 

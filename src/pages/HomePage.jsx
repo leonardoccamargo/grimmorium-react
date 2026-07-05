@@ -13,7 +13,7 @@ export default function HomePage() {
   const strings = {
     heroKicker: language === 'pt-br' ? 'Página inicial' : 'Home',
     heroHeadingTop: language === 'pt-br' ? 'Tudo o que você precisa' : 'Everything you need',
-    heroHeadingBottom: language === 'pt-br' ? 'para mestrar sua próxima aventura' : 'to run your next adventure',
+    heroHeadingBottom: language === 'pt-br' ? 'para a sua próxima aventura!' : 'for your next adventure!',
     heroText: language === 'pt-br'
       ? 'Crie personagens de D&D 5e, acompanhe vida e recursos na sessão e consulte magias do grimório em um só lugar.'
       : 'Create D&D 5e characters, track HP and resources in-session, and browse spells in one place.',
