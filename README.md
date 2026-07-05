@@ -1,6 +1,6 @@
 # Grimmorium Frontend API
 
-SPA em React para gerenciamento de personagens, grimório e jogo do MVP.
+SPA em React para gerenciamento de personagens em tempo real.
 
 ## Pre-requisitos
 
