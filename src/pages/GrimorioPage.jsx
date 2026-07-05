@@ -2,6 +2,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import PageTitle from '../components/PageTitle'
 import LoadingIndicator from '../components/LoadingIndicator'
 import SpellCard from '../components/SpellCard'
+import SearchBar from '../components/SearchBar'
 import { useLanguage } from '../context/LanguageContext.jsx'
 
 const API_BASE = 'https://www.dnd5eapi.co/api/2014/spells'
@@ -115,6 +116,7 @@ export default function GrimorioPage() {
   const [selectedSpellDetails, setSelectedSpellDetails] = useState(null)
   const [indexStatus, setIndexStatus] = useState('loading')
   const [detailStatus, setDetailStatus] = useState('idle')
+  const [searchTerm, setSearchTerm] = useState('')
   const [levelFilter, setLevelFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [reloadToken, setReloadToken] = useState(0)
@@ -181,14 +183,37 @@ export default function GrimorioPage() {
     ? (detailSpell ? 'success' : 'idle')
     : detailStatus
 
+  const searchedSpells = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase()
+
+    if (!normalizedSearch) {
+      return spellIndexList
+    }
+
+    return spellIndexList.filter((spell) =>
+      String(spell.name || '').toLowerCase().includes(normalizedSearch),
+    )
+  }, [searchTerm, spellIndexList])
+
   const filteredSpells = useMemo(
-    () => filterSpellsByLevel(levelFilter, spellIndexList),
-    [levelFilter, spellIndexList],
+    () => filterSpellsByLevel(levelFilter, searchedSpells),
+    [levelFilter, searchedSpells],
   )
 
   const handleLevelFilterChange = (event) => {
     setLevelFilter(event.target.value)
     setCurrentPage(1)
+    setSelectedSpellIndex(null)
+    setSelectedSpellDetails(null)
+    setDetailStatus('idle')
+  }
+
+  const handleSearchChange = (value) => {
+    setSearchTerm(value)
+    setCurrentPage(1)
+    setSelectedSpellIndex(null)
+    setSelectedSpellDetails(null)
+    setDetailStatus('idle')
   }
 
   const totalPages = useMemo(
@@ -316,6 +341,16 @@ export default function GrimorioPage() {
       />
 
       <section className="content-section">
+        <div className="page-actions">
+          <SearchBar
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder={language === 'pt-br' ? 'Buscar magia por nome...' : 'Search spell by name...'}
+            buttonLabel={language === 'pt-br' ? 'Buscar' : 'Search'}
+            ariaLabel={language === 'pt-br' ? 'Buscar magia' : 'Search spell'}
+          />
+        </div>
+
         <div className="spell-actions">
           <div>
             <label htmlFor="spell-level-filter">{strings.filterLabel}</label>

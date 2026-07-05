@@ -1488,6 +1488,10 @@ input[type="number"]:focus {
     margin-bottom: 18px;
 }
 
+.page-actions-compact {
+    margin-bottom: 8px;
+}
+
 .character-form {
     display: grid;
     gap: 18px;
@@ -1596,7 +1600,7 @@ input[type="number"]:focus {
     grid-template-columns: minmax(0, 1fr) auto auto;
     gap: 12px;
     align-items: stretch;
-    margin-bottom: 18px;
+    margin-bottom: 2px;
     width: 100%;
     max-width: none;
     padding: 10px;
@@ -1831,6 +1835,7 @@ input[type="number"]:focus {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
+    margin-top: 16px;
 }
 
 .character-card {
@@ -1986,7 +1991,7 @@ input[type="number"]:focus {
 }
 
 .session-roster {
-    padding: 16px;
+    padding: 4px;
 }
 
 .session-roster h3 {

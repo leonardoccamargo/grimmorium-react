@@ -81,7 +81,7 @@ export default function PersonagensPage() {
       <PageTitle title={strings.title} subtitle={strings.subtitle} />
 
       <section className="content-section">
-        <div className="page-actions">
+        <div className="page-actions page-actions-compact">
           <SearchBar
             value={busca}
             onChange={setBusca}

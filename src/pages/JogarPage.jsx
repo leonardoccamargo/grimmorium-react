@@ -4,6 +4,7 @@ import PageTitle from '../components/PageTitle'
 import LoadingIndicator from '../components/LoadingIndicator'
 import ConfirmModal from '../components/ConfirmModal'
 import MessageModal from '../components/MessageModal'
+import SearchBar from '../components/SearchBar'
 import { useCharacters } from '../context/CharactersContext'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { clampHpToMax, parseHpString, formatHpString } from '../utils/characterHealth.js'
@@ -16,6 +17,7 @@ export default function JogarPage() {
   const [editedValues, setEditedValues] = useState({})
   const [showUnsavedModal, setShowUnsavedModal] = useState(false)
   const [showSavedModal, setShowSavedModal] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const strings = {
     title: language === 'pt-br' ? 'Modo de Jogo' : 'Play Mode',
@@ -151,15 +153,28 @@ export default function JogarPage() {
     })
   }, [status, personagens])
 
+  const filteredSessionRows = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase()
+
+    if (!normalizedSearch) {
+      return sessionRows
+    }
+
+    return sessionRows.filter((row) =>
+      String(row.nome || '').toLowerCase().includes(normalizedSearch) ||
+      String(row.classe || '').toLowerCase().includes(normalizedSearch),
+    )
+  }, [sessionRows, searchTerm])
+
   const sessionSummary = useMemo(() => {
-    if (sessionRows.length === 0) {
+    if (filteredSessionRows.length === 0) {
       return {
         totalCharacters: 0,
         classesBreakdown: [],
       }
     }
 
-    const byClass = sessionRows.reduce((acc, row) => {
+    const byClass = filteredSessionRows.reduce((acc, row) => {
       const className = String(row.classe || '').trim() || (language === 'pt-br' ? 'Sem classe' : 'No class')
       acc[className] = (acc[className] || 0) + 1
       return acc
@@ -172,11 +187,15 @@ export default function JogarPage() {
         return a.name.localeCompare(b.name)
       })
 
-    return { totalCharacters: sessionRows.length, classesBreakdown }
-  }, [sessionRows, language])
+    return { totalCharacters: filteredSessionRows.length, classesBreakdown }
+  }, [filteredSessionRows, language])
 
   const handleOpenSession = (characterId) => {
     navigate(`/jogar/${characterId}`)
+  }
+
+  const handleSearchChange = (value) => {
+    setSearchTerm(value)
   }
 
   const persistChanges = async ({ exitAfterSave = false, showSavedModal = true } = {}) => {
@@ -407,33 +426,49 @@ export default function JogarPage() {
               </article>
             </div>
 
+            <div className="page-actions page-actions-compact">
+              <SearchBar
+                value={searchTerm}
+                onChange={handleSearchChange}
+                placeholder={language === 'pt-br' ? 'Buscar personagem por nome ou classe...' : 'Search character by name or class...'}
+                buttonLabel={language === 'pt-br' ? 'Buscar' : 'Search'}
+                ariaLabel={language === 'pt-br' ? 'Buscar personagem' : 'Search character'}
+              />
+            </div>
+
             <div className="session-roster">
               <h3>{strings.rosterTitle}</h3>
-              <ul className="session-roster-list">
-                {sessionRows.map((row) => (
-                  <li key={row.id} className="session-roster-item">
-                    <div className="session-roster-main">
-                      <div>
-                        <p className="session-roster-name">{row.nome}</p>
-                        <p className="session-roster-meta">{row.classe} · {strings.levelLabel} {row.nivel}</p>
+              {filteredSessionRows.length === 0 ? (
+                <div className="alert alert-warning">
+                  {language === 'pt-br' ? 'Nenhum personagem encontrado para a busca.' : 'No characters found for your search.'}
+                </div>
+              ) : (
+                <ul className="session-roster-list">
+                  {filteredSessionRows.map((row) => (
+                    <li key={row.id} className="session-roster-item">
+                      <div className="session-roster-main">
+                        <div>
+                          <p className="session-roster-name">{row.nome}</p>
+                          <p className="session-roster-meta">{row.classe} · {strings.levelLabel} {row.nivel}</p>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="session-roster-stats">
-                      <span className="session-roster-stat"><small>{strings.hpLabel}</small><strong>{row.currentHp}/{row.maxHp} ({row.hpPercent}%)</strong></span>
-                      <span className="session-roster-stat"><small>{strings.acLabel}</small><strong>{row.ca}</strong></span>
-                      <span className="session-roster-stat"><small>{strings.slotsSpentLabel}</small><strong>{row.usedSlots}</strong></span>
-                      <span className="session-roster-stat"><small>{strings.slotsAvailableLabel}</small><strong>{row.availableSlots}</strong></span>
-                    </div>
+                      <div className="session-roster-stats">
+                        <span className="session-roster-stat"><small>{strings.hpLabel}</small><strong>{row.currentHp}/{row.maxHp} ({row.hpPercent}%)</strong></span>
+                        <span className="session-roster-stat"><small>{strings.acLabel}</small><strong>{row.ca}</strong></span>
+                        <span className="session-roster-stat"><small>{strings.slotsSpentLabel}</small><strong>{row.usedSlots}</strong></span>
+                        <span className="session-roster-stat"><small>{strings.slotsAvailableLabel}</small><strong>{row.availableSlots}</strong></span>
+                      </div>
 
-                    <div className="session-roster-actions">
-                      <button type="button" className="btn-secondary" onClick={() => handleOpenSession(row.id)}>
-                        {strings.openSessionButton}
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                      <div className="session-roster-actions">
+                        <button type="button" className="btn-secondary" onClick={() => handleOpenSession(row.id)}>
+                          {strings.openSessionButton}
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         )}
