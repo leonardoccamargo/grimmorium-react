@@ -1,60 +1,47 @@
-# Grimmorium Frontend (MVP 2)
+# Grimmorium Frontend API
 
-SPA em React para gestão de personagens e grimório de magias.
+SPA em React para gerenciamento de personagens, grimorio e jogo do MVP.
 
-## Requisitos
+## Pre-requisitos
 
-- Node.js 18+
-- npm 9+
-- Backend ativo em http://127.0.0.1:5000
+1. Windows com PowerShell
+2. Node.js 18 ou superior instalado
+3. Backend rodando em http://127.0.0.1:5000
 
-## Instalação
+Para conferir se Node e npm estao instalados, rode:
 
-No terminal (a partir da raiz do projeto):
+```powershell
+node --version
+npm --version
+```
 
-```bash
-cd grimmorium-react-main
+## Passo a passo
+
+1. Entrar na pasta do frontend
+
+```powershell
+cd .\grimmorium-react-main
+```
+
+2. Instalar dependencias
+
+```powershell
 npm install
 ```
 
-## Execução
+3. Iniciar frontend
 
-No terminal (a partir da raiz do projeto):
-
-```bash
-cd grimmorium-react-main
+```powershell
 npm run dev
 ```
 
-Aplicação: http://localhost:5173
+## Como testar se esta funcionando
 
-## Configuração da origem dos personagens
+Com o frontend ligado, abra no navegador: http://localhost:5173
 
-O frontend permite alternar a fonte dos personagens com uma única variável:
+## Como parar o frontend
 
-- `api` para usar o backend
-- `local` para usar o JSON/localStorage do frontend
-
-Crie um arquivo `.env` na pasta `grimmorium-react-main` com este conteúdo base:
-
-```dotenv
-VITE_CHARACTERS_DATA_MODE=api
-VITE_API_BASE_URL=http://127.0.0.1:5000
-```
-
-Se quiser trabalhar sem backend para os personagens, troque apenas para:
-
-```dotenv
-VITE_CHARACTERS_DATA_MODE=local
-```
-
-## Comandos úteis
-
-```bash
-npm run build
-npm run preview
-npm run lint
-```
+No terminal onde o frontend esta rodando, pressione `Ctrl + C`.
 
 ## Rotas principais
 
@@ -65,12 +52,22 @@ npm run lint
 - /jogar/:id
 - * (404)
 
-## Fontes de dados
+## Dados e integracao
 
-- Personagens: backend ou local, conforme `VITE_CHARACTERS_DATA_MODE`
-- Magias PT-BR: backend em `/api/magias` (padrão)
-- JSON local em `public/`: usado quando os personagens estão em modo local
+É possivel também usar o frontend com JSON local, caso necessário. Para isso, faca o seguinte:
 
-## Creditos e APIs externas
+1. No arquivo `.env`, altere a variável `api` para `local` em `VITE_CHARACTERS_DATA_MODE=api`.
+2. Para voltar ao backend, use `VITE_CHARACTERS_DATA_MODE=api`.
+3. Se precisar de outro backend, ajuste `VITE_API_BASE_URL`.
+4. As magias continuam sendo buscadas em `/api/magias`.
 
-- [D&D 5e API](https://www.dnd5eapi.co) — API pública REST com dados do D&D 5ª edição.
+## Comandos uteis
+
+- `npm run dev`
+- `npm run build`
+- `npm run preview`
+- `npm run lint`
+
+## Creditos
+
+- D&D 5e API: https://www.dnd5eapi.co
