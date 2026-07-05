@@ -4,7 +4,7 @@ Uma SPA (Single Page Application) em React para gerenciamento de personagens em 
 
 Este repositório contém a **interface visual** do ecossistema Grimmorium. Ele se conecta diretamente ao nosso ecossistema de backend para fornecer uma experiência fluida e dinâmica de gerenciamento de fichas, magias e inventários.
 
-> 🌐 **Repositório Backend:** Para o funcionamento completo com persistência de dados, certifique-se de que o backend está ativo. Você encontra as instruções no repositório correspondente.
+> 🌐 **Repositório Backend:** Para o funcionamento completo com persistência de dados, certifique-se de que o backend está ativo. Você encontra as instruções no [repositório do backend](https://github.com/leonardoccamargo/grimmorium-react-backend).
 
 ---
 
