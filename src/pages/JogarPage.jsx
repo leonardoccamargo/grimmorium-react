@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import PageTitle from '../components/PageTitle'
 import LoadingIndicator from '../components/LoadingIndicator'
 import ConfirmModal from '../components/ConfirmModal'
@@ -11,6 +11,7 @@ import { clampHpToMax, parseHpString, formatHpString } from '../utils/characterH
 
 export default function JogarPage() {
   const { id } = useParams()
+  const location = useLocation()
   const navigate = useNavigate()
   const { language } = useLanguage()
   const { personagens, status, mensagem, updateCharacter } = useCharacters()
@@ -109,8 +110,9 @@ export default function JogarPage() {
   }
 
   const isSessionOverview = !id
+  const returnPath = String(location.state?.from || '/jogar')
 
-  const handleVoltar = () => navigate('/jogar')
+  const handleVoltar = () => navigate(returnPath)
 
   const sessionRows = useMemo(() => {
     if (status !== 'success') return []
@@ -191,7 +193,7 @@ export default function JogarPage() {
   }, [filteredSessionRows, language])
 
   const handleOpenSession = (characterId) => {
-    navigate(`/jogar/${characterId}`)
+    navigate(`/jogar/${characterId}`, { state: { from: '/jogar' } })
   }
 
   const handleSearchChange = (value) => {
@@ -217,7 +219,7 @@ export default function JogarPage() {
         hp_temp: resolvedTemp,
         hp: formatHpString(resolvedCurrent, resolvedMax),
       })
-      if (!saved) return
+      if (!saved) return false
     }
 
     setEditedValues({})
@@ -225,16 +227,18 @@ export default function JogarPage() {
     if (exitAfterSave) {
       setShowUnsavedModal(false)
       handleVoltar()
-      return
+      return true
     }
 
     if (showSavedModal) {
       setShowSavedModal(true)
     }
+
+    return true
   }
 
   const handleSave = async () => {
-    await persistChanges()
+    await persistChanges({ exitAfterSave: true, showSavedModal: false })
   }
 
   const handleSaveAndLeave = async () => {

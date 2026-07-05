@@ -2016,15 +2016,20 @@ input[type="number"]:focus {
     background: color-mix(in srgb, var(--fundo-card) 78%, var(--fundo-secundario) 22%);
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--detalhe-ouro) 10%, transparent);
     display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "main actions"
+        "stats stats";
     gap: 10px;
 }
 
 .session-roster-main {
+    grid-area: main;
     display: flex;
     justify-content: space-between;
     gap: 10px;
     align-items: center;
-    padding-right: 220px;
+    min-width: 0;
 }
 
 .session-roster-name {
@@ -2040,6 +2045,7 @@ input[type="number"]:focus {
 }
 
 .session-roster-stats {
+    grid-area: stats;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
@@ -2066,11 +2072,11 @@ input[type="number"]:focus {
 }
 
 .session-roster-actions {
-    position: absolute;
-    top: 12px;
-    right: 12px;
+    grid-area: actions;
+    position: static;
     display: flex;
     justify-content: flex-end;
+    align-items: flex-start;
 }
 
 .play-card-header {
@@ -2824,12 +2830,24 @@ input[type="number"]:focus {
         grid-template-columns: 1fr;
     }
 
+    .session-overview {
+        gap: 12px;
+    }
+
+    .session-roster-item {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "main"
+            "stats"
+            "actions";
+    }
+
     .session-roster-stats {
         grid-template-columns: 1fr;
     }
 
     .session-roster-actions .btn-secondary {
-        width: auto;
+        width: 100%;
     }
 
     .status-rapido {

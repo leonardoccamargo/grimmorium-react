@@ -41,11 +41,11 @@ export default function PersonagensPage() {
   }, [personagens, busca])
 
   function handleSelect(id) {
-    navigate(`/jogar/${id}`)
+    navigate(`/jogar/${id}`, { state: { from: '/personagens' } })
   }
 
   function handleEdit(id) {
-    navigate(`/jogar/${id}?modo=editar`)
+    navigate(`/jogar/${id}?modo=editar`, { state: { from: '/personagens' } })
   }
 
   function handleDelete(id) {
