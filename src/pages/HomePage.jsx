@@ -6,6 +6,10 @@ export default function HomePage() {
   const { language } = useLanguage()
   const classBelt = ['Bárbaro', 'Bardo', 'Bruxo', 'Clérigo', 'Druida', 'Feiticeiro', 'Guerreiro', 'Ladino', 'Mago', 'Monge', 'Paladino', 'Patrulheiro']
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }
+
   const strings = {
     heroKicker: language === 'pt-br' ? 'Página inicial' : 'Home',
     heroHeadingTop: language === 'pt-br' ? 'Tudo o que você precisa' : 'Everything you need',
@@ -18,6 +22,7 @@ export default function HomePage() {
     pill1: language === 'pt-br' ? 'Criação rápida' : 'Quick setup',
     pill2: language === 'pt-br' ? 'Sessão em andamento' : 'Session ready',
     pill3: language === 'pt-br' ? 'Consulta simples' : 'Easy lookup',
+    pill4: language === 'pt-br' ? 'Rolagens integradas' : 'Integrated rolls',
     stat1Label: language === 'pt-br' ? 'Classes' : 'Classes',
     stat2Label: language === 'pt-br' ? 'Magias' : 'Spells',
     stat3Label: language === 'pt-br' ? 'Compatível' : 'Compatible',
@@ -45,9 +50,9 @@ export default function HomePage() {
   }
 
   const features = [
-    { n: 'I', title: strings.card1Title, text: strings.card1Text, icon: 'sword' },
-    { n: 'II', title: strings.card2Title, text: strings.card2Text, icon: 'shield' },
-    { n: 'III', title: strings.card3Title, text: strings.card3Text, icon: 'scroll' },
+    { n: 'I', title: strings.card1Title, text: strings.card1Text, icon: 'sword', href: '/personagens' },
+    { n: 'II', title: strings.card2Title, text: strings.card2Text, icon: 'shield', href: '/jogar' },
+    { n: 'III', title: strings.card3Title, text: strings.card3Text, icon: 'scroll', href: '/grimorio' },
   ]
 
   function renderFeatureIcon(icon) {
@@ -74,17 +79,6 @@ export default function HomePage() {
                 <span className="home-hero-subline">{strings.heroHeadingBottom}</span>
               </h1>
               <p className="hero-lead">{strings.heroText}</p>
-
-              <div className="home-cta-row">
-                <Link to="/personagens" className="home-btn home-btn-primary"><FlameIcon /> {strings.ctaPrimary}</Link>
-                <Link to="/grimorio" className="home-btn home-btn-ghost">{strings.ctaSecondary}</Link>
-              </div>
-
-              <div className="home-pill-row" aria-label={language === 'pt-br' ? 'Destaques rápidos' : 'Quick highlights'}>
-                <span className="home-pill">{strings.pill1}</span>
-                <span className="home-pill">{strings.pill2}</span>
-                <span className="home-pill">{strings.pill3}</span>
-              </div>
 
               <dl className="home-stats">
                 <div>
@@ -114,11 +108,17 @@ export default function HomePage() {
                 <div className="home-floating-rune"><RuneCircle /></div>
               </div>
 
-              <div className="home-dice-card">
-                <div className="home-dice-icon">d20</div>
-                <div>
-                  <p>{language === 'pt-br' ? 'Rolagem crítica' : 'Critical roll'}</p>
-                  <small>{language === 'pt-br' ? 'Rolador integrado à ficha' : 'Roller integrated with sheet'}</small>
+              <div className="home-hero-actions">
+                <div className="home-pill-row" aria-label={language === 'pt-br' ? 'Destaques rápidos' : 'Quick highlights'}>
+                  <span className="home-pill">{strings.pill1}</span>
+                  <span className="home-pill">{strings.pill2}</span>
+                  <span className="home-pill">{strings.pill3}</span>
+                  <span className="home-pill">{strings.pill4}</span>
+                </div>
+
+                <div className="home-cta-row">
+                  <Link to="/personagens" className="home-btn home-btn-primary"><FlameIcon /> {strings.ctaPrimary}</Link>
+                  <Link to="/grimorio" className="home-btn home-btn-ghost">{strings.ctaSecondary}</Link>
                 </div>
               </div>
             </aside>
@@ -145,7 +145,9 @@ export default function HomePage() {
               <div className="hero-card-icon">{renderFeatureIcon(feature.icon)}</div>
               <h4>{feature.title}</h4>
               <p>{feature.text}</p>
-              <span className="hero-card-link">{strings.cardAction} <ArrowIcon /></span>
+              <Link to={feature.href} className="hero-card-link" aria-label={`${strings.cardAction} - ${feature.title}`} onClick={scrollToTop}>
+                {strings.cardAction} <ArrowIcon />
+              </Link>
             </article>
           ))}
         </div>

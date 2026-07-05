@@ -35,6 +35,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/personagens" element={<PersonagensPage />} />
           <Route path="/grimorio" element={<GrimorioPage />} />
+          <Route path="/jogar" element={<JogarPage />} />
           <Route path="/jogar/:id" element={<JogarPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

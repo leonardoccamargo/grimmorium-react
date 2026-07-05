@@ -20,6 +20,21 @@ export default function JogarPage() {
   const strings = {
     title: language === 'pt-br' ? 'Modo de Jogo' : 'Play Mode',
     subtitle: language === 'pt-br' ? 'Atualize a ficha do personagem em tempo real.' : 'Update the character sheet in real time.',
+    sessionTitle: language === 'pt-br' ? 'Sessão' : 'Session',
+    sessionSubtitle: language === 'pt-br'
+      ? 'Visão resumida do estado dos personagens para conduzir a mesa.'
+      : 'Summarized character status view to run your table.',
+    loadingSession: language === 'pt-br' ? 'Carregando painel da sessão...' : 'Loading session dashboard...',
+    noCharactersInSession: language === 'pt-br'
+      ? 'Nenhum personagem disponível para a sessão.'
+      : 'No characters available for the session.',
+    summaryCharacters: language === 'pt-br' ? 'Personagens na sessão' : 'Characters in session',
+    summaryClasses: language === 'pt-br' ? 'Classes presentes' : 'Classes present',
+    summaryClassesEmpty: language === 'pt-br' ? 'Sem classes registradas' : 'No classes registered',
+    rosterTitle: language === 'pt-br' ? 'Lista de Personagens' : 'Character list',
+    openSessionButton: language === 'pt-br' ? 'Jogar' : 'Play',
+    slotsSpentLabel: language === 'pt-br' ? 'Slots gastos' : 'Slots spent',
+    slotsAvailableLabel: language === 'pt-br' ? 'Slots disponíveis' : 'Slots available',
     loading: language === 'pt-br' ? 'Abrindo ficha...' : 'Opening sheet...',
     notFound: language === 'pt-br'
       ? 'Personagem não encontrado. Volte à lista e selecione outro personagem.'
@@ -91,7 +106,79 @@ export default function JogarPage() {
     }))
   }
 
-  const handleVoltar = () => navigate('/personagens')
+  const isSessionOverview = !id
+
+  const handleVoltar = () => navigate('/jogar')
+
+  const sessionRows = useMemo(() => {
+    if (status !== 'success') return []
+
+    return personagens.map((personagem) => {
+      const parsedHp = parseHpString(personagem.hp)
+      const hpMaxField = Number(personagem.hp_max)
+      const hpCurrentField = Number(personagem.hp_current)
+      const maxHp = Number.isFinite(hpMaxField) && hpMaxField > 0 ? hpMaxField : Math.max(parsedHp.max, 1)
+      const currentHp = Number.isFinite(hpCurrentField)
+        ? clampHpToMax(Math.max(0, hpCurrentField), maxHp)
+        : clampHpToMax(Math.max(0, parsedHp.current), maxHp)
+
+      const hpPercent = maxHp > 0 ? Math.round((currentHp / maxHp) * 100) : 0
+      const armorClass = Math.max(0, Number(personagem.ca) || 0)
+
+      const slotsMagia = personagem.slots_magia || {}
+      const slotsUsados = personagem.slots_usados || {}
+      const totalSlots = Object.values(slotsMagia).reduce((total, value) => total + (Number(value) || 0), 0)
+      const usedSlots = Object.keys(slotsMagia).reduce((total, key) => {
+        const max = Number(slotsMagia[key]) || 0
+        const used = Number(slotsUsados[key]) || 0
+        return total + Math.min(Math.max(used, 0), max)
+      }, 0)
+      const availableSlots = Math.max(0, totalSlots - usedSlots)
+
+      return {
+        id: personagem.id,
+        nome: personagem.nome,
+        classe: personagem.classe,
+        nivel: personagem.nivel,
+        ca: armorClass,
+        currentHp,
+        maxHp,
+        hpPercent,
+        usedSlots,
+        availableSlots,
+        totalSlots,
+      }
+    })
+  }, [status, personagens])
+
+  const sessionSummary = useMemo(() => {
+    if (sessionRows.length === 0) {
+      return {
+        totalCharacters: 0,
+        classesBreakdown: [],
+      }
+    }
+
+    const byClass = sessionRows.reduce((acc, row) => {
+      const className = String(row.classe || '').trim() || (language === 'pt-br' ? 'Sem classe' : 'No class')
+      acc[className] = (acc[className] || 0) + 1
+      return acc
+    }, {})
+
+    const classesBreakdown = Object.entries(byClass)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => {
+        if (b.count !== a.count) return b.count - a.count
+        return a.name.localeCompare(b.name)
+      })
+
+    return { totalCharacters: sessionRows.length, classesBreakdown }
+  }, [sessionRows, language])
+
+  const handleOpenSession = (characterId) => {
+    navigate(`/jogar/${characterId}`)
+  }
+
   const persistChanges = async ({ exitAfterSave = false, showSavedModal = true } = {}) => {
     if (formValues) {
       const parsedHp = parseHpString(formValues.hp)
@@ -286,17 +373,76 @@ export default function JogarPage() {
 
   return (
     <main>
-      <PageTitle title={strings.title} subtitle={strings.subtitle} />
+      <PageTitle
+        title={isSessionOverview ? strings.sessionTitle : strings.title}
+        subtitle={isSessionOverview ? strings.sessionSubtitle : strings.subtitle}
+      />
 
       <section className="content-section">
-        {status === 'loading' && <LoadingIndicator message={strings.loading} />}
+        {status === 'loading' && <LoadingIndicator message={isSessionOverview ? strings.loadingSession : strings.loading} />}
         {status === 'error' && <div className="alert alert-error">{mensagem}</div>}
 
-        {status === 'success' && !selecionado && (
+        {status === 'success' && isSessionOverview && sessionRows.length === 0 && (
+          <div className="alert alert-warning">{strings.noCharactersInSession}</div>
+        )}
+
+        {status === 'success' && isSessionOverview && sessionRows.length > 0 && (
+          <div className="session-overview">
+            <div className="session-overview-cards">
+              <article className="session-overview-card">
+                <p>{strings.summaryCharacters}</p>
+                <strong>{sessionSummary.totalCharacters}</strong>
+              </article>
+              <article className="session-overview-card">
+                <p>{strings.summaryClasses}</p>
+                {sessionSummary.classesBreakdown.length === 0 ? (
+                  <strong>{strings.summaryClassesEmpty}</strong>
+                ) : (
+                  <div className="session-class-list">
+                    {sessionSummary.classesBreakdown.map((item) => (
+                      <span key={item.name} className="session-class-chip">{item.name} <b>{item.count}</b></span>
+                    ))}
+                  </div>
+                )}
+              </article>
+            </div>
+
+            <div className="session-roster">
+              <h3>{strings.rosterTitle}</h3>
+              <ul className="session-roster-list">
+                {sessionRows.map((row) => (
+                  <li key={row.id} className="session-roster-item">
+                    <div className="session-roster-main">
+                      <div>
+                        <p className="session-roster-name">{row.nome}</p>
+                        <p className="session-roster-meta">{row.classe} · {strings.levelLabel} {row.nivel}</p>
+                      </div>
+                    </div>
+
+                    <div className="session-roster-stats">
+                      <span className="session-roster-stat"><small>{strings.hpLabel}</small><strong>{row.currentHp}/{row.maxHp} ({row.hpPercent}%)</strong></span>
+                      <span className="session-roster-stat"><small>{strings.acLabel}</small><strong>{row.ca}</strong></span>
+                      <span className="session-roster-stat"><small>{strings.slotsSpentLabel}</small><strong>{row.usedSlots}</strong></span>
+                      <span className="session-roster-stat"><small>{strings.slotsAvailableLabel}</small><strong>{row.availableSlots}</strong></span>
+                    </div>
+
+                    <div className="session-roster-actions">
+                      <button type="button" className="btn-secondary" onClick={() => handleOpenSession(row.id)}>
+                        {strings.openSessionButton}
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {status === 'success' && !isSessionOverview && !selecionado && (
           <div className="alert alert-warning">{strings.notFound}</div>
         )}
 
-        {status === 'success' && selecionado && (
+        {status === 'success' && !isSessionOverview && selecionado && (
           <div className="play-card">
             <div className="play-card-header">
               <div>

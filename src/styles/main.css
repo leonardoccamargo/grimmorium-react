@@ -74,6 +74,7 @@ h4 {
 .menu-placeholder {
     display: inline-flex;
     align-items: center;
+    position: relative;
     font-family: var(--font-display);
     font-size: 0.875rem;
     font-weight: 600;
@@ -82,6 +83,26 @@ h4 {
     padding: 8px 12px;
     border-radius: 8px;
     color: color-mix(in srgb, var(--texto-secundario) 88%, #fff 12%);
+}
+
+.menu-placeholder::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 2px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ouro-brilho), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.menu-placeholder.is-active {
+    color: var(--ouro-brilho);
+}
+
+.menu-placeholder.is-active::after {
+    opacity: 1;
 }
 
 /* Linha luminosa exibida no hover e no item ativo do menu. */
@@ -140,7 +161,7 @@ h4 {
     padding: 8px 16px;
     border-radius: 999px;
     border: 1px solid color-mix(in oklab, var(--detalhe-ouro) 40%, transparent);
-    background: color-mix(in srgb, var(--fundo-principal) 72%, #0d131d 28%);
+    background: color-mix(in srgb, var(--fundo-principal) 72%);
     color: color-mix(in srgb, var(--texto-principal) 85%, #fff 15%);
     font-family: var(--font-display);
     font-size: 0.75rem;
@@ -198,13 +219,18 @@ h4 {
 .hero-conteudo h2 {
     display: block;
     border-bottom: none;
-    font-size: clamp(2.2rem, 5vw, 4.15rem);
+    font-size: clamp(2rem, 4.2vw, 3.7rem);
     line-height: 1.08;
     margin-bottom: 12px;
     color: color-mix(in srgb, var(--ouro-brilho) 72%, var(--texto-principal));
     text-shadow:
         0 0 10px rgba(231, 204, 139, 0.4),
         0 4px 14px rgba(0, 0, 0, 0.7);
+}
+
+.home-hero-copy .text-gold-gradient {
+    display: inline-block;
+    max-width: 18ch;
 }
 
 .hero-lead {
@@ -266,15 +292,6 @@ h4 {
     text-align: left;
 }
 
-.home-cta-row {
-    display: grid;
-    grid-template-columns: max-content max-content;
-    align-items: center;
-    column-gap: 12px;
-    row-gap: 10px;
-    margin-bottom: 16px;
-}
-
 .home-btn {
     display: inline-flex;
     align-items: center;
@@ -326,6 +343,7 @@ h4 {
 .home-hero-panel {
     position: relative;
     align-self: stretch;
+    margin-top: clamp(18px, 2.6vw, 34px);
     text-align: left;
     overflow: visible;
     border: none;
@@ -334,6 +352,22 @@ h4 {
     background: transparent;
     box-shadow: none;
     backdrop-filter: blur(2px);
+}
+
+.home-hero-actions {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+    padding-top: 4px;
+}
+
+.home-cta-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    justify-content: start;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 10px;
 }
 
 .home-stats {
@@ -433,6 +467,14 @@ h4 {
     background-clip: text;
     color: transparent;
     text-shadow: 0 0 40px color-mix(in oklab, var(--gold) 25%, transparent);
+}
+
+[data-theme="light"] .text-gold-gradient {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: color-mix(in srgb, var(--gold-primary) 82%, var(--text-primary) 18%);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--gold-primary) 18%, transparent);
 }
 
 .rune-frame {
@@ -562,49 +604,6 @@ h4 {
     opacity: 0.72;
     color: var(--ouro-brilho);
     animation: rune-spin 40s linear infinite;
-}
-
-.home-dice-card {
-    position: absolute;
-    left: -22px;
-    bottom: -24px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid rgba(231, 204, 139, 0.34);
-    background: color-mix(in srgb, var(--fundo-card) 88%, #05080e 12%);
-    box-shadow:
-        inset 0 0 0 1px rgba(231, 204, 139, 0.18),
-        0 14px 28px rgba(0, 0, 0, 0.34);
-}
-
-.home-dice-icon {
-    display: grid;
-    place-items: center;
-    width: 46px;
-    height: 46px;
-    border-radius: 10px;
-    background: rgba(231, 204, 139, 0.12);
-    font-family: "Cinzel", serif;
-    font-size: 1.05rem;
-    color: var(--ouro-brilho);
-}
-
-.home-dice-card p {
-    margin: 0;
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ouro-brilho);
-}
-
-.home-dice-card small {
-    display: block;
-    margin-top: 2px;
-    color: var(--texto-secundario);
-    font-size: 0.75rem;
 }
 
 .hero-card-icon {
@@ -741,7 +740,7 @@ h4 {
 }
 
 [data-theme="light"] .hero-arcano {
-
+    background: color-mix(in srgb, var(--fundo-secundario) 30%, transparent);
     border-color: color-mix(in srgb, var(--gold-primary) 26%, transparent);
     box-shadow:
         inset 0 0 0 1px color-mix(in srgb, var(--gold-primary) 12%, transparent),
@@ -757,7 +756,10 @@ h4 {
 
 [data-theme="light"] .home-pill,
 [data-theme="light"] .hero-card,
-[data-theme="light"] .home-classes-belt {
+[data-theme="light"] .home-classes-belt,
+[data-theme="light"] .session-overview-card,
+[data-theme="light"] .session-roster-item,
+[data-theme="light"] .session-roster-stat {
     background: color-mix(in srgb, var(--bg-nav) 82%, transparent);
     border-color: color-mix(in srgb, var(--gold-primary) 24%, transparent);
 }
@@ -790,11 +792,6 @@ h4 {
 
 [data-theme="light"] .home-hero-image-overlay {
     background: transparent;
-}
-
-[data-theme="light"] .home-dice-card {
-    background: color-mix(in srgb, var(--bg-nav) 86%, transparent);
-    border-color: color-mix(in srgb, var(--gold-primary) 24%, transparent);
 }
 
 [data-theme="light"] .hero-card-icon,
@@ -1051,7 +1048,7 @@ input[type="number"]:focus {
 .personagem-card,
 .character-card {
     padding: 14px;
-    border: 3px double var(--detalhe-ouro);
+    border: 2px solid color-mix(in srgb, var(--detalhe-ouro) 80%, transparent);
     border-radius: 12px;
     background: linear-gradient(170deg, color-mix(in srgb, var(--fundo-card) 92%, #04070d 8%), var(--fundo-card));
     box-shadow: var(--sombra-card);
@@ -1468,7 +1465,7 @@ input[type="number"]:focus {
     margin-bottom: 24px;
     padding: 18px 22px;
     border-radius: 14px;
-    background: color-mix(in srgb, var(--fundo-card) 85%, var(--fundo-secundario) 15%);
+    background: color-mix(in srgb, var(--fundo-secundario) 40%, transparent);
     border: 1px solid rgba(197, 160, 89, 0.35);
 }
 
@@ -1604,7 +1601,7 @@ input[type="number"]:focus {
     max-width: none;
     padding: 10px;
     border-radius: 16px;
-    background: color-mix(in srgb, var(--fundo-card) 84%, var(--fundo-secundario) 16%);
+    background: color-mix(in srgb, var(--fundo-secundario) 30%, transparent);
     border: 1px solid rgba(197, 160, 89, 0.28);
     box-shadow: inset 0 0 0 1px rgba(231, 204, 139, 0.06);
 }
@@ -1617,8 +1614,8 @@ input[type="number"]:focus {
     min-height: 48px;
     padding: 0 12px;
     border-radius: 12px;
-    background: color-mix(in srgb, var(--fundo-secundario) 72%, #080d13 28%);
-    border: 1px solid rgba(197, 160, 89, 0.24);
+    background: color-mix(in srgb, var(--fundo-secundario) 72%);
+    border: 1px solid rgba(94, 75, 41, 0.24);
 }
 
 .search-bar-icon {
@@ -1655,6 +1652,18 @@ input[type="number"]:focus {
 .search-bar:focus-within {
     border-color: rgba(231, 204, 139, 0.55);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14);
+}
+
+[data-theme="light"] .search-bar input {
+    color: color-mix(in srgb, var(--gold-primary) 24%, var(--text-primary) 76%);
+}
+
+[data-theme="light"] .search-bar input::placeholder {
+    color: color-mix(in srgb, var(--gold-primary) 62%, var(--text-primary) 38%);
+}
+
+[data-theme="light"] .search-bar-icon {
+    color: color-mix(in srgb, var(--gold-primary) 82%, var(--text-primary) 18%);
 }
 
 .alert {
@@ -1814,7 +1823,7 @@ input[type="number"]:focus {
 .content-section {
     padding: 18px;
     border-radius: 16px;
-    background: var(--fundo-card);
+    background: color-mix(in srgb, var(--fundo-secundario) 30%, transparent);
     border: 1px solid color-mix(in srgb, var(--detalhe-ouro) 24%, transparent);
 }
 
@@ -1914,6 +1923,149 @@ input[type="number"]:focus {
     border-radius: 16px;
     background: color-mix(in srgb, var(--fundo-card) 82%, var(--fundo-secundario) 18%);
     border: 1px solid rgba(197, 160, 89, 0.32);
+}
+
+.session-overview {
+    display: grid;
+    gap: 16px;
+}
+
+.session-overview-cards {
+    display: grid;
+    grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+    gap: 12px;
+}
+
+.session-overview-card {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid color-mix(in oklab, var(--detalhe-ouro) 38%, transparent);
+    background: color-mix(in srgb, var(--fundo-card) 78%, var(--fundo-secundario) 22%);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--detalhe-ouro) 10%, transparent);
+}
+
+.session-overview-card p {
+    margin: 0;
+    color: var(--texto-secundario);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.session-overview-card strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 1.28rem;
+    font-family: var(--font-display);
+    color: var(--texto-principal);
+}
+
+.session-class-list {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.session-class-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(197, 160, 89, 0.28);
+    background: color-mix(in srgb, var(--fundo-secundario) 78%, transparent);
+    font-size: 0.8rem;
+    color: var(--texto-secundario);
+    white-space: nowrap;
+}
+
+.session-class-chip b {
+    color: var(--texto-principal);
+    font-weight: 700;
+}
+
+.session-roster {
+    padding: 16px;
+}
+
+.session-roster h3 {
+    margin: 0 0 12px;
+    border: none;
+    padding: 0;
+}
+
+.session-roster-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.session-roster-item {
+    position: relative;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid color-mix(in oklab, var(--detalhe-ouro) 38%, transparent);
+    background: color-mix(in srgb, var(--fundo-card) 78%, var(--fundo-secundario) 22%);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--detalhe-ouro) 10%, transparent);
+    display: grid;
+    gap: 10px;
+}
+
+.session-roster-main {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    padding-right: 220px;
+}
+
+.session-roster-name {
+    margin: 0;
+    font-size: 1.06rem;
+    font-weight: 700;
+}
+
+.session-roster-meta {
+    margin: 3px 0 0;
+    color: var(--texto-secundario);
+    font-size: 0.9rem;
+}
+
+.session-roster-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.session-roster-stat {
+    display: grid;
+    gap: 3px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    border: 1px solid color-mix(in oklab, var(--detalhe-ouro) 30%, transparent);
+    background: color-mix(in srgb, var(--fundo-card) 78%, var(--fundo-secundario) 22%);
+}
+
+.session-roster-stat small {
+    color: var(--texto-secundario);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.session-roster-stat strong {
+    font-size: 0.93rem;
+}
+
+.session-roster-actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .play-card-header {
@@ -2229,18 +2381,28 @@ input[type="number"]:focus {
         grid-template-columns: 1fr;
     }
 
+    .session-overview-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .session-roster-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .home-hero-grid {
         grid-template-columns: 1fr;
+    }
+
+    .home-hero-copy .text-gold-gradient {
+        max-width: none;
     }
 
     .home-hero-panel {
         margin-top: 6px;
     }
 
-    .home-dice-card {
-        left: 10px;
-        bottom: 10px;
-        position: absolute;
+    .home-hero-actions {
+        padding-top: 2px;
     }
 
     .home-classes-head {
@@ -2645,13 +2807,24 @@ input[type="number"]:focus {
         height: 24px;
     }
 
-    .home-floating-rune,
-    .home-dice-card {
+    .home-floating-rune {
         display: none;
     }
 
     .cards-grid {
         grid-template-columns: 1fr;
+    }
+
+    .session-overview-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .session-roster-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .session-roster-actions .btn-secondary {
+        width: auto;
     }
 
     .status-rapido {

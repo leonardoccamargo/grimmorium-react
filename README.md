@@ -28,14 +28,24 @@ npm run dev
 
 Aplicação: http://localhost:5173
 
-## Variáveis de ambiente (opcional)
+## Configuração da origem dos personagens
 
-Crie um arquivo `.env` na pasta `grimmorium-react-main`:
+O frontend permite alternar a fonte dos personagens com uma única variável:
 
-```bash
+- `api` para usar o backend
+- `local` para usar o JSON/localStorage do frontend
+
+Crie um arquivo `.env` na pasta `grimmorium-react-main` com este conteúdo base:
+
+```dotenv
 VITE_CHARACTERS_DATA_MODE=api
 VITE_API_BASE_URL=http://127.0.0.1:5000
-VITE_ENABLE_LOCAL_JSON_FALLBACK=false
+```
+
+Se quiser trabalhar sem backend para os personagens, troque apenas para:
+
+```dotenv
+VITE_CHARACTERS_DATA_MODE=local
 ```
 
 ## Comandos úteis
@@ -56,19 +66,10 @@ npm run lint
 
 ## Fontes de dados
 
-- Personagens: backend (padrão)
+- Personagens: backend ou local, conforme `VITE_CHARACTERS_DATA_MODE`
 - Magias PT-BR: backend em `/api/magias` (padrão)
-- JSON local em `public/`: opcional, usado apenas como contingência quando `VITE_ENABLE_LOCAL_JSON_FALLBACK=true`
+- JSON local em `public/`: usado quando os personagens estão em modo local
 
 ## Creditos e APIs externas
 
 - [D&D 5e API](https://www.dnd5eapi.co) — API pública REST com dados do D&D 5ª edição.
-
-## Aderência ao MVP (resumo)
-
-- 3+ paginas e componentizacao reutilizavel
-- React Router com `useNavigate`, `useParams`, `useLocation`
-- Rota 404
-- Feedback de loading/sucesso/erro, tooltips e mensagens condicionais
-- Layout responsivo (desktop/tablet/mobile)
-- README com instalação e execução

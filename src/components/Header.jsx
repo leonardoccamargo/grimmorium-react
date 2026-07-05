@@ -71,7 +71,7 @@ export default function Header({ theme, onToggleTheme }) {
         <NavLink to="/" end className={({ isActive }) => isActive ? 'is-active' : ''}>{strings.navHome}</NavLink>
         <NavLink to="/personagens" className={({ isActive }) => isActive ? 'is-active' : ''}>{strings.navCharacters}</NavLink>
         <NavLink to="/grimorio" className={({ isActive }) => isActive ? 'is-active' : ''}>{strings.navSpellbook}</NavLink>
-        <span className="menu-placeholder">{strings.navSession}</span>
+        <NavLink to="/jogar" className={({ isActive }) => isActive ? 'is-active' : ''}>{strings.navSession}</NavLink>
       </nav>
 
       <div className="breadcrumb">{strings.breadcrumbPrefix} <strong>/{breadcrumbLabel}</strong></div>

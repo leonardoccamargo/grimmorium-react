@@ -6,8 +6,7 @@ import { parseHpString } from '../utils/characterHealth.js'
 const CharactersContext = createContext(null)
 const STORAGE_KEY = 'atlas-arcano-personagens'
 const DATA_MODE = String(import.meta.env.VITE_CHARACTERS_DATA_MODE || 'api').toLowerCase()
-const IS_API_MODE = DATA_MODE === 'api'
-const ENABLE_LOCAL_JSON_FALLBACK = String(import.meta.env.VITE_ENABLE_LOCAL_JSON_FALLBACK || 'false').toLowerCase() === 'true'
+const IS_LOCAL_MODE = DATA_MODE === 'local'
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000').replace(/\/$/, '')
 
 const HIT_DICE_BY_CLASS = {
@@ -244,8 +243,8 @@ function buildWizardPayload(character) {
 
 export function CharactersProvider({ children }) {
   const { language } = useLanguage()
-  const [personagens, setPersonagens] = useState(() => (IS_API_MODE ? [] : (getStoredCharacters() || [])))
-  const [status, setStatus] = useState(() => (IS_API_MODE ? 'loading' : (getStoredCharacters() ? 'success' : 'loading')))
+  const [personagens, setPersonagens] = useState(() => (IS_LOCAL_MODE ? (getStoredCharacters() || []) : []))
+  const [status, setStatus] = useState(() => (IS_LOCAL_MODE ? (getStoredCharacters() ? 'success' : 'loading') : 'loading'))
   const [mensagemKey, setMensagemKey] = useState(null)
   const [apiErrorDetail, setApiErrorDetail] = useState('')
 
@@ -274,10 +273,6 @@ export function CharactersProvider({ children }) {
       case 'character-api-error':
         return apiErrorDetail
           || (language === 'pt-br' ? 'Erro ao salvar o personagem.' : 'Error saving character.')
-      case 'character-fallback-local':
-        return language === 'pt-br'
-          ? 'Backend indisponível. Personagens carregados do JSON local como fallback.'
-          : 'Backend unavailable. Characters loaded from local JSON fallback.'
       default:
         return ''
     }
@@ -285,7 +280,7 @@ export function CharactersProvider({ children }) {
 
   useEffect(() => {
     async function loadCharacters() {
-      if (!IS_API_MODE) {
+      if (IS_LOCAL_MODE) {
         const storedCharacters = getStoredCharacters()
         if (storedCharacters) {
           setPersonagens(storedCharacters)
@@ -312,18 +307,6 @@ export function CharactersProvider({ children }) {
         setPersonagens(mapped)
         setStatus('success')
       } catch {
-        if (ENABLE_LOCAL_JSON_FALLBACK) {
-          try {
-            const localData = await loadLocalJsonCharacters()
-            setPersonagens(localData)
-            setMensagemKey('character-fallback-local')
-            setStatus('success')
-            return
-          } catch {
-            // Keep API error path below when fallback also fails.
-          }
-        }
-
         setMensagemKey('character-sync-error')
         setStatus('error')
       }
@@ -333,20 +316,20 @@ export function CharactersProvider({ children }) {
   }, [])
 
   const refreshCharacters = async () => {
-    if (!IS_API_MODE) return
+    if (IS_LOCAL_MODE) return
     const response = await apiRequest('/api/v2/characters')
     const mapped = (response.characters || []).map(mapV2CharacterToFrontend)
     setPersonagens(mapped)
   }
 
   useEffect(() => {
-    if (!IS_API_MODE && status === 'success') {
+    if (IS_LOCAL_MODE && status === 'success') {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(personagens))
     }
   }, [personagens, status])
 
   const addCharacter = async (character) => {
-    if (!IS_API_MODE) {
+    if (IS_LOCAL_MODE) {
       const newCharacter = {
         ...character,
         id: Date.now(),
@@ -373,7 +356,7 @@ export function CharactersProvider({ children }) {
   }
 
   const updateCharacter = async (updatedCharacter) => {
-    if (!IS_API_MODE) {
+    if (IS_LOCAL_MODE) {
       setPersonagens((prev) => prev.map((personagem) => (
         personagem.id === updatedCharacter.id ? updatedCharacter : personagem
       )))
@@ -430,7 +413,7 @@ export function CharactersProvider({ children }) {
   }
 
   const deleteCharacter = async (id) => {
-    if (!IS_API_MODE) {
+    if (IS_LOCAL_MODE) {
       setPersonagens((prev) => prev.filter((personagem) => personagem.id !== id))
       setMensagemKey('character-deleted')
       return true

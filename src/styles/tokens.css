@@ -99,9 +99,9 @@
 
 [data-theme="light"] {
     /* Paleta de superficies do tema claro. */
-    --bg-principal: #e9d7b9bb;
+    --bg-principal: #e9d7b9;
     --bg-parchment: #e7d7ba;
-    --bg-card: #E1D7C4;
+    --bg-card: #d8cab3ea;
     --bg-nav: #D9CFBB;
     --border-color: #C9B89B;
     --text-primary: #261F19;
@@ -110,7 +110,7 @@
     --gold-primary: #8F6E12;
     --gold-glow: rgba(143, 110, 18, 0.08);
     --green-arcane: #3b5249;
-    --green-bg-tag: #D6DED8;
+    --green-bg-tag: #e7d7ba;
 
     --background: var(--bg-principal);
     --foreground: var(--text-primary);
@@ -133,7 +133,7 @@
     --acento-esmeralda: var(--green-arcane);
     --acento-contraste: #EEE6D8;
     --borda-input: var(--border-color);
-    --sombra-card: 0 12px 24px rgba(70, 57, 45, 0.12);
+    --sombra-card: 0 6px 8px rgba(70, 57, 45, 0.12);
     --textura-opacidade: 0.07;
 
     --home-btn-primary-text: color-mix(in srgb, var(--text-primary) 96%, #000 4%);
