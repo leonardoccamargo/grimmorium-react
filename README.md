@@ -8,48 +8,44 @@ Este repositório contém a **interface visual** do ecossistema Grimmorium. Ele 
 
 ---
 
-## 🛠️ Pré-requisitos
+## 🏗️ Arquitetura
 
-1. **Sistema Operacional:** Windows com PowerShell.
-2. **Ambiente:** Node.js 18+ instalado ([Download aqui](https://nodejs.org/)).
-3. **Dependência:** Backend rodando em `[http://127.0.0.1:5000](http://127.0.0.1:5000)` (ou configurado em modo local, como explicado abaixo em Dados e Integração).
+O Grimmorium adota o cenário de interface, API própria e serviço externo. A interface consome o backend Flask para gerir personagens e magias persistidas em SQLite. Ela também consulta e trata dados da API pública D&D 5e SRD diretamente no Grimório, sem redirecionar o usuário para outro sistema.
+
+![Fluxograma da arquitetura do Grimmorium](docs/arquitetura-grimmorium.svg)
 
 ---
 
-## 🚀 Passo a Passo para Execução
+## 🛠️ Pré-requisitos
 
-Siga a ordem dos comandos abaixo no seu PowerShell:
+1. **Docker Desktop:** instalado e em execução ([instalação](https://docs.docker.com/desktop/install/windows-install/)).
+2. Os repositórios `grimmorium-react` e `grimmorium-react-backend` devem estar clonados lado a lado.
 
-### 1. Entrar na pasta do frontend
+---
+
+## 🐳 Execução com Docker
+
+No PowerShell, entre na raiz deste repositório e execute:
 
 ```powershell
-cd .\grimmorium-react-main
-
+cd .\grimmorium-react
+docker compose up --build
 ```
 
-### 2. Instalar dependências
+O Docker inicia os dois componentes: interface em [http://localhost:8080](http://localhost:8080), API em [http://localhost:5000](http://localhost:5000) e Swagger em [http://localhost:5000/openapi/swagger](http://localhost:5000/openapi/swagger). Para encerrar, pressione `Ctrl + C` ou execute `docker compose down` em outro terminal.
+
+---
+
+## 💻 Execução local (alternativa para desenvolvimento)
+
+Para executar sem Docker, instale Node.js 18+ e mantenha o backend disponível em `http://127.0.0.1:5000`:
 
 ```powershell
 npm install
-
-```
-
-### 3. Iniciar frontend
-
-```powershell
 npm run dev
-
 ```
 
-👋 **Como parar o frontend:** No terminal onde o servidor está rodando, pressione `Ctrl + C`.
-
----
-
-## 🧪 Como testar se está funcionando
-
-Com o servidor de desenvolvimento ligado, abra o endereço abaixo no seu navegador:
-
-* **URL Local:** [http://localhost:5173](http://localhost:5173)
+Acesse [http://localhost:5173](http://localhost:5173). Para interromper, pressione `Ctrl + C` no terminal.
 
 ---
 
@@ -109,4 +105,9 @@ No diretório do projeto, você pode executar os seguintes scripts:
 
 ## 🎖️ Créditos
 
-* **Base de dados externa:** [D&D 5e API](https://www.dnd5eapi.co)
+### API externa: D&D 5e SRD API
+
+* Serviço público e gratuito: [D&D 5e SRD API](https://www.dnd5eapi.co), sem cadastro ou chave de API.
+* Rotas usadas: `GET /api/2014/spells` para o índice e `GET /api/2014/spells/{index}` para os detalhes de cada magia.
+* A aplicação transforma a resposta externa em cards e detalhes de magia dentro do Grimório; o usuário permanece na interface Grimmorium.
+* Os dados da SRD 5.1 estão disponíveis sob a licença [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/), com atribuição à Wizards of the Coast e à D&D 5e SRD API.
