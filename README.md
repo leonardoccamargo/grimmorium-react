@@ -25,10 +25,9 @@ O Grimmorium adota o cenário de interface, API própria e serviço externo. A i
 
 ## 🐳 Execução com Docker
 
-No PowerShell, entre na raiz deste repositório e execute:
+No PowerShell, na raiz deste repositório, execute:
 
 ```powershell
-cd .\grimmorium-react
 docker compose up --build
 ```
 
@@ -110,4 +109,4 @@ No diretório do projeto, você pode executar os seguintes scripts:
 * Serviço público e gratuito: [D&D 5e SRD API](https://www.dnd5eapi.co), sem cadastro ou chave de API.
 * Rotas usadas: `GET /api/2014/spells` para o índice e `GET /api/2014/spells/{index}` para os detalhes de cada magia.
 * A aplicação transforma a resposta externa em cards e detalhes de magia dentro do Grimório; o usuário permanece na interface Grimmorium.
-* Os dados da SRD 5.1 estão disponíveis sob a licença [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/), com atribuição à Wizards of the Coast e à D&D 5e SRD API.
+* O conteúdo SRD utilizado como base é disponibilizado sob a licença [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/), com a atribuição indicada pela Wizards of the Coast. A API é referenciada como o serviço externo utilizado pelo projeto.
