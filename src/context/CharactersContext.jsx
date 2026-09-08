@@ -84,6 +84,8 @@ function mapV2CharacterToFrontend(character) {
     hp_max: hpMax,
     hp_temp: hpTemp,
     ca: character.vitals?.ac_current ?? character.vitals?.ac_base ?? 10,
+    hit_dice_current: character.vitals?.hit_dice_current ?? character.level ?? 1,
+    hit_dice_max: character.vitals?.hit_dice_max ?? character.level ?? 1,
     slots_magia: mapSlotsToFrontend(character.spell_slots),
     slots_usados: mapUsedSlotsToFrontend(character.spell_slots),
     consumiveis: (character.inventory || []).map((item) => item.name),
@@ -449,10 +451,25 @@ export function CharactersProvider({ children }) {
     }
   }
 
+  const applyShortRest = async (id) => {
+    if (IS_LOCAL_MODE) return false
+
+    try {
+      await apiRequest(`/api/v2/characters/${id}/rest/short`, { method: 'POST' })
+      await refreshCharacters()
+      setMensagemKey('character-updated')
+      return true
+    } catch (error) {
+      setMensagemKey(error?.isApiError ? 'character-api-error' : 'character-sync-error')
+      setApiErrorDetail(error?.isApiError ? error.message : '')
+      return false
+    }
+  }
+
   const clearMensagem = () => { setMensagemKey(null); setApiErrorDetail('') }
 
   return (
-    <CharactersContext.Provider value={{ personagens, status, mensagem, addCharacter, updateCharacter, deleteCharacter, clearMensagem, dataMode: DATA_MODE }}>
+    <CharactersContext.Provider value={{ personagens, status, mensagem, addCharacter, updateCharacter, deleteCharacter, applyShortRest, clearMensagem, dataMode: DATA_MODE }}>
       {children}
     </CharactersContext.Provider>
   )

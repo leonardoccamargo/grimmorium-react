@@ -14,7 +14,7 @@ export default function JogarPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const { language } = useLanguage()
-  const { personagens, status, mensagem, updateCharacter } = useCharacters()
+  const { personagens, status, mensagem, updateCharacter, applyShortRest } = useCharacters()
   const [editedValues, setEditedValues] = useState({})
   const [showUnsavedModal, setShowUnsavedModal] = useState(false)
   const [showSavedModal, setShowSavedModal] = useState(false)
@@ -59,6 +59,7 @@ export default function JogarPage() {
     hpCurrentLabel: language === 'pt-br' ? 'HP atual' : 'Current HP',
     hpMaxLabel: language === 'pt-br' ? 'HP máximo' : 'Max HP',
     hpTempLabel: language === 'pt-br' ? 'HP temporário' : 'Temp HP',
+    hitDiceLabel: language === 'pt-br' ? 'Dados de Vida' : 'Hit Dice',
     increase: '+',
     decrease: '-',
     unsavedTitle: language === 'pt-br' ? 'Alterações não salvas' : 'Unsaved changes',
@@ -351,8 +352,14 @@ export default function JogarPage() {
     }))
   }
 
-  const handleShortRest = () => {
-    resetUsedSlots('short')
+  const handleShortRest = async () => {
+    if (!formValues || Number(formValues.hit_dice_current) <= 0) return
+
+    const rested = await applyShortRest(formValues.id)
+    if (rested) {
+      setEditedValues({})
+      setShowSavedModal(true)
+    }
   }
 
   const handleLongRest = () => {
@@ -544,6 +551,13 @@ export default function JogarPage() {
                     />
                   </label>
                   <button type="button" className="btn-secondary play-step-button" onClick={() => adjustNumberField('ca', 1)}>{strings.increase}</button>
+                </div>
+              </div>
+
+              <div className="play-control-group">
+                <span className="play-control-label">{strings.hitDiceLabel}</span>
+                <div className="play-control-row play-control-row-compact">
+                  <span>{formValues.hit_dice_current ?? 0}/{formValues.hit_dice_max ?? formValues.nivel}</span>
                 </div>
               </div>
 
