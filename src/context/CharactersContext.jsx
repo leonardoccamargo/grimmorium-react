@@ -84,6 +84,17 @@ function mapV2CharacterToFrontend(character) {
     hp_max: hpMax,
     hp_temp: hpTemp,
     ca: character.vitals?.ac_current ?? character.vitals?.ac_base ?? 10,
+    raca: character.race,
+    subraca: character.subrace,
+    campanha: character.campaign || '',
+    alinhamento: character.alignment || '',
+    antecedente: character.background || '',
+    tracos: character.personality_traits || '',
+    ideais: character.ideals || '',
+    vinculos: character.bonds || '',
+    defeitos: character.flaws || '',
+    atributos_base: Object.fromEntries(Object.entries(character.abilities || {}).map(([key, value]) => [key, value.base ?? 10])),
+    atributos_raciais: Object.fromEntries(Object.entries(character.abilities || {}).map(([key, value]) => [key, value.racial ?? 0])),
     hit_dice_current: character.vitals?.hit_dice_current ?? character.level ?? 1,
     hit_dice_max: character.vitals?.hit_dice_max ?? character.level ?? 1,
     slots_magia: mapSlotsToFrontend(character.spell_slots),
@@ -434,6 +445,22 @@ export function CharactersProvider({ children }) {
     }
   }
 
+  const updateCharacterSheet = async (id, character) => {
+    try {
+      const result = await apiRequest('/api/v2/characters/sheet', {
+        method: 'POST',
+        body: JSON.stringify({ id, ...buildWizardPayload(character) }),
+      })
+      await refreshCharacters()
+      setMensagemKey('character-updated')
+      return result
+    } catch (error) {
+      setMensagemKey(error?.isApiError ? 'character-api-error' : 'character-sync-error')
+      setApiErrorDetail(error?.isApiError ? error.message : '')
+      return false
+    }
+  }
+
   const deleteCharacter = async (id) => {
     if (IS_LOCAL_MODE) {
       setPersonagens((prev) => prev.filter((personagem) => personagem.id !== id))
@@ -480,7 +507,7 @@ export function CharactersProvider({ children }) {
   const clearMensagem = () => { setMensagemKey(null); setApiErrorDetail('') }
 
   return (
-    <CharactersContext.Provider value={{ personagens, status, mensagem, addCharacter, updateCharacter, deleteCharacter, applyShortRest, clearMensagem, dataMode: DATA_MODE }}>
+    <CharactersContext.Provider value={{ personagens, status, mensagem, addCharacter, updateCharacter, updateCharacterSheet, deleteCharacter, applyShortRest, clearMensagem, dataMode: DATA_MODE }}>
       {children}
     </CharactersContext.Provider>
   )

@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import PageTitle from '../components/PageTitle'
 import LoadingIndicator from '../components/LoadingIndicator'
 import ConfirmModal from '../components/ConfirmModal'
 import MessageModal from '../components/MessageModal'
 import ShortRestModal from '../components/ShortRestModal'
 import SearchBar from '../components/SearchBar'
+import CharacterForm from '../components/CharacterForm'
 import { useCharacters } from '../context/CharactersContext'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { clampHpToMax, parseHpString, formatHpString } from '../utils/characterHealth.js'
@@ -13,15 +14,17 @@ import { clampHpToMax, parseHpString, formatHpString } from '../utils/characterH
 export default function JogarPage() {
   const { id } = useParams()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { language } = useLanguage()
-  const { personagens, status, mensagem, updateCharacter, applyShortRest } = useCharacters()
+  const { personagens, status, mensagem, updateCharacter, updateCharacterSheet, applyShortRest } = useCharacters()
   const [editedValues, setEditedValues] = useState({})
   const [showUnsavedModal, setShowUnsavedModal] = useState(false)
   const [showSavedModal, setShowSavedModal] = useState(false)
   const [showShortRestModal, setShowShortRestModal] = useState(false)
   const [shortRestResult, setShortRestResult] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const isEditMode = searchParams.get('modo') === 'editar'
 
   const strings = {
     title: language === 'pt-br' ? 'Modo de Jogo' : 'Play Mode',
@@ -209,6 +212,12 @@ export default function JogarPage() {
 
   const handleOpenSession = (characterId) => {
     navigate(`/jogar/${characterId}`, { state: { from: '/jogar' } })
+  }
+
+  const handleEditSubmit = async (values) => {
+    if (!selecionado) return
+    const updated = await updateCharacterSheet(selecionado.id, values)
+    if (updated) handleVoltar()
   }
 
   const handleSearchChange = (value) => {
@@ -517,11 +526,24 @@ export default function JogarPage() {
           </div>
         )}
 
-        {status === 'success' && !isSessionOverview && !selecionado && (
+        {status === 'success' && isEditMode && selecionado && (
+          <CharacterForm
+            initial={{
+              ...selecionado,
+              metodo_atributos: 'standard',
+              hp: `${selecionado.hp_current}/${selecionado.hp_max}`,
+            }}
+            onSubmit={handleEditSubmit}
+            onCancel={handleVoltar}
+            submitLabel={language === 'pt-br' ? 'Salvar ficha' : 'Save sheet'}
+          />
+        )}
+
+        {status === 'success' && !isEditMode && !isSessionOverview && !selecionado && (
           <div className="alert alert-warning">{strings.notFound}</div>
         )}
 
-        {status === 'success' && !isSessionOverview && selecionado && (
+        {status === 'success' && !isEditMode && !isSessionOverview && selecionado && (
           <div className="play-card">
             <div className="play-card-header">
               <div>
