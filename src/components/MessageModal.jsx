@@ -48,7 +48,7 @@ export default function MessageModal({
         onClick={(event) => event.stopPropagation()}
       >
         <h3 id={titleId}>{title}</h3>
-        <p id={messageId}>{message}</p>
+        <div id={messageId}>{message}</div>
 
         <div className="modal-actions">
           <button ref={buttonRef} type="button" className="btn-primary" onClick={onClose}>

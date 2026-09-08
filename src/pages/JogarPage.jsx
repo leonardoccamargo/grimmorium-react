@@ -73,6 +73,7 @@ export default function JogarPage() {
     shortRestResultLabel: language === 'pt-br' ? 'Resultado dos dados' : 'Die results',
     shortRestConstitutionLabel: language === 'pt-br' ? 'Constituição aplicada' : 'Constitution applied',
     shortRestHealingLabel: language === 'pt-br' ? 'Cura total' : 'Total healing',
+    shortRestNoDice: language === 'pt-br' ? 'Nenhum Dado de Vida gasto.' : 'No Hit Dice spent.',
     increase: '+',
     decrease: '-',
     unsavedTitle: language === 'pt-br' ? 'Alterações não salvas' : 'Unsaved changes',
@@ -385,6 +386,21 @@ export default function JogarPage() {
     resetUsedSlots('long')
   }
 
+  const shortRestResultMessage = shortRestResult
+    ? (
+      <div className="short-rest-result">
+        {shortRestResult.roll_breakdown?.length > 0 ? (
+          shortRestResult.roll_breakdown.map((roll, index) => (
+            <p key={index}>
+              {strings.shortRestResultLabel} {index + 1}: {roll.die} {roll.constitution_modifier >= 0 ? '+' : '-'} {Math.abs(roll.constitution_modifier)} = {roll.result}
+            </p>
+          ))
+        ) : <p>{strings.shortRestNoDice}</p>}
+        <strong>{strings.shortRestHealingLabel}: {shortRestResult.healed} HP</strong>
+      </div>
+    )
+    : strings.savedMessage
+
   const canSave = Boolean(
     formValues
     && Number.isFinite(Number(hpState.current))
@@ -635,9 +651,7 @@ export default function JogarPage() {
             <MessageModal
               isOpen={showSavedModal}
               title={strings.savedTitle}
-              message={shortRestResult
-                ? `${strings.shortRestResultLabel}: ${shortRestResult.raw_rolls.join(', ') || '0'} | ${strings.shortRestConstitutionLabel}: ${shortRestResult.constitution_modifier >= 0 ? '+' : ''}${shortRestResult.constitution_modifier} | ${strings.shortRestHealingLabel}: ${shortRestResult.healed} HP`
-                : strings.savedMessage}
+              message={shortRestResultMessage}
               buttonLabel={strings.closeButton}
               onClose={() => setShowSavedModal(false)}
             />
