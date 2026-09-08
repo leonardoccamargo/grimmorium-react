@@ -238,7 +238,7 @@ export default function JogarPage() {
   }
 
   const handleSave = async () => {
-    await persistChanges({ exitAfterSave: true, showSavedModal: false })
+    await persistChanges({ exitAfterSave: false, showSavedModal: true })
   }
 
   const handleSaveAndLeave = async () => {

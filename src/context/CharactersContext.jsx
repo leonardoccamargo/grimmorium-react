@@ -402,16 +402,18 @@ export function CharactersProvider({ children }) {
 
       const slotEntries = Array.from({ length: 9 }, (_, index) => {
         const level = index + 1
+        const maxSlots = Number(updatedCharacter.slots_magia?.[`nivel${level}`])
         const usedFromPlay = Number(updatedCharacter.slots_usados?.[`nivel${level}`])
         const usedFallback = Number(updatedCharacter.slots_magia?.[`nivel${level}`])
 
         return {
           level,
+          maxSlots,
           used: Number.isFinite(usedFromPlay)
             ? Math.max(0, usedFromPlay)
             : (Number.isFinite(usedFallback) ? Math.max(0, usedFallback) : 0),
         }
-      })
+      }).filter((entry) => Number.isFinite(entry.maxSlots) && entry.maxSlots > 0)
 
       await Promise.all(slotEntries.map((entry) => (
         apiRequest(`/api/v2/characters/${updatedCharacter.id}/spell-slots/${entry.level}`, {
