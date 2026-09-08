@@ -253,10 +253,12 @@ export default function JogarPage() {
   }
 
   const handleSave = async () => {
+    setShortRestResult(null)
     await persistChanges({ exitAfterSave: false, showSavedModal: true })
   }
 
   const handleSaveAndLeave = async () => {
+    setShortRestResult(null)
     await persistChanges({ exitAfterSave: true, showSavedModal: false })
   }
 
