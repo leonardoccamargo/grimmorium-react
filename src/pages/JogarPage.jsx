@@ -20,6 +20,7 @@ export default function JogarPage() {
   const [showUnsavedModal, setShowUnsavedModal] = useState(false)
   const [showSavedModal, setShowSavedModal] = useState(false)
   const [showShortRestModal, setShowShortRestModal] = useState(false)
+  const [shortRestResult, setShortRestResult] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
 
   const strings = {
@@ -69,6 +70,9 @@ export default function JogarPage() {
     shortRestDiceLabel: language === 'pt-br' ? 'Dados de Vida a gastar' : 'Hit Dice to spend',
     shortRestCancel: language === 'pt-br' ? 'Cancelar' : 'Cancel',
     shortRestConfirm: language === 'pt-br' ? 'Aplicar descanso' : 'Apply rest',
+    shortRestResultLabel: language === 'pt-br' ? 'Resultado dos dados' : 'Die results',
+    shortRestConstitutionLabel: language === 'pt-br' ? 'Constituição aplicada' : 'Constitution applied',
+    shortRestHealingLabel: language === 'pt-br' ? 'Cura total' : 'Total healing',
     increase: '+',
     decrease: '-',
     unsavedTitle: language === 'pt-br' ? 'Alterações não salvas' : 'Unsaved changes',
@@ -368,6 +372,7 @@ export default function JogarPage() {
     if (rested) {
       setEditedValues({})
       setShowShortRestModal(false)
+      setShortRestResult(rested)
       setShowSavedModal(true)
     }
   }
@@ -630,7 +635,9 @@ export default function JogarPage() {
             <MessageModal
               isOpen={showSavedModal}
               title={strings.savedTitle}
-              message={strings.savedMessage}
+              message={shortRestResult
+                ? `${strings.shortRestResultLabel}: ${shortRestResult.raw_rolls.join(', ') || '0'} | ${strings.shortRestConstitutionLabel}: ${shortRestResult.constitution_modifier >= 0 ? '+' : ''}${shortRestResult.constitution_modifier} | ${strings.shortRestHealingLabel}: ${shortRestResult.healed} HP`
+                : strings.savedMessage}
               buttonLabel={strings.closeButton}
               onClose={() => setShowSavedModal(false)}
             />
