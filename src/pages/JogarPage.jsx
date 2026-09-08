@@ -4,6 +4,7 @@ import PageTitle from '../components/PageTitle'
 import LoadingIndicator from '../components/LoadingIndicator'
 import ConfirmModal from '../components/ConfirmModal'
 import MessageModal from '../components/MessageModal'
+import ShortRestModal from '../components/ShortRestModal'
 import SearchBar from '../components/SearchBar'
 import { useCharacters } from '../context/CharactersContext'
 import { useLanguage } from '../context/LanguageContext.jsx'
@@ -18,6 +19,7 @@ export default function JogarPage() {
   const [editedValues, setEditedValues] = useState({})
   const [showUnsavedModal, setShowUnsavedModal] = useState(false)
   const [showSavedModal, setShowSavedModal] = useState(false)
+  const [showShortRestModal, setShowShortRestModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
   const strings = {
@@ -60,6 +62,13 @@ export default function JogarPage() {
     hpMaxLabel: language === 'pt-br' ? 'HP máximo' : 'Max HP',
     hpTempLabel: language === 'pt-br' ? 'HP temporário' : 'Temp HP',
     hitDiceLabel: language === 'pt-br' ? 'Dados de Vida' : 'Hit Dice',
+    shortRestTitle: language === 'pt-br' ? 'Descanso curto' : 'Short rest',
+    shortRestMessage: language === 'pt-br'
+      ? 'Escolha quantos Dados de Vida deseja gastar. Você também pode gastar zero.'
+      : 'Choose how many Hit Dice to spend. You can also spend zero.',
+    shortRestDiceLabel: language === 'pt-br' ? 'Dados de Vida a gastar' : 'Hit Dice to spend',
+    shortRestCancel: language === 'pt-br' ? 'Cancelar' : 'Cancel',
+    shortRestConfirm: language === 'pt-br' ? 'Aplicar descanso' : 'Apply rest',
     increase: '+',
     decrease: '-',
     unsavedTitle: language === 'pt-br' ? 'Alterações não salvas' : 'Unsaved changes',
@@ -352,12 +361,13 @@ export default function JogarPage() {
     }))
   }
 
-  const handleShortRest = async () => {
-    if (!formValues || Number(formValues.hit_dice_current) <= 0) return
+  const handleShortRest = async (diceCount) => {
+    if (!formValues) return
 
-    const rested = await applyShortRest(formValues.id)
+    const rested = await applyShortRest(formValues.id, diceCount)
     if (rested) {
       setEditedValues({})
+      setShowShortRestModal(false)
       setShowSavedModal(true)
     }
   }
@@ -595,7 +605,7 @@ export default function JogarPage() {
             </div>
 
             <div className="play-actions">
-              <button type="button" className="btn-secondary" onClick={handleShortRest}>{strings.shortRestButton}</button>
+              <button type="button" className="btn-secondary" onClick={() => setShowShortRestModal(true)}>{strings.shortRestButton}</button>
               <button type="button" className="btn-secondary" onClick={handleLongRest}>{strings.longRestButton}</button>
               <button type="button" className="btn-secondary" onClick={handleBackClick}>{strings.backButton}</button>
               <button type="button" className="btn-primary" onClick={handleSave} disabled={!canSave}>{strings.saveButton}</button>
@@ -623,6 +633,19 @@ export default function JogarPage() {
               message={strings.savedMessage}
               buttonLabel={strings.closeButton}
               onClose={() => setShowSavedModal(false)}
+            />
+
+            <ShortRestModal
+              key={showShortRestModal ? `open-${formValues.id}` : 'closed'}
+              isOpen={showShortRestModal}
+              availableHitDice={Number(formValues.hit_dice_current) || 0}
+              title={strings.shortRestTitle}
+              message={strings.shortRestMessage}
+              diceLabel={strings.shortRestDiceLabel}
+              cancelLabel={strings.shortRestCancel}
+              confirmLabel={strings.shortRestConfirm}
+              onCancel={() => setShowShortRestModal(false)}
+              onConfirm={handleShortRest}
             />
           </div>
         )}

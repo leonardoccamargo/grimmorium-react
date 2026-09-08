@@ -451,11 +451,14 @@ export function CharactersProvider({ children }) {
     }
   }
 
-  const applyShortRest = async (id) => {
+  const applyShortRest = async (id, diceCount) => {
     if (IS_LOCAL_MODE) return false
 
     try {
-      await apiRequest(`/api/v2/characters/${id}/rest/short`, { method: 'POST' })
+      await apiRequest(`/api/v2/characters/${id}/rest/short`, {
+        method: 'POST',
+        body: JSON.stringify({ dice_count: diceCount }),
+      })
       await refreshCharacters()
       setMensagemKey('character-updated')
       return true
