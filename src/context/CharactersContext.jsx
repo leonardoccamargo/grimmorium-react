@@ -455,13 +455,13 @@ export function CharactersProvider({ children }) {
     if (IS_LOCAL_MODE) return false
 
     try {
-      await apiRequest(`/api/v2/characters/${id}/rest/short`, {
+      const result = await apiRequest(`/api/v2/characters/${id}/rest/short`, {
         method: 'POST',
         body: JSON.stringify({ dice_count: diceCount }),
       })
       await refreshCharacters()
       setMensagemKey('character-updated')
-      return true
+      return result
     } catch (error) {
       setMensagemKey(error?.isApiError ? 'character-api-error' : 'character-sync-error')
       setApiErrorDetail(error?.isApiError ? error.message : '')
