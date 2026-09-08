@@ -1728,6 +1728,31 @@ input[type="number"]:focus {
     line-height: 1.55;
 }
 
+.short-rest-result {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.short-rest-result p {
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid rgba(197, 160, 89, 0.24);
+    border-radius: 10px;
+    background: rgba(197, 160, 89, 0.08);
+    color: var(--texto-principal);
+    font-variant-numeric: tabular-nums;
+}
+
+.short-rest-result strong {
+    display: block;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(197, 160, 89, 0.32);
+    color: var(--ouro-brilho);
+    font-size: 1.05rem;
+}
+
 .modal-actions {
     margin-top: 18px;
     display: flex;

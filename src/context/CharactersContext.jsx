@@ -398,6 +398,7 @@ export function CharactersProvider({ children }) {
         body: JSON.stringify({
           hp_current: hpCurrent,
           hp_temp: hpTemp,
+          hit_dice_current: Number(updatedCharacter.hit_dice_current),
           ac_base: Number(updatedCharacter.ca) || 10,
         }),
       })
@@ -459,7 +460,14 @@ export function CharactersProvider({ children }) {
         method: 'POST',
         body: JSON.stringify({ dice_count: diceCount }),
       })
-      await refreshCharacters()
+      if (result.character) {
+        const updated = mapV2CharacterToFrontend(result.character)
+        setPersonagens((prev) => prev.map((character) => (
+          character.id === updated.id ? updated : character
+        )))
+      } else {
+        await refreshCharacters()
+      }
       setMensagemKey('character-updated')
       return result
     } catch (error) {
