@@ -2,13 +2,13 @@
   {
     "id": 1,
     "nome": "Helena",
-    "classe": "Guardiã de Túmulos",
+    "classe": "Bruxo",
     "nivel": 3,
-    "hp": "25/25",
+    "hp": "18/18",
     "mana": "0/0",
-    "ca": 15,
+    "ca": 8,
     "slots_magia": {
-      "nivel1": 4,
+      "nivel1": 0,
       "nivel2": 2,
       "nivel3": 0
     },
@@ -23,7 +23,7 @@
     "nome": "Lyon",
     "classe": "Patrulheiro",
     "nivel": 16,
-    "hp": "124/124",
+    "hp": "72/124",
     "mana": "0/0",
     "ca": 18,
     "slots_magia": {
@@ -118,7 +118,7 @@
     "nome": "Nymera",
     "classe": "Druida",
     "nivel": 4,
-    "hp": "33/33",
+    "hp": "16/33",
     "mana": "0/0",
     "ca": 14,
     "slots_magia": {

@@ -65,11 +65,6 @@ export default function HomePage() {
     <main className="home-page-shell">
 
       <section className="hero-arcano home-hero">
-        <CornerFlourish className="home-corner top-left" />
-        <CornerFlourish className="home-corner top-right" />
-        <CornerFlourish className="home-corner bottom-left" />
-        <CornerFlourish className="home-corner bottom-right" />
-
         <div className="hero-conteudo">
           <div className="home-hero-grid">
             <div className="home-hero-copy">

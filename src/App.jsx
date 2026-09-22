@@ -11,6 +11,7 @@ import NotFoundPage from './pages/NotFoundPage.jsx'
 
 export default function App() {
   const [theme, setTheme] = useState('dark')
+  const [isDockOpen, setIsDockOpen] = useState(false)
   const { language } = useLanguage()
 
   useEffect(() => {
@@ -26,9 +27,15 @@ export default function App() {
   }
 
   return (
-    <div className="container">
+    <div className={`container ${isDockOpen ? 'is-dock-open' : ''}`}>
       <RunesBackdrop />
-      <Header theme={theme} onToggleTheme={toggleTheme} />
+      <Header
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        isDockOpen={isDockOpen}
+        onToggleDock={() => setIsDockOpen((value) => !value)}
+        onCloseDock={() => setIsDockOpen(false)}
+      />
 
       <main>
         <Routes>

@@ -1,15 +1,34 @@
 ﻿/* Estrutura principal do app e navegacao superior. */
 .container {
     position: relative;
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 30px clamp(18px, 3.2vw, 34px);
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0 0 30px;
     border: none;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
     overflow: visible;
     animation: reveal 0.7s ease;
+}
+
+.container > main {
+    position: relative;
+    z-index: 1;
+    margin-left: 64px;
+    padding-top: 72px;
+    width: calc(100% - 64px);
+    transition: margin-left 0.35s cubic-bezier(0.22, 1, 0.36, 1), width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.container.is-dock-open > main {
+    margin-left: 210px;
+    width: calc(100% - 210px);
+}
+
+body {
+    padding-left: 0;
 }
 
 h1,
@@ -21,17 +40,138 @@ h4 {
 }
 
 .topo-arcano {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 18px 10px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: none;
+    backdrop-filter: blur(3px);
+}
+
+.header-dock {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    bottom: 0;
+    width: 64px;
+    min-width: 64px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 18px 10px 16px;
+    border: none;
+    border-right: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+    margin-left: 0;
+    z-index: 25;
+}
+
+.header-dock.is-open {
+    width: 210px;
+}
+
+.dock-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 12px;
+    color: var(--texto-principal);
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: transparent;
+    cursor: pointer;
+}
+
+.dock-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    color: var(--ouro-brilho);
+    flex-shrink: 0;
+}
+
+.dock-text {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: opacity 0.25s ease, max-width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.header-dock.is-open .dock-text {
+    opacity: 1;
+    max-width: 140px;
+}
+
+.header-main {
     position: relative;
-    display: grid;
-    gap: 14px;
-    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    z-index: 0;
+}
+
+.brand-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+    padding-top: 0;
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+}
+
+.header-logo {
+    width: clamp(30px, 2.8vw, 42px);
+    height: auto;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 10px rgba(236, 192, 94, 0.22));
 }
 
 .titulo-arcano {
     text-align: left;
-    font-size: clamp(2.1rem, 3.4vw, 3.2rem);
+    font-size: clamp(1.2rem, 1.7vw, 1.8rem);
     margin: 0;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.04em;
     color: color-mix(in srgb, var(--ouro-brilho) 72%, var(--texto-principal));
     text-shadow: 0 0 10px rgba(231, 204, 139, 0.25);
 }
@@ -40,7 +180,9 @@ h4 {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-end;
     gap: 8px;
+    margin-left: auto;
 }
 
 [data-theme="light"] .titulo-arcano {
@@ -49,90 +191,67 @@ h4 {
 
 .menu-arcano {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    flex-direction: column;
     gap: 10px;
-    border-top: 1px solid color-mix(in srgb, var(--detalhe-ouro) 60%, transparent);
-    border-bottom: 1px solid color-mix(in srgb, var(--detalhe-ouro) 60%, transparent);
-    padding: 10px 2px;
+    margin-top: 12px;
+    width: 100%;
 }
 
 .menu-arcano a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
     color: var(--texto-principal);
     text-decoration: none;
     font-family: var(--font-display);
-    font-size: 0.875rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 8px 12px;
-    border-radius: 8px;
+    padding: 11px 10px;
+    border-radius: 12px;
     position: relative;
-    transition: color 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    border: none;
+    white-space: nowrap;
 }
 
-.menu-placeholder {
+.nav-icon {
     display: inline-flex;
     align-items: center;
-    position: relative;
-    font-family: var(--font-display);
-    font-size: 0.875rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 8px 12px;
-    border-radius: 8px;
-    color: color-mix(in srgb, var(--texto-secundario) 88%, #fff 12%);
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    flex-shrink: 0;
 }
 
-.menu-placeholder::after {
-    content: "";
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    bottom: 2px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--ouro-brilho), transparent);
+.nav-label {
     opacity: 0;
-    transition: opacity 0.2s;
+    max-width: 0;
+    overflow: hidden;
+    transition: opacity 0.22s ease, max-width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    display: inline-block;
+    letter-spacing: 0.08em;
 }
 
-.menu-placeholder.is-active {
-    color: var(--ouro-brilho);
-}
-
-.menu-placeholder.is-active::after {
+.header-dock.is-open .nav-label {
     opacity: 1;
-}
-
-/* Linha luminosa exibida no hover e no item ativo do menu. */
-.menu-arcano a::after {
-    content: "";
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    bottom: 2px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--ouro-brilho), transparent);
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.menu-arcano a:hover::after {
-    opacity: 1;
+    max-width: 170px;
 }
 
 .menu-arcano a:hover {
     color: var(--ouro-brilho);
+    background: transparent;
+    transform: translateX(2px);
 }
 
 .menu-arcano a.is-active {
-    background: transparent;
     color: var(--ouro-brilho);
-}
-
-.menu-arcano a.is-active::after {
-    opacity: 1;
+    background: transparent;
 }
 
 .btn-voltar-inicio {
@@ -156,9 +275,10 @@ h4 {
 .theme-toggle {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     margin-left: 0;
-    padding: 8px 16px;
+    padding: 8px 12px;
     border-radius: 999px;
     border: 1px solid color-mix(in oklab, var(--detalhe-ouro) 40%, transparent);
     background: color-mix(in srgb, var(--fundo-principal) 72%);
@@ -173,6 +293,14 @@ h4 {
     transition: border-color 0.2s ease, color 0.2s ease, transform 0.18s ease;
 }
 
+.theme-toggle.icon-only {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0;
+}
+
 .theme-toggle:hover {
     border-color: color-mix(in oklab, var(--detalhe-ouro) 75%, transparent);
     color: var(--detalhe-ouro);
@@ -182,29 +310,29 @@ h4 {
 /* Hero e secoes de destaque da Home. */
 .hero-arcano {
     position: relative;
+    width: 100%;
     margin-bottom: 24px;
     min-height: 510px;
-    border: 1px solid color-mix(in srgb, var(--detalhe-ouro) 48%, transparent);
-    border-radius: 14px;
+    border: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
     display: grid;
     place-items: center;
     text-align: center;
-    overflow: hidden;
     background: transparent;
-    box-shadow:
-        inset 0 0 0 1px color-mix(in oklab, var(--detalhe-ouro) 12%, transparent),
-        inset 0 0 40px color-mix(in oklab, var(--detalhe-ouro) 6%, transparent),
-        0 30px 80px -30px color-mix(in oklab, var(--fundo-principal) 90%, transparent);
+    box-shadow: none;
 }
 
 .hero-conteudo {
     position: relative;
     z-index: 1;
-    width: min(1000px, 90%);
-    margin: clamp(14px, 2.6vw, 28px) auto;
-    padding: clamp(22px, 3.6vw, 42px) clamp(20px, 3.8vw, 44px);
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: clamp(22px, 3.6vw, 42px) clamp(18px, 3vw, 32px);
     border: none;
-    border-radius: 16px;
+    border-radius: 0;
     background: transparent;
     box-shadow: none;
     backdrop-filter: none;
@@ -519,38 +647,6 @@ h4 {
     animation: rune-spin 90s linear infinite reverse;
 }
 
-.home-corner {
-    position: absolute;
-    width: 32px;
-    height: 32px;
-    color: rgba(231, 204, 139, 0.66);
-    pointer-events: none;
-    z-index: 2;
-}
-
-.home-corner.top-left {
-    top: 12px;
-    left: 12px;
-}
-
-.home-corner.top-right {
-    top: 12px;
-    right: 12px;
-    transform: scaleX(-1);
-}
-
-.home-corner.bottom-left {
-    bottom: 12px;
-    left: 12px;
-    transform: scaleY(-1);
-}
-
-.home-corner.bottom-right {
-    bottom: 12px;
-    right: 12px;
-    transform: scale(-1);
-}
-
 .home-hero-subline {
     display: block;
     margin-top: 8px;
@@ -740,12 +836,11 @@ h4 {
 }
 
 [data-theme="light"] .hero-arcano {
-    background: color-mix(in srgb, var(--fundo-secundario) 30%, transparent);
-    border-color: color-mix(in srgb, var(--gold-primary) 26%, transparent);
-    box-shadow:
-        inset 0 0 0 1px color-mix(in srgb, var(--gold-primary) 12%, transparent),
-        inset 0 0 24px color-mix(in srgb, var(--gold-primary) 5%, transparent),
-        0 20px 40px -24px rgba(70, 57, 45, 0.16);
+    background: transparent;
+    border: none;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
 }
 
 [data-theme="light"] .home-kicker{
@@ -852,33 +947,48 @@ h2 {
 .tooltip-wrapper {
     position: relative;
     display: inline-flex;
+    align-items: center;
 }
 
-.tooltip-wrapper::after {
-    content: attr(data-tooltip);
+.tooltip-label {
     position: absolute;
     left: 50%;
-    bottom: calc(100% + 8px);
-    transform: translateX(-50%) translateY(4px);
+    top: calc(100% + 6px);
+    transform: translateX(-50%) translateY(-4px);
     opacity: 0;
     pointer-events: none;
     white-space: nowrap;
-    background: color-mix(in srgb, var(--fundo-card) 84%, #000 16%);
+    max-width: min(180px, calc(100vw - 20px));
+    background: transparent;
     color: var(--texto-principal);
-    border: 1px solid color-mix(in srgb, var(--detalhe-ouro) 68%, transparent);
-    border-radius: 8px;
-    padding: 5px 8px;
-    font-size: 0.78rem;
-    line-height: 1.2;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-    z-index: 25;
-    transition: opacity 0.18s ease, transform 0.18s ease;
+    font-size: 0.58rem;
+    line-height: 1.1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
-.tooltip-wrapper:hover::after,
-.tooltip-wrapper:focus-within::after {
+.tooltip-wrapper:hover .tooltip-label,
+.tooltip-wrapper:focus-within .tooltip-label {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 680px) {
+    .tooltip-wrapper {
+        position: relative;
+    }
+
+    .tooltip-label {
+        left: auto;
+        right: 50%;
+        transform: translateX(50%) translateY(-4px);
+    }
+
+    .tooltip-wrapper:hover .tooltip-label,
+    .tooltip-wrapper:focus-within .tooltip-label {
+        transform: translateX(50%) translateY(0);
+    }
 }
 
 /* Superficies de personagem, grimorio e modo de jogo. */
@@ -1440,25 +1550,13 @@ input[type="number"]:focus {
     justify-content: space-between;
     align-items: center;
     gap: 14px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(197, 160, 89, 0.18);
+    width: 100%;
+    padding: 0;
+    border-bottom: none;
 }
 
 .subtitulo-arcano {
-    margin-top: 6px;
-    color: var(--texto-secundario);
-    font-family: "Cormorant Garamond", "Times New Roman", serif;
-    font-size: 1.26rem;
-    font-style: italic;
-    line-height: 1.25;
-    max-width: 560px;
-}
-
-.breadcrumb {
-    margin-top: 16px;
-    font-family: "Cormorant Garamond", "Times New Roman", serif;
-    font-size: 1rem;
-    color: var(--texto-secundario);
+    display: none;
 }
 
 .page-title {
