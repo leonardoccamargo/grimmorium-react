@@ -12,7 +12,14 @@ Este repositório contém a **interface visual** do ecossistema Grimmorium. Ele 
 
 O Grimmorium adota o cenário de interface, API própria e serviço externo. A interface consome o backend Flask para gerir personagens e magias persistidas em SQLite. Ela também consulta e trata dados da API pública D&D 5e SRD diretamente no Grimório, sem redirecionar o usuário para outro sistema.
 
-![Fluxograma da arquitetura do Grimmorium](docs/arquitetura-grimmorium.svg)
+![Fluxograma da arquitetura do Grimmorium](docs/Arquitetura%20do%20Grimmorium.jpg)
+
+### Fluxo das magias por idioma
+
+- **Português:** o frontend consulta o endpoint próprio `/api/magias`, servido pelo backend.
+- **Inglês:** o frontend consulta diretamente a API pública D&D 5e SRD para carregar o índice e os detalhes das magias.
+
+Nos dois casos, os dados são apresentados dentro do Grimmorium e o usuário não precisa acessar a API externa diretamente.
 
 ---
 
