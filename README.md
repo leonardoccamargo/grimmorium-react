@@ -31,13 +31,19 @@ No PowerShell, na raiz deste repositório, execute:
 docker compose up --build
 ```
 
-O Docker inicia os dois componentes: interface em [http://localhost:8080](http://localhost:8080), API em [http://localhost:5000](http://localhost:5000) e Swagger em [http://localhost:5000/openapi/swagger](http://localhost:5000/openapi/swagger). Para encerrar, pressione `Ctrl + C` ou execute `docker compose down` em outro terminal.
+O Docker inicia os dois componentes:
+
+* Interface em [http://localhost:8080](http://localhost:8080)
+* API em [http://localhost:5000](http://localhost:5000)
+* Swagger em [http://localhost:5000/openapi/swagger](http://localhost:5000/openapi/swagger)
+
+Para encerrar, pressione `Ctrl + C` ou execute `docker compose down` em outro terminal.
 
 ---
 
 ## 💻 Execução local (alternativa para desenvolvimento)
 
-Para executar sem Docker, instale Node.js 18+ e mantenha o backend disponível em `http://127.0.0.1:5000`:
+Para executar sem Docker, instale Node.js 20+ e mantenha o backend disponível em `http://127.0.0.1:5000`:
 
 ```powershell
 npm install
@@ -58,6 +64,22 @@ A aplicação utiliza roteamento interno para as seguintes telas:
 * `/jogar` — Área de jogo/sessão.
 * `/jogar/:id` — Tela de jogo focada em um personagem específico.
 * `*` — Tela de erro (404) para rotas não encontradas.
+
+---
+
+## 🕘 Histórico da sessão
+
+Na página **Sessão**, cada personagem possui uma área de histórico própria.
+
+O histórico registra alterações feitas durante o modo **Jogar**, como:
+
+- Recuperação ou perda de pontos de vida.
+- Uso ou recuperação de slots de feitiço.
+- Descansos e outras alterações realizadas durante a sessão.
+
+Cada ficha mantém somente as **9 alterações mais recentes**. Quando uma nova alteração ultrapassa esse limite, o registro mais antigo é removido.
+
+Alterações feitas no modo de edição completa da ficha não entram no histórico.
 
 ---
 
@@ -87,6 +109,8 @@ VITE_API_BASE_URL=[URL_DO_SEU_NOVO_BACKEND]
 
 
 
+> ⚠️ **Nota sobre o modo local:** Sem o backend ativo, personagens usam o JSON local e alterações não geram histórico persistido. Para o fluxo completo, use `VITE_CHARACTERS_DATA_MODE=api`.
+
 > ⚠️ **Nota sobre Magias:** Mesmo em modo local, as magias continuam sendo buscadas no endpoint `/api/magias`.
 
 ---
@@ -98,7 +122,7 @@ No diretório do projeto, você pode executar os seguintes scripts:
 * `npm run dev` — Inicia o servidor de desenvolvimento local.
 * `npm run build` — Compila a aplicação para produção (gera os arquivos otimizados na pasta `dist`).
 * `npm run preview` — Visualiza localmente o build de produção gerado.
-* `npm run lint` — Executa o linter para buscar e corrigir problemas no código estrutural.
+* `npm run lint` — Executa o linter para verificar problemas no código estrutural.
 
 ---
 
