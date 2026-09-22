@@ -461,6 +461,17 @@ export function CharactersProvider({ children }) {
     }
   }
 
+  const getCharacterHistory = async (id) => {
+    if (IS_LOCAL_MODE) return []
+
+    try {
+      const result = await apiRequest(`/api/v2/characters/${id}/history`)
+      return result.entries || []
+    } catch {
+      return []
+    }
+  }
+
   const deleteCharacter = async (id) => {
     if (IS_LOCAL_MODE) {
       setPersonagens((prev) => prev.filter((personagem) => personagem.id !== id))
@@ -507,7 +518,7 @@ export function CharactersProvider({ children }) {
   const clearMensagem = () => { setMensagemKey(null); setApiErrorDetail('') }
 
   return (
-    <CharactersContext.Provider value={{ personagens, status, mensagem, addCharacter, updateCharacter, updateCharacterSheet, deleteCharacter, applyShortRest, clearMensagem, dataMode: DATA_MODE }}>
+    <CharactersContext.Provider value={{ personagens, status, mensagem, addCharacter, updateCharacter, updateCharacterSheet, getCharacterHistory, deleteCharacter, applyShortRest, clearMensagem, dataMode: DATA_MODE }}>
       {children}
     </CharactersContext.Provider>
   )

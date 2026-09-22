@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import PageTitle from '../components/PageTitle'
+import { Play } from 'lucide-react'
 import LoadingIndicator from '../components/LoadingIndicator'
 import ConfirmModal from '../components/ConfirmModal'
 import MessageModal from '../components/MessageModal'
@@ -17,13 +17,14 @@ export default function JogarPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { language } = useLanguage()
-  const { personagens, status, mensagem, updateCharacter, updateCharacterSheet, applyShortRest } = useCharacters()
+  const { personagens, status, mensagem, updateCharacter, updateCharacterSheet, getCharacterHistory, applyShortRest } = useCharacters()
   const [editedValues, setEditedValues] = useState({})
   const [showUnsavedModal, setShowUnsavedModal] = useState(false)
   const [showSavedModal, setShowSavedModal] = useState(false)
   const [showShortRestModal, setShowShortRestModal] = useState(false)
   const [shortRestResult, setShortRestResult] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [historyByCharacter, setHistoryByCharacter] = useState({})
   const isEditMode = searchParams.get('modo') === 'editar'
 
   const strings = {
@@ -37,11 +38,10 @@ export default function JogarPage() {
     noCharactersInSession: language === 'pt-br'
       ? 'Nenhum personagem disponível para a sessão.'
       : 'No characters available for the session.',
-    summaryCharacters: language === 'pt-br' ? 'Personagens na sessão' : 'Characters in session',
-    summaryClasses: language === 'pt-br' ? 'Classes presentes' : 'Classes present',
-    summaryClassesEmpty: language === 'pt-br' ? 'Sem classes registradas' : 'No classes registered',
     rosterTitle: language === 'pt-br' ? 'Lista de Personagens' : 'Character list',
     openSessionButton: language === 'pt-br' ? 'Jogar' : 'Play',
+    historyTitle: language === 'pt-br' ? 'Histórico' : 'History',
+    historyEmpty: language === 'pt-br' ? 'Nenhuma alteração registrada nesta sessão.' : 'No changes recorded in this session.',
     slotsSpentLabel: language === 'pt-br' ? 'Slots gastos' : 'Slots spent',
     slotsAvailableLabel: language === 'pt-br' ? 'Slots disponíveis' : 'Slots available',
     loading: language === 'pt-br' ? 'Abrindo ficha...' : 'Opening sheet...',
@@ -49,6 +49,7 @@ export default function JogarPage() {
       ? 'Personagem não encontrado. Volte à lista e selecione outro personagem.'
       : 'Character not found. Return to the list and select another character.',
     playBadge: language === 'pt-br' ? 'Jogo' : 'Play',
+    classLabel: language === 'pt-br' ? 'Classe' : 'Class',
     levelLabel: language === 'pt-br' ? 'Nível' : 'Level',
     hpLabel: 'HP',
     acLabel: language === 'pt-br' ? 'Classe de Armadura' : 'Armor Class',
@@ -186,29 +187,24 @@ export default function JogarPage() {
     )
   }, [sessionRows, searchTerm])
 
-  const sessionSummary = useMemo(() => {
-    if (filteredSessionRows.length === 0) {
-      return {
-        totalCharacters: 0,
-        classesBreakdown: [],
-      }
+  useEffect(() => {
+    if (!isSessionOverview || status !== 'success' || !sessionRows.length) {
+      return undefined
     }
 
-    const byClass = filteredSessionRows.reduce((acc, row) => {
-      const className = String(row.classe || '').trim() || (language === 'pt-br' ? 'Sem classe' : 'No class')
-      acc[className] = (acc[className] || 0) + 1
-      return acc
-    }, {})
-
-    const classesBreakdown = Object.entries(byClass)
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => {
-        if (b.count !== a.count) return b.count - a.count
-        return a.name.localeCompare(b.name)
+    let active = true
+    Promise.all(sessionRows.map(async (row) => [row.id, await getCharacterHistory(row.id)]))
+      .then((entries) => {
+        if (active) setHistoryByCharacter(Object.fromEntries(entries))
       })
 
-    return { totalCharacters: filteredSessionRows.length, classesBreakdown }
-  }, [filteredSessionRows, language])
+    return () => { active = false }
+  }, [getCharacterHistory, isSessionOverview, sessionRows, status])
+
+  const formatHistoryDate = (dateValue) => {
+    if (!dateValue) return ''
+    return new Intl.DateTimeFormat(language, { dateStyle: 'short', timeStyle: 'short' }).format(new Date(dateValue))
+  }
 
   const handleOpenSession = (characterId) => {
     navigate(`/jogar/${characterId}`, { state: { from: '/jogar' } })
@@ -445,11 +441,6 @@ export default function JogarPage() {
 
   return (
     <main>
-      <PageTitle
-        title={isSessionOverview ? strings.sessionTitle : strings.title}
-        subtitle={isSessionOverview ? strings.sessionSubtitle : strings.subtitle}
-      />
-
       <section className="content-section">
         {status === 'loading' && <LoadingIndicator message={isSessionOverview ? strings.loadingSession : strings.loading} />}
         {status === 'error' && <div className="alert alert-error">{mensagem}</div>}
@@ -460,25 +451,6 @@ export default function JogarPage() {
 
         {status === 'success' && isSessionOverview && sessionRows.length > 0 && (
           <div className="session-overview">
-            <div className="session-overview-cards">
-              <article className="session-overview-card">
-                <p>{strings.summaryCharacters}</p>
-                <strong>{sessionSummary.totalCharacters}</strong>
-              </article>
-              <article className="session-overview-card">
-                <p>{strings.summaryClasses}</p>
-                {sessionSummary.classesBreakdown.length === 0 ? (
-                  <strong>{strings.summaryClassesEmpty}</strong>
-                ) : (
-                  <div className="session-class-list">
-                    {sessionSummary.classesBreakdown.map((item) => (
-                      <span key={item.name} className="session-class-chip">{item.name} <b>{item.count}</b></span>
-                    ))}
-                  </div>
-                )}
-              </article>
-            </div>
-
             <div className="page-actions page-actions-compact">
               <SearchBar
                 value={searchTerm}
@@ -486,6 +458,7 @@ export default function JogarPage() {
                 placeholder={language === 'pt-br' ? 'Buscar personagem por nome ou classe...' : 'Search character by name or class...'}
                 buttonLabel={language === 'pt-br' ? 'Buscar' : 'Search'}
                 ariaLabel={language === 'pt-br' ? 'Buscar personagem' : 'Search character'}
+                iconOnly
               />
             </div>
 
@@ -499,24 +472,50 @@ export default function JogarPage() {
                 <ul className="session-roster-list">
                   {filteredSessionRows.map((row) => (
                     <li key={row.id} className="session-roster-item">
-                      <div className="session-roster-main">
-                        <div>
+                      <div className="session-roster-body">
+                        <div className="session-roster-main">
                           <p className="session-roster-name">{row.nome}</p>
-                          <p className="session-roster-meta">{row.classe} · {strings.levelLabel} {row.nivel}</p>
                         </div>
-                      </div>
 
-                      <div className="session-roster-stats">
-                        <span className="session-roster-stat"><small>{strings.hpLabel}</small><strong>{row.currentHp}/{row.maxHp} ({row.hpPercent}%)</strong></span>
-                        <span className="session-roster-stat"><small>{strings.acLabel}</small><strong>{row.ca}</strong></span>
-                        <span className="session-roster-stat"><small>{strings.slotsSpentLabel}</small><strong>{row.usedSlots}</strong></span>
-                        <span className="session-roster-stat"><small>{strings.slotsAvailableLabel}</small><strong>{row.availableSlots}</strong></span>
-                      </div>
+                        <div className="session-roster-actions">
+                          <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={() => handleOpenSession(row.id)}
+                            aria-label={`${strings.openSessionButton} ${row.nome}`}
+                            title={strings.openSessionButton}
+                          >
+                            <Play size={16} strokeWidth={2} aria-hidden="true" />
+                          </button>
+                        </div>
 
-                      <div className="session-roster-actions">
-                        <button type="button" className="btn-secondary" onClick={() => handleOpenSession(row.id)}>
-                          {strings.openSessionButton}
-                        </button>
+                        <div className="session-roster-stats">
+                          <span className="session-roster-stat"><small>{strings.hpLabel}</small><strong>{row.currentHp}/{row.maxHp} ({row.hpPercent}%)</strong></span>
+                          <span className="session-roster-stat"><small>{strings.acLabel}</small><strong>{row.ca}</strong></span>
+                          <span className="session-roster-stat"><small>{strings.slotsSpentLabel}</small><strong>{row.usedSlots}</strong></span>
+                          <span className="session-roster-stat"><small>{strings.slotsAvailableLabel}</small><strong>{row.availableSlots}</strong></span>
+                        </div>
+
+                        <div className="session-roster-history">
+                          <div className="session-roster-history-heading">
+                            <span>{strings.historyTitle}</span>
+                          </div>
+                          {historyByCharacter[row.id]?.length ? (
+                            <div className="session-roster-history-list">
+                              {historyByCharacter[row.id].map((entry) => (
+                                <span key={entry.id}>
+                                  <b>{entry.summary}</b>
+                                  <small>{formatHistoryDate(entry.created_at)}</small>
+                                </span>
+                              ))}
+                            </div>
+                          ) : <small className="session-roster-history-empty">{strings.historyEmpty}</small>}
+                        </div>
+
+                        <div className="session-roster-bottomline">
+                          <span><strong>{strings.classLabel}</strong>{row.classe}</span>
+                          <span><strong>{strings.levelLabel}</strong>{row.nivel}</span>
+                        </div>
                       </div>
                     </li>
                   ))}

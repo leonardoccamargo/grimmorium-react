@@ -1,5 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
-import PageTitle from '../components/PageTitle'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import LoadingIndicator from '../components/LoadingIndicator'
 import SpellCard from '../components/SpellCard'
 import SearchBar from '../components/SearchBar'
@@ -118,8 +117,13 @@ export default function GrimorioPage() {
   const [detailStatus, setDetailStatus] = useState('idle')
   const [searchTerm, setSearchTerm] = useState('')
   const [levelFilter, setLevelFilter] = useState('all')
+  const [schoolFilter, setSchoolFilter] = useState('all')
+  const [actionFilter, setActionFilter] = useState('all')
+  const [rangeFilter, setRangeFilter] = useState('all')
+  const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' })
   const [currentPage, setCurrentPage] = useState(1)
   const [reloadToken, setReloadToken] = useState(0)
+  const detailRef = useRef(null)
   const ITEMS_PER_PAGE = 12
 
   useEffect(() => {
@@ -183,6 +187,18 @@ export default function GrimorioPage() {
     ? (detailSpell ? 'success' : 'idle')
     : detailStatus
 
+  useEffect(() => {
+    const isMatchingDetail = detailSpell?.index === selectedSpellIndex?.index
+    if (!selectedSpellIndex || effectiveDetailStatus !== 'success' || !isMatchingDetail) {
+      return undefined
+    }
+
+    if (!detailRef.current) return undefined
+
+    detailRef.current.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'nearest' })
+    return undefined
+  }, [detailSpell, effectiveDetailStatus, selectedSpellIndex])
+
   const searchedSpells = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase()
 
@@ -196,12 +212,46 @@ export default function GrimorioPage() {
   }, [searchTerm, spellIndexList])
 
   const filteredSpells = useMemo(
-    () => filterSpellsByLevel(levelFilter, searchedSpells),
-    [levelFilter, searchedSpells],
+    () => filterSpellsByLevel(levelFilter, searchedSpells).filter((spell) => {
+      const schoolMatches = schoolFilter === 'all' || spell.school?.name === schoolFilter
+      const actionMatches = actionFilter === 'all' || spell.casting_time === actionFilter
+      const rangeMatches = rangeFilter === 'all' || spell.range === rangeFilter
+      return schoolMatches && actionMatches && rangeMatches
+    }),
+    [actionFilter, levelFilter, rangeFilter, schoolFilter, searchedSpells],
   )
+
+  const sortedSpells = useMemo(() => {
+    const collator = new Intl.Collator(language, { sensitivity: 'base', numeric: true })
+    const spells = [...filteredSpells]
+
+    spells.sort((firstSpell, secondSpell) => {
+      const firstValue = sortConfig.key === 'level'
+        ? firstSpell.level
+        : firstSpell[sortConfig.key]?.name || firstSpell[sortConfig.key] || ''
+      const secondValue = sortConfig.key === 'level'
+        ? secondSpell.level
+        : secondSpell[sortConfig.key]?.name || secondSpell[sortConfig.key] || ''
+      const result = typeof firstValue === 'number' && typeof secondValue === 'number'
+        ? firstValue - secondValue
+        : collator.compare(String(firstValue), String(secondValue))
+
+      return sortConfig.direction === 'ascending' ? result : -result
+    })
+
+    return spells
+  }, [filteredSpells, language, sortConfig])
 
   const handleLevelFilterChange = (event) => {
     setLevelFilter(event.target.value)
+    setCurrentPage(1)
+    setSelectedSpellIndex(null)
+    setSelectedSpellDetails(null)
+    setDetailStatus('idle')
+  }
+
+  const handleFilterChange = (setter) => (event) => {
+    setter(event.target.value)
     setCurrentPage(1)
     setSelectedSpellIndex(null)
     setSelectedSpellDetails(null)
@@ -217,17 +267,38 @@ export default function GrimorioPage() {
   }
 
   const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(filteredSpells.length / ITEMS_PER_PAGE)),
-    [filteredSpells],
+    () => Math.max(1, Math.ceil(sortedSpells.length / ITEMS_PER_PAGE)),
+    [sortedSpells],
   )
 
-  const hasFilteredSpells = filteredSpells.length > 0
+  const hasFilteredSpells = sortedSpells.length > 0
 
   const paginatedSpells = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
     const endIndex = startIndex + ITEMS_PER_PAGE
-    return filteredSpells.slice(startIndex, endIndex)
-  }, [filteredSpells, currentPage])
+    return sortedSpells.slice(startIndex, endIndex)
+  }, [currentPage, sortedSpells])
+
+  const filterOptions = useMemo(() => ({
+    schools: [...new Set(spellIndexList.map((spell) => spell.school?.name).filter(Boolean))].sort(),
+    actions: [...new Set(spellIndexList.map((spell) => spell.casting_time).filter(Boolean))].sort(),
+    ranges: [...new Set(spellIndexList.map((spell) => spell.range).filter(Boolean))].sort(),
+  }), [spellIndexList])
+
+  const handleSort = (key) => {
+    setSortConfig((currentSort) => ({
+      key,
+      direction: currentSort.key === key && currentSort.direction === 'ascending'
+        ? 'descending'
+        : 'ascending',
+    }))
+    setCurrentPage(1)
+  }
+
+  const sortIndicator = (key) => {
+    if (sortConfig.key !== key) return ''
+    return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓'
+  }
 
   const averageDamage = useMemo(
     () => parseAverageDamage(detailSpell?.damage, detailSpell?.level),
@@ -240,10 +311,18 @@ export default function GrimorioPage() {
       language === 'pt-br'
         ? 'Explore magias D&D 5e com descrição, componentes, alcance e custo de slot.'
         : 'Browse D&D 5e spells with description, components, range and slot details.',
-    filterLabel: language === 'pt-br' ? 'Filtrar por nível' : 'Filter by level',
+    filterLabel: language === 'pt-br' ? 'Nível' : 'Level',
+    spellNameColumn: language === 'pt-br' ? 'Nome da magia' : 'Spell name',
+    schoolFilterLabel: language === 'pt-br' ? 'Escola' : 'School',
+    actionFilterLabel: language === 'pt-br' ? 'Ação' : 'Action',
+    rangeFilterLabel: language === 'pt-br' ? 'Alcance' : 'Range',
     optionAll: language === 'pt-br' ? 'Todos' : 'All',
     optionCantrip: language === 'pt-br' ? 'Truques' : 'Cantrips',
     spellCount: language === 'pt-br' ? 'magias' : 'spells',
+    schoolColumn: language === 'pt-br' ? 'Escola de magia' : 'Spell school',
+    actionColumn: language === 'pt-br' ? 'Tipo de ação' : 'Action type',
+    levelColumn: language === 'pt-br' ? 'Nível da magia' : 'Spell level',
+    rangeColumn: language === 'pt-br' ? 'Alcance' : 'Range',
     selectPrompt:
       language === 'pt-br'
         ? 'Selecione uma magia para ver os detalhes completos.'
@@ -305,11 +384,14 @@ export default function GrimorioPage() {
           {strings.rangeLabel} {detailSpell.range}
         </p>
 
-        <div className="spell-detail-tags">
+        <div className="spell-detail-info">
           <span>{detailSpell.components.join(', ')}</span>
           <span>{detailSpell.casting_time}</span>
           <span>{detailSpell.duration}</span>
           {detailSpell.concentration && <span>{strings.concentrationLabel}</span>}
+        </div>
+
+        <div className="spell-detail-description">
           {detailSpell.desc.map((line, index) => (
             <p key={index}>{line}</p>
           ))}
@@ -335,31 +417,20 @@ export default function GrimorioPage() {
 
   return (
     <main>
-      <PageTitle
-        title={strings.title}
-        subtitle={strings.subtitle}
-      />
-
       <section className="content-section">
-        <div className="page-actions">
+        <div className="spell-toolbar">
           <SearchBar
             value={searchTerm}
             onChange={handleSearchChange}
             placeholder={language === 'pt-br' ? 'Buscar magia por nome...' : 'Search spell by name...'}
             buttonLabel={language === 'pt-br' ? 'Buscar' : 'Search'}
             ariaLabel={language === 'pt-br' ? 'Buscar magia' : 'Search spell'}
+            iconOnly
           />
-        </div>
-
-        <div className="spell-actions">
-          <div>
-            <label htmlFor="spell-level-filter">{strings.filterLabel}</label>
-            <select
-              id="spell-level-filter"
-              value={levelFilter}
-              onChange={handleLevelFilterChange}
-            >
-              <option value="all">{strings.optionAll}</option>
+          <div className="spell-filters">
+            <label className="visually-hidden" htmlFor="spell-level-filter">{strings.filterLabel}</label>
+            <select id="spell-level-filter" value={levelFilter} onChange={handleLevelFilterChange}>
+              <option value="all">{strings.filterLabel}: {strings.optionAll}</option>
               <option value="cantrip">{strings.optionCantrip}</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -371,9 +442,24 @@ export default function GrimorioPage() {
               <option value="8">8</option>
               <option value="9">9</option>
             </select>
+            <label className="visually-hidden" htmlFor="spell-school-filter">{strings.schoolFilterLabel}</label>
+            <select id="spell-school-filter" value={schoolFilter} onChange={handleFilterChange(setSchoolFilter)}>
+              <option value="all">{strings.schoolFilterLabel}: {strings.optionAll}</option>
+              {filterOptions.schools.map((school) => <option key={school} value={school}>{school}</option>)}
+            </select>
+            <label className="visually-hidden" htmlFor="spell-action-filter">{strings.actionFilterLabel}</label>
+            <select id="spell-action-filter" value={actionFilter} onChange={handleFilterChange(setActionFilter)}>
+              <option value="all">{strings.actionFilterLabel}: {strings.optionAll}</option>
+              {filterOptions.actions.map((action) => <option key={action} value={action}>{action}</option>)}
+            </select>
+            <label className="visually-hidden" htmlFor="spell-range-filter">{strings.rangeFilterLabel}</label>
+            <select id="spell-range-filter" value={rangeFilter} onChange={handleFilterChange(setRangeFilter)}>
+              <option value="all">{strings.rangeFilterLabel}: {strings.optionAll}</option>
+              {filterOptions.ranges.map((range) => <option key={range} value={range}>{range}</option>)}
+            </select>
           </div>
           <div className="spell-count">
-            {indexStatus === 'success' && <span>{filteredSpells.length} {strings.spellCount}</span>}
+            {indexStatus === 'success' && <span>{sortedSpells.length} {strings.spellCount}</span>}
           </div>
         </div>
 
@@ -400,6 +486,26 @@ export default function GrimorioPage() {
                 <div className="alert alert-warning">{strings.noFilteredResults}</div>
               )}
 
+              {hasFilteredSpells && (
+                <div className="spell-table-header">
+                  <button className="spell-table-header-name" type="button" onClick={() => handleSort('name')} aria-label={`Sort by ${strings.spellNameColumn}`}>
+                    {strings.spellNameColumn}{sortIndicator('name')}
+                  </button>
+                  <button type="button" onClick={() => handleSort('school')} aria-label={`Sort by ${strings.schoolColumn}`}>
+                    {strings.schoolColumn}{sortIndicator('school')}
+                  </button>
+                  <button type="button" onClick={() => handleSort('casting_time')} aria-label={`Sort by ${strings.actionColumn}`}>
+                    {strings.actionColumn}{sortIndicator('casting_time')}
+                  </button>
+                  <button type="button" onClick={() => handleSort('level')} aria-label={`Sort by ${strings.levelColumn}`}>
+                    {strings.levelColumn}{sortIndicator('level')}
+                  </button>
+                  <button type="button" onClick={() => handleSort('range')} aria-label={`Sort by ${strings.rangeColumn}`}>
+                    {strings.rangeColumn}{sortIndicator('range')}
+                  </button>
+                </div>
+              )}
+
               <div className="cards-grid">
                 {paginatedSpells.map((spell) => {
                   const isSelected = selectedSpellIndex?.index === spell.index
@@ -410,15 +516,14 @@ export default function GrimorioPage() {
                         spell={spell}
                         isSelected={isSelected}
                         onSelect={() => handleSpellSelect(spell)}
-                        details={isSelected ? detailSpell : null}
-                        averageDamage={isSelected ? averageDamage : null}
-                        emptySummary={language === 'pt-br'
-                          ? 'Selecione para ver descrição e componentes.'
-                          : 'Select to view description and components.'}
                       />
 
                       {isSelected && (
-                        <div className="spell-detail-inline">
+                        <div
+                          className="spell-detail-inline"
+                          id={`spell-detail-${spell.index}`}
+                          ref={detailRef}
+                        >
                           {effectiveDetailStatus === 'loading' && <LoadingIndicator message={strings.loadingDetails} />}
                           {effectiveDetailStatus === 'error' && <div className="alert alert-error">{strings.errorDetail}</div>}
                           {effectiveDetailStatus !== 'loading' && effectiveDetailStatus !== 'error' && detailSpell && (
@@ -479,18 +584,6 @@ export default function GrimorioPage() {
               )}
             </div>
 
-            <aside className="spell-detail-panel">
-              {effectiveDetailStatus === 'loading' && <LoadingIndicator message={strings.loadingDetails} />}
-              {effectiveDetailStatus === 'error' && <div className="alert alert-error">{strings.errorDetail}</div>}
-              {effectiveDetailStatus !== 'loading' && effectiveDetailStatus !== 'error' && detailSpell && (
-                renderSpellDetailCard()
-              )}
-              {effectiveDetailStatus === 'idle' && !detailSpell && (
-                <div className="spell-detail-empty">
-                  <p>{strings.selectPrompt}</p>
-                </div>
-              )}
-            </aside>
           </div>
         )}
       </section>

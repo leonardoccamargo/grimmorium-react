@@ -1,10 +1,10 @@
-import { NavLink } from 'react-router-dom'
-import { useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import logo from '../assets/grimmorium-logo.svg'
 
 export default function Header({ theme, onToggleTheme, isDockOpen, onToggleDock, onCloseDock }) {
   const { language, toggleLanguage } = useLanguage()
+  const { pathname } = useLocation()
 
   const strings = {
     title: language === 'pt-br' ? 'Grimmorium' : 'Grimmorium',
@@ -21,6 +21,16 @@ export default function Header({ theme, onToggleTheme, isDockOpen, onToggleDock,
       : (theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'),
     languageToggle: language === 'pt-br' ? 'Alternar idioma' : 'Toggle language',
   }
+
+  const pageTitle = pathname === '/personagens'
+    ? strings.navCharacters
+    : pathname === '/grimorio'
+      ? strings.navSpellbook
+      : pathname.startsWith('/jogar')
+        ? strings.navSession
+        : pathname === '/'
+          ? ''
+          : (language === 'pt-br' ? 'Página não encontrada' : 'Page not found')
 
   const navItems = [
     { to: '/', label: strings.navHome, icon: <HomeIcon /> },
@@ -45,6 +55,8 @@ export default function Header({ theme, onToggleTheme, isDockOpen, onToggleDock,
             </div>
           </NavLink>
         </div>
+
+        {pageTitle && <h2 className="header-page-title">{pageTitle}</h2>}
 
         <div className="header-actions">
           <button

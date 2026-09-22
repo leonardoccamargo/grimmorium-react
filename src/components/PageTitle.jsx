@@ -1,10 +1,7 @@
-export default function PageTitle({ title, subtitle }) {
+export default function PageTitle({ title }) {
   return (
     <div className="page-title">
-      <div>
-        <h2>{title}</h2>
-        {subtitle ? <p>{subtitle}</p> : null}
-      </div>
+      <h2>{title}</h2>
     </div>
   )
 }

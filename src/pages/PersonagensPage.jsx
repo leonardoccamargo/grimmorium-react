@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCharacters } from '../context/CharactersContext'
 import { useLanguage } from '../context/LanguageContext.jsx'
-import PageTitle from '../components/PageTitle'
 import SearchBar from '../components/SearchBar'
 import CharacterCard from '../components/CharacterCard'
 import LoadingIndicator from '../components/LoadingIndicator'
@@ -31,6 +30,9 @@ export default function PersonagensPage() {
     noResults: language === 'pt-br' ? 'Nenhum personagem encontrado para sua busca.' : 'No characters found for your search.',
     searchButton: language === 'pt-br' ? 'Buscar' : 'Search',
     searchAria: language === 'pt-br' ? 'Buscar personagem' : 'Search character',
+    summaryCharacters: language === 'pt-br' ? 'Personagens' : 'Characters',
+    summaryClasses: language === 'pt-br' ? 'Classes presentes' : 'Classes present',
+    summaryClassesEmpty: language === 'pt-br' ? 'Sem classes registradas' : 'No classes registered',
   }
 
   const personagensFiltrados = useMemo(() => {
@@ -39,6 +41,18 @@ export default function PersonagensPage() {
       char.classe.toLowerCase().includes(busca.toLowerCase()),
     )
   }, [personagens, busca])
+
+  const characterSummary = useMemo(() => {
+    const byClass = personagensFiltrados.reduce((acc, character) => {
+      const className = String(character.classe || '').trim() || (language === 'pt-br' ? 'Sem classe' : 'No class')
+      acc[className] = (acc[className] || 0) + 1
+      return acc
+    }, {})
+
+    return Object.entries(byClass)
+      .map(([name, count]) => ({ name, count }))
+      .sort((first, second) => second.count - first.count || first.name.localeCompare(second.name))
+  }, [language, personagensFiltrados])
 
   function handleSelect(id) {
     navigate(`/jogar/${id}`, { state: { from: '/personagens' } })
@@ -78,8 +92,6 @@ export default function PersonagensPage() {
 
   return (
     <main>
-      <PageTitle title={strings.title} subtitle={strings.subtitle} />
-
       <section className="content-section">
         <div className="page-actions page-actions-compact">
           <SearchBar
@@ -91,8 +103,32 @@ export default function PersonagensPage() {
             actionLabel={strings.buttonNew}
             actionOnClick={() => setIsCreating(true)}
             onSubmit={(event) => event.preventDefault()}
+            iconOnly
           />
         </div>
+
+        {status === 'success' && personagensFiltrados.length > 0 && (
+          <div className="session-overview">
+            <div className="session-overview-cards">
+              <article className="session-overview-card">
+                <p>{strings.summaryCharacters}</p>
+                <strong>{personagensFiltrados.length}</strong>
+              </article>
+              <article className="session-overview-card">
+                <p>{strings.summaryClasses}</p>
+                {characterSummary.length === 0 ? (
+                  <strong>{strings.summaryClassesEmpty}</strong>
+                ) : (
+                  <div className="session-class-list">
+                    {characterSummary.map((item) => (
+                      <span key={item.name} className="session-class-chip">{item.name} <b>{item.count}</b></span>
+                    ))}
+                  </div>
+                )}
+              </article>
+            </div>
+          </div>
+        )}
 
         {status === 'loading' && <LoadingIndicator message={strings.loadingCharacters} />}
         {status === 'error' && <div className="alert alert-error">{mensagem}</div>}

@@ -152,11 +152,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 html {
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
     background: var(--ink-deep);
 }
 

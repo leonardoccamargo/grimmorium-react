@@ -1,4 +1,3 @@
-import PageTitle from '../components/PageTitle'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 
@@ -20,8 +19,6 @@ export default function NotFoundPage() {
 
   return (
     <main>
-      <PageTitle title={strings.title} subtitle={strings.subtitle} />
-
       <section className="content-section notfound-section">
         <p>{strings.message} <strong>{location.pathname}</strong>.</p>
         <button type="button" className="btn-primary" onClick={() => navigate('/')}>{strings.buttonLabel}</button>

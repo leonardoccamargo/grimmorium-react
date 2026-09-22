@@ -11,7 +11,6 @@ export default function HomePage() {
   }
 
   const strings = {
-    heroKicker: language === 'pt-br' ? 'Página inicial' : 'Home',
     heroHeadingTop: language === 'pt-br' ? 'Tudo o que você precisa' : 'Everything you need',
     heroHeadingBottom: language === 'pt-br' ? 'para a sua próxima aventura!' : 'for your next adventure!',
     heroText: language === 'pt-br'
@@ -68,7 +67,6 @@ export default function HomePage() {
         <div className="hero-conteudo">
           <div className="home-hero-grid">
             <div className="home-hero-copy">
-              <span className="home-kicker"><StarIcon /> {strings.heroKicker}</span>
               <h1>
                 <span className="text-gold-gradient">{strings.heroHeadingTop}</span>
                 <span className="home-hero-subline">{strings.heroHeadingBottom}</span>
@@ -166,16 +164,6 @@ export default function HomePage() {
   )
 }
 
-function CornerFlourish({ className = '' }) {
-  return (
-    <svg viewBox="0 0 60 60" className={className} fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M2 20 V6 A4 4 0 0 1 6 2 H20" />
-      <path d="M8 14 L14 8" />
-      <circle cx="14" cy="14" r="1.5" fill="currentColor" />
-    </svg>
-  )
-}
-
 function RuneCircle({ large = false }) {
   const size = large ? 600 : 180
   return (
@@ -200,10 +188,11 @@ function RuneCircle({ large = false }) {
 function SwordIcon() {
   return (
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14.5 17.5L3 6V3h3l11.5 11.5" />
-      <path d="M13 19l6-6" />
-      <path d="M16 16l4 4" />
-      <path d="M19 21l2-2" />
+      <path d="M14.5 5.5L18.5 1.5 22.5 5.5 18.5 9.5" />
+      <path d="M18.5 5.5L9 15" />
+      <path d="M7 13l4 4" />
+      <path d="M5 15l4 4" />
+      <path d="M3 21l4-4" />
     </svg>
   )
 }
@@ -223,14 +212,6 @@ function ScrollIcon() {
       <path d="M8 3h11a2 2 0 0 1 2 2v3H8z" />
       <path d="M19 21H6a2 2 0 0 1-2-2V6a3 3 0 0 1 3-3" />
       <path d="M8 12h9M8 16h6" />
-    </svg>
-  )
-}
-
-function StarIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
-      <path d="M12 2l2 7h7l-5.7 4.2L17.5 22 12 17.6 6.5 22l2.2-8.8L3 9h7z" />
     </svg>
   )
 }
