@@ -2510,6 +2510,12 @@ input[type="number"]:focus {
     font-size: 0.68rem;
 }
 
+.session-roster-history-list em {
+    color: var(--texto-secundario);
+    font-size: 0.72rem;
+    font-style: normal;
+}
+
 .session-roster-history-empty {
     display: block;
     color: var(--texto-secundario);

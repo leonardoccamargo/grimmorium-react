@@ -206,6 +206,12 @@ export default function JogarPage() {
     return new Intl.DateTimeFormat(language, { dateStyle: 'short', timeStyle: 'short' }).format(new Date(dateValue))
   }
 
+  const formatHistorySummary = (entry) => {
+    if (entry.event_type === 'long_rest') return language === 'pt-br' ? 'Realizou um descanso longo.' : 'Completed a long rest.'
+    if (entry.event_type === 'short_rest') return language === 'pt-br' ? 'Realizou um descanso curto.' : 'Completed a short rest.'
+    return entry.summary
+  }
+
   const handleOpenSession = (characterId) => {
     navigate(`/jogar/${characterId}`, { state: { from: '/jogar' } })
   }
@@ -504,7 +510,13 @@ export default function JogarPage() {
                             <div className="session-roster-history-list">
                               {historyByCharacter[row.id].map((entry) => (
                                 <span key={entry.id}>
-                                  <b>{entry.summary}</b>
+                                  <b>{formatHistorySummary(entry)}</b>
+                                  {entry.event_type === 'short_rest' && (
+                                    <em>Dados usados: {entry.details?.hit_dice_spent || 0} | Vida recuperada: {entry.details?.healed || 0}</em>
+                                  )}
+                                  {entry.event_type === 'long_rest' && (
+                                    <em>Dados recuperados: {entry.details?.hit_dice_recovered || 0} | Vida recuperada: {entry.details?.hp_recovered || 0}</em>
+                                  )}
                                   <small>{formatHistoryDate(entry.created_at)}</small>
                                 </span>
                               ))}

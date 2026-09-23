@@ -1,0 +1,98 @@
+ROTEIRO DO VÍDEO - GRIMMORIUM MVP3
+Duração sugerida: ~5 minutos (Máximo 6 minutos)
+
+==================================================
+PREPARAÇÃO ANTES DE GRAVAR
+
+Terminal na pasta grimmorium-react rodando: docker compose up -d
+
+Deixe rodando um: docker compose ps
+
+Abas abertas: Site (8080), Swagger (5000), D&D 5e API, e o README/Diagrama.
+
+Use os personagens já cadastrados.
+
+==================================================
+
+OBJETIVO E PROPÓSITO (20 a 60 segundos)
+==================================================
+[ 💻 TELA: Página inicial do Grimmorium (localhost:8080) ]
+
+"Olá! Neste vídeo, vou apresentar o meu 3º MVP. A ideia do Grimmorium nasceu para resolver um problema bem comum nas mesas de RPG: a desorganização e a demora.
+
+Ficar caçando regras em livros ou atualizando recursos em fichas de papel quebra muito o ritmo do jogo. O propósito da aplicação é justamente digitalizar e centralizar essa rotina. Ela oferece uma gestão rápida das fichas, controla os recursos em tempo real durante a sessão e traz um grimório digital para consultas instantâneas."
+
+==================================================
+2. ARQUITETURA E COMUNICAÇÃO (30 a 60 segundos)
+
+[ 💻 TELA: Diagrama de arquitetura ou seção do README ]
+[ 🎬 AÇÃO: Mostre rapidamente o terminal com o 'docker compose ps' ]
+
+"Falando sobre a arquitetura, o projeto está dividido em três partes. No Front-end, utilizei React. O Back-end é uma API própria feita em Python com Flask, conectada a um banco SQLite que persiste os dados usando um volume do Docker.
+
+A comunicação entre o Front e o Back acontece por requisições HTTP REST com dados em JSON. Além disso, o Front-end também se conecta a uma API externa para o módulo de magias. O Docker executa o frontend e o backend em containers separados, mas os dois ficam prontos para funcionar juntos pelo Docker Compose."
+
+==================================================
+3. API EXTERNA (30 a 60 segundos)
+
+[ 💻 TELA: Documentação da D&D 5e API ]
+
+"E por falar nessa API externa, a escolhida foi a D&D 5e API. É um serviço público e gratuito que fornece dados sobre as magias do jogo.
+
+Quando o site está em inglês, o frontend consulta diretamente essa API para carregar o índice e os detalhes das magias. Quando o site está em português, o frontend consulta o endpoint próprio /api/magias, que disponibiliza uma base local em português com os campos usados pela aplicação. Nos dois casos, o usuário continua dentro do Grimmorium e não precisa acessar a API externa diretamente."
+
+==================================================
+4. COMPONENTE 2: API PRÓPRIA E SWAGGER (60 a 90 segundos)
+
+[ 💻 TELA: Swagger (localhost:5000/openapi/swagger) ]
+
+"Agora, mostrando a segunda componente: aqui temos a nossa API do Flask rodando em um container Docker na porta 5000. Esta é a interface do Swagger, onde as rotas estão documentadas e podem ser testadas."
+
+[ 🎬 AÇÃO: Role rapidamente pelos grupos de rotas (saúde, magias, personagens, sessão, etc) ]
+
+"Aqui estão todas as rotas implementadas pela API. Vou demonstrar as principais operações para não gastar o tempo inteiro navegando na documentação."
+
+[ 🎬 AÇÃO: Abra e execute a rota GET /api/v2/characters ]
+
+"Aqui eu rodo um GET para listar os personagens e vemos o retorno direto do banco de dados."
+
+[ 🎬 AÇÃO: Mostre rapidamente o POST /api/v2/characters/wizard ]
+
+"A criação de uma ficha usa uma rota POST. Também temos a edição completa da ficha e a exclusão usando as rotas correspondentes."
+
+[ 🎬 AÇÃO: Abra o PUT /api/v2/characters/{id}/play e altere o hp_current ]
+
+"Também temos as rotas específicas do modo de jogo. Executando este PUT, por exemplo, a API atualiza a vida do personagem, aplica a regra de negócio no backend e retorna o personagem atualizado."
+
+[ 🎬 AÇÃO: Mostre o GET /api/v2/characters/{id}/history (e se der tempo, execute uma de descanso) ]
+
+"A API também disponibiliza o histórico das alterações feitas durante o modo Jogar e as rotas de descanso e recursos da sessão."
+
+==================================================
+5. COMPONENTE PRINCIPAL: FRONTEND (60 a 90 segundos)
+
+[ 💻 TELA: Aplicação React (localhost:8080) na página de Personagens ]
+
+"Para fechar, temos o componente principal: o Front-end, rodando no seu próprio container na porta 8080. Na página de Personagens, a aplicação faz um GET na nossa API para montar os cards na tela."
+
+[ 🎬 AÇÃO: Use a busca, abra o wizard, crie uma ficha temporária e mostre o novo card ]
+
+"A interface também possui um wizard para criar personagens, busca para localizar fichas e confirmação antes de excluir um personagem. Com isso, demonstramos as operações de criação, consulta e exclusão pela interface."
+
+[ 🎬 AÇÃO: (Opcional) Exclua a ficha. Depois, abra o modo Jogar de outro personagem e altere o HP ]
+
+"Quando eu interajo com a ficha no modo de jogo, como ao alterar a vida, o frontend envia um PUT para o Flask. O backend atualiza o banco e registra a alteração no histórico específico desse personagem."
+
+[ 🎬 AÇÃO: Consuma um slot, salve e volte para /jogar. Mostre o histórico na tela ]
+
+"Ao voltar para a visão da sessão, o frontend consulta o endpoint de histórico e mostra mensagens específicas, como 'Recuperou 23 pontos de vida' ou 'Perdeu 1 slot de feitiço'. Cada ficha mantém apenas as nove alterações mais recentes. A edição completa da ficha não gera histórico."
+
+[ 🎬 AÇÃO: Abra Descanso curto e confirme a ação ]
+
+"O modo de jogo também possui descanso curto e descanso longo. O descanso curto calcula a cura com base nos dados de vida e no modificador de Constituição. HP, dados de vida e slots são atualizados pela API."
+
+[ 🎬 AÇÃO: Vá para /grimorio, pesquise uma magia, use um filtro, ordene e abra os detalhes ]
+
+"Já nesta tela do Grimório acontece a integração com as magias. O React permite buscar, filtrar, ordenar e abrir a descrição completa de cada magia dentro da própria interface.
+
+Com isso, fecho o ciclo completo entre interface, API própria, banco de dados e serviço externo. O Grimmorium integra esses componentes em uma única experiência para apoiar a preparação e condução de sessões de RPG. Muito obrigado!"
